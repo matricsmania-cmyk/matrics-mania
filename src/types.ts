@@ -1,19 +1,35 @@
 export type PageType = 'home' | 'about' | 'services' | 'blog' | 'contact';
 
+export interface BlogSection {
+  id: string;
+  title: string;
+  content: string;
+  keyPoints?: string[];
+  quote?: string;
+  codeSnippet?: string;
+  table?: {
+    headers: string[];
+    rows: string[][];
+  };
+}
+
 export interface BlogPost {
   id: string;
   title: string;
   slug: string;
   excerpt: string;
   content: string;
+  sections?: BlogSection[];
   category: 'SEO & Growth' | 'Paid Media' | 'AI Marketing' | 'Analytics' | 'Brand Strategy';
   author: {
     name: string;
     role: string;
     avatar: string;
+    bio?: string;
   };
   publishedAt: string;
   readTime: string;
+  wordCount?: number;
   featuredImageUrl: string;
   tags: string[];
   keyTakeaways: string[];

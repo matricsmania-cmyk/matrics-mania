@@ -5,10 +5,11 @@ import { Logo } from './Logo';
 
 interface FooterProps {
   onNavigate: (page: PageType) => void;
+  onNavigateToLocation?: (slug: string) => void;
   onShowToast: (title: string, description?: string, type?: 'success' | 'error' | 'info') => void;
 }
 
-export const Footer: React.FC<FooterProps> = ({ onNavigate, onShowToast }) => {
+export const Footer: React.FC<FooterProps> = ({ onNavigate, onNavigateToLocation, onShowToast }) => {
   const [newsletterEmail, setNewsletterEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
 
@@ -53,7 +54,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onShowToast }) => {
           </div>
 
           {/* Quick Links */}
-          <div className="md:col-span-3 space-y-3">
+          <div className="md:col-span-2 space-y-3">
             <h4 className="text-xs font-bold uppercase tracking-wider text-slate-300">Navigation</h4>
             <ul className="space-y-2 text-xs">
               {navLinks.map((link) => (
@@ -70,6 +71,43 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onShowToast }) => {
                   </button>
                 </li>
               ))}
+            </ul>
+          </div>
+
+          {/* Service Areas */}
+          <div className="md:col-span-2 space-y-3">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-300">Service Areas</h4>
+            <ul className="space-y-2 text-xs text-slate-400">
+              <li>
+                <button
+                  onClick={() => {
+                    if (onNavigateToLocation) {
+                      onNavigateToLocation('digital-marketing-agency-in-varanasi');
+                    } else {
+                      window.location.hash = 'digital-marketing-agency-in-varanasi';
+                    }
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  className="hover:text-blue-400 transition-colors text-left cursor-pointer"
+                >
+                  Agency in Varanasi
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => {
+                    if (onNavigateToLocation) {
+                      onNavigateToLocation('digital-marketing-agency-in-prayagraj');
+                    } else {
+                      window.location.hash = 'digital-marketing-agency-in-prayagraj';
+                    }
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  className="hover:text-blue-400 transition-colors text-left cursor-pointer"
+                >
+                  Agency in Prayagraj
+                </button>
+              </li>
             </ul>
           </div>
 

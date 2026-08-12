@@ -1,22 +1,24 @@
 import React from 'react';
 import { PageType, BlogPost } from '../types';
 import { SERVICES_DATA, CASE_STUDIES_DATA, TESTIMONIALS_DATA, CLIENT_LOGOS, AGENCY_METRICS, BLOG_POSTS_DATA } from '../data/mockData';
-import { ROICalculator } from '../components/ROICalculator';
+import { getSlugFromTitle } from '../utils/slug';
 import { AuditSimulator } from '../components/AuditSimulator';
 import { useTheme } from '../context/ThemeContext';
-import { ArrowRight, CheckCircle2, TrendingUp, Sparkles, ShieldCheck, Search, Target, Code, Share2, FileText, BarChart3, Star, ChevronRight, Sun, Moon } from 'lucide-react';
+import { ArrowRight, CheckCircle2, TrendingUp, Sparkles, ShieldCheck, Search, Target, Code, Share2, FileText, BarChart3, Star, ChevronRight, Sun, Moon, MapPin } from 'lucide-react';
 
 interface HomePageProps {
   onNavigate: (page: PageType) => void;
   onOpenBooking: (prefillInfo?: any) => void;
-  onOpenBlogModal: (post: BlogPost) => void;
+  onNavigateToBlogSlug: (slug: string) => void;
+  onNavigateToLocation: (slug: string) => void;
   onShowToast: (title: string, description?: string, type?: 'success' | 'error' | 'info') => void;
 }
 
 export const HomePage: React.FC<HomePageProps> = ({
   onNavigate,
   onOpenBooking,
-  onOpenBlogModal,
+  onNavigateToBlogSlug,
+  onNavigateToLocation,
   onShowToast,
 }) => {
   const { theme, toggleTheme } = useTheme();
@@ -189,13 +191,6 @@ export const HomePage: React.FC<HomePageProps> = ({
         </div>
       </section>
 
-      {/* INTERACTIVE ROI CALCULATOR SECTION */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <ROICalculator onOpenBooking={onOpenBooking} />
-      </section>
-
-
-
       {/* LIVE AUDIT SIMULATOR SECTION */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <AuditSimulator onOpenBooking={onOpenBooking} onShowToast={onShowToast} />
@@ -277,7 +272,7 @@ export const HomePage: React.FC<HomePageProps> = ({
           {BLOG_POSTS_DATA.slice(0, 3).map((post) => (
             <div
               key={post.id}
-              onClick={() => onOpenBlogModal(post)}
+              onClick={() => onNavigateToBlogSlug(getSlugFromTitle(post.title))}
               className="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 overflow-hidden shadow-lg hover:border-blue-500/50 transition-all cursor-pointer group flex flex-col justify-between"
             >
               <div>
@@ -308,6 +303,84 @@ export const HomePage: React.FC<HomePageProps> = ({
               </div>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* OUR SERVICE AREAS: VARANASI & PRAYAGRAJ */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="bg-slate-900 text-white rounded-3xl p-8 md:p-12 border border-slate-800 space-y-8 relative overflow-hidden shadow-2xl">
+          <div className="text-center max-w-2xl mx-auto space-y-3">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20 text-xs font-bold uppercase tracking-wider">
+              <MapPin className="w-3.5 h-3.5 text-blue-400" />
+              <span>Regional Growth Hubs</span>
+            </div>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight">
+              Our Service Areas: Varanasi & Prayagraj
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
+              We specialize in scaling businesses across Eastern Uttar Pradesh. Explore our dedicated location hubs for tailored Local SEO, Lead Generation, and Growth Strategies:
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Varanasi Button / Card */}
+            <div className="p-6 rounded-2xl bg-slate-950 border border-slate-800 hover:border-blue-500/60 transition-all flex flex-col justify-between space-y-5 group">
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-extrabold uppercase tracking-widest text-blue-400 bg-blue-950/80 px-3 py-1 rounded-full border border-blue-500/30">
+                    Varanasi Hub
+                  </span>
+                  <span className="text-xs text-slate-400">Uttar Pradesh</span>
+                </div>
+                <h3 className="text-xl font-bold text-white group-hover:text-blue-400 transition-colors">
+                  Digital Marketing Agency in Varanasi
+                </h3>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  Local SEO, Meta & Google Ads, and E-commerce growth for Godowlia, Assi Ghat, Cantonment, Sigra, and Banaras enterprises.
+                </p>
+              </div>
+
+              <button
+                onClick={() => {
+                  onNavigateToLocation('digital-marketing-agency-in-varanasi');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className="w-full py-3.5 px-5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-extrabold text-xs sm:text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <span>Digital Marketing Agency in Varanasi</span>
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </button>
+            </div>
+
+            {/* Prayagraj Button / Card */}
+            <div className="p-6 rounded-2xl bg-slate-950 border border-slate-800 hover:border-blue-500/60 transition-all flex flex-col justify-between space-y-5 group">
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-extrabold uppercase tracking-widest text-blue-400 bg-blue-950/80 px-3 py-1 rounded-full border border-blue-500/30">
+                    Prayagraj Hub
+                  </span>
+                  <span className="text-xs text-slate-400">Uttar Pradesh</span>
+                </div>
+                <h3 className="text-xl font-bold text-white group-hover:text-blue-400 transition-colors">
+                  Digital Marketing Agency in Prayagraj
+                </h3>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  Student admission lead funnels, Local Map Pack SEO, and real estate marketing across Civil Lines, Katra, Naini, and Sangam area.
+                </p>
+              </div>
+
+              <button
+                onClick={() => {
+                  onNavigateToLocation('digital-marketing-agency-in-prayagraj');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className="w-full py-3.5 px-5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-extrabold text-xs sm:text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <span>Digital Marketing Agency in Prayagraj</span>
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </button>
+            </div>
+          </div>
         </div>
       </section>
 

@@ -1,14 +1,15 @@
 import React, { useState, useMemo } from 'react';
 import { BlogPost } from '../types';
 import { BLOG_POSTS_DATA } from '../data/mockData';
+import { getSlugFromTitle } from '../utils/slug';
 import { Search, Calendar, Clock, ArrowRight, Sparkles, Filter } from 'lucide-react';
 
 interface BlogPageProps {
-  onOpenBlogModal: (post: BlogPost) => void;
+  onNavigateToBlogSlug: (slug: string) => void;
   onOpenBooking: () => void;
 }
 
-export const BlogPage: React.FC<BlogPageProps> = ({ onOpenBlogModal, onOpenBooking }) => {
+export const BlogPage: React.FC<BlogPageProps> = ({ onNavigateToBlogSlug, onOpenBooking }) => {
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState<string>('');
 
@@ -34,8 +35,8 @@ export const BlogPage: React.FC<BlogPageProps> = ({ onOpenBlogModal, onOpenBooki
         <span className="text-xs font-bold uppercase tracking-widest text-blue-600 dark:text-blue-400">
           Growth & Marketing Insights
         </span>
-        <h1 className="text-4xl sm:text-6xl font-black text-slate-900 dark:text-white max-w-4xl mx-auto tracking-tight">
-          The Matricsmania <span className="gradient-text-primary">Growth Intelligence Blog</span>
+        <h1 className="text-3xl sm:text-5xl md:text-6xl font-black text-slate-900 dark:text-white max-w-4xl mx-auto tracking-tight leading-tight">
+          The Matricsmania <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 dark:from-blue-400 dark:via-purple-400 dark:to-pink-400 bg-clip-text text-transparent">Growth Intelligence Blog</span>
         </h1>
         <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto leading-relaxed">
           In-depth technical SEO breakdowns, high-ROAS creative playbooks, and algorithmic conversion engineering guides published weekly.
@@ -76,7 +77,7 @@ export const BlogPage: React.FC<BlogPageProps> = ({ onOpenBlogModal, onOpenBooki
       {selectedCategory === 'All' && !searchQuery && featuredPost && (
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div
-            onClick={() => onOpenBlogModal(featuredPost)}
+            onClick={() => onNavigateToBlogSlug(getSlugFromTitle(featuredPost.title))}
             className="rounded-3xl bg-slate-900 text-white border border-slate-800 overflow-hidden shadow-2xl grid grid-cols-1 lg:grid-cols-12 gap-8 items-center cursor-pointer group hover:border-blue-500/50 transition-all duration-300"
           >
             <div className="lg:col-span-6 h-64 lg:h-full relative overflow-hidden">
@@ -151,7 +152,7 @@ export const BlogPage: React.FC<BlogPageProps> = ({ onOpenBlogModal, onOpenBooki
             {filteredPosts.map((post) => (
               <div
                 key={post.id}
-                onClick={() => onOpenBlogModal(post)}
+                onClick={() => onNavigateToBlogSlug(getSlugFromTitle(post.title))}
                 className="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 overflow-hidden shadow-lg hover:border-blue-500/50 transition-all cursor-pointer group flex flex-col justify-between"
               >
                 <div>

@@ -42,7 +42,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate, onOpenB
         {/* Desktop Nav Items */}
         <nav className="hidden md:flex items-center gap-1 bg-slate-100/80 dark:bg-slate-900/80 p-1.5 rounded-full border border-slate-200 dark:border-slate-800">
           {navItems.map((item) => {
-            const isActive = currentPage === item.id;
+            const isActive = currentPage === item.id || (item.id === 'blog' && (currentPage as string) === 'blog-detail');
             return (
               <button
                 key={item.id}
@@ -107,7 +107,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate, onOpenB
                 key={item.id}
                 onClick={() => handleNavClick(item.id)}
                 className={`px-4 py-3 rounded-xl text-sm font-semibold text-left transition-colors ${
-                  currentPage === item.id
+                  currentPage === item.id || (item.id === 'blog' && (currentPage as string) === 'blog-detail')
                     ? 'bg-blue-600 text-white'
                     : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-900'
                 }`}
