@@ -1,0 +1,6 @@
+{
+  "name": "Matricsmania",
+  "description": "Professional digital marketing agency website with interactive multi-page navigation, ROI calculator, case studies, blog insights, and dark mode support.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

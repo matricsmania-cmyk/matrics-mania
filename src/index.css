@@ -1,0 +1,117 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Plus Jakarta Sans', 'Outfit', 'Sora', system-ui, -apple-system, sans-serif;
+}
+
+@layer base {
+  :root {
+    --bg-primary: #ffffff;
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --card-bg: #f8fafc;
+    --border-color: #e2e8f0;
+  }
+
+  .dark {
+    --bg-primary: #090d16;
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --card-bg: #111827;
+    --border-color: #1e293b;
+  }
+
+  *, ::before, ::after {
+    font-family: 'Plus Jakarta Sans', 'Outfit', 'Sora', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  }
+
+  body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: 'Plus Jakarta Sans', 'Outfit', 'Sora', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4, h5, h6, button, input, select, textarea {
+    font-family: 'Plus Jakarta Sans', 'Outfit', 'Sora', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  }
+}
+
+/* Glassmorphism helpers */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+.dark .glass-panel {
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(30, 41, 59, 0.8);
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(8px);
+}
+
+.dark .glass-card {
+  background: rgba(17, 24, 39, 0.85);
+  backdrop-filter: blur(8px);
+}
+
+/* Custom gradient text */
+.gradient-text-primary {
+  background: linear-gradient(135deg, #2563eb 0%, #7c3aed 50%, #db2777 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.dark .gradient-text-primary {
+  background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 50%, #f472b6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gradient-text-cyan {
+  background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Smooth custom scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.dark ::webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 4px;
+}
+
+/* Pulse highlight animation */
+@keyframes pulseGlow {
+  0%, 100% {
+    opacity: 0.4;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 4s infinite ease-in-out;
+}
+
