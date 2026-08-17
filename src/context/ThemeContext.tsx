@@ -32,6 +32,13 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       root.classList.remove('dark');
     }
     localStorage.setItem('matricsmania-theme', theme);
+
+    // Dynamically update favicon based on selected theme
+    const favicon = document.querySelector("link[rel*='icon']") as HTMLLinkElement | null;
+    if (favicon) {
+      favicon.href = theme === 'dark' ? '/matrics-mania-logo-dark.webp' : '/matrics-mania-logo-light.webp';
+      favicon.type = 'image/webp';
+    }
   }, [theme]);
 
   const toggleTheme = () => {

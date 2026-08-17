@@ -40,7 +40,16 @@
     <meta property="twitter:image" content="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80" />
 
     <!-- Favicon with Exact Monogram -->
-    <link rel="icon" type="image/png" href="/logo.png" />
+    <link id="favicon" rel="icon" type="image/webp" href="/matrics-mania-logo-dark.webp" />
+    <script>
+      (function() {
+        var theme = localStorage.getItem('matricsmania-theme');
+        if (theme === 'light') {
+          var faviconEl = document.getElementById('favicon');
+          if (faviconEl) faviconEl.setAttribute('href', '/matrics-mania-logo-light.webp');
+        }
+      })();
+    </script>
     
     <!-- Preload Light & Dark Logos for Instant Theme Mode Switching -->
     <link rel="preload" as="image" href="/matrics-mania-logo-light.webp" type="image/webp" fetchpriority="high" />
