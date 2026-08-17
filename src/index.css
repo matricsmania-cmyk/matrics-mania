@@ -395,12 +395,6 @@ html:not(.dark) button.bg-brand-accent * {
   color: #FFFFFF !important;
 }
 
-/* Ensure text and icons inside light/transparent/outline buttons are dark slate in light mode */
-html:not(.dark) button:not(.bg-gradient-to-r):not([class*="bg-blue-"]):not([class*="bg-indigo-"]):not([class*="bg-violet-"]):not([class*="bg-emerald-"]):not([class*="bg-brand-accent"]),
-html:not(.dark) button:not(.bg-gradient-to-r):not([class*="bg-blue-"]):not([class*="bg-indigo-"]):not([class*="bg-violet-"]):not([class*="bg-emerald-"]):not([class*="bg-brand-accent"]) * {
-  color: #0F172A !important;
-}
-
 /* Maintain high-contrast emerald green for positive indicators/checks in light mode */
 html:not(.dark) .text-emerald-400,
 html:not(.dark) .text-green-400,
@@ -424,28 +418,68 @@ html:not(.dark) header [class*="w-\[1080px\]"] {
   box-shadow: 0 4px 20px -2px rgba(0,0,0,0.05), 0 2px 8px -1px rgba(0,0,0,0.03) !important;
 }
 
-html:not(.dark) header button,
-html:not(.dark) header span,
-html:not(.dark) header a {
-  &:not([class*="bg-"]) {
-    color: #0F172A !important;
-  }
-}
-
-html:not(.dark) header .text-\[\#94A3B8\],
-html:not(.dark) header .text-\[\#94a3b8\] {
+/* Elegant and dynamic header navigation buttons in light mode */
+html:not(.dark) header nav button {
   color: #475569 !important;
-  &:hover {
-    color: #0F172A !important;
-  }
+  background-color: transparent !important;
+  transition: all 0.2s ease-in-out !important;
 }
 
-/* Dropdown containers */
+html:not(.dark) header nav button:hover {
+  color: #2563EB !important;
+  background-color: #F1F5F9 !important;
+}
+
+/* Active navigation button indicators in light mode */
+html:not(.dark) header nav button[class*="text-white"],
+html:not(.dark) header nav button[class*="font-semibold"] {
+  color: #2563EB !important;
+  font-weight: 700 !important;
+}
+
+/* Theme toggle & mobile menu toggle buttons in light mode */
+html:not(.dark) header button:not(.bg-gradient-to-r):not([class*="bg-blue-"]) {
+  color: #475569 !important;
+  background-color: transparent !important;
+  transition: all 0.2s ease-in-out !important;
+}
+
+html:not(.dark) header button:not(.bg-gradient-to-r):not([class*="bg-blue-"]):hover {
+  color: #2563EB !important;
+  background-color: #F1F5F9 !important;
+}
+
+/* Dropdown containers and headers */
 html:not(.dark) header div[class*="bg-\[\#0D1424\]"],
 html:not(.dark) header div[class*="bg-\[\#0d1424\]"] {
   background-color: #FFFFFF !important;
   border-color: #E2E8F0 !important;
   box-shadow: 0 10px 30px -5px rgba(0,0,0,0.1), 0 4px 12px -2px rgba(0,0,0,0.05) !important;
+}
+
+html:not(.dark) header div[class*="bg-\[\#0D1424\]"] button span,
+html:not(.dark) header div[class*="bg-\[\#0d1424\]"] button span,
+html:not(.dark) header [class*="bg-\[\#0D1424\]"] button span,
+html:not(.dark) header [class*="bg-\[\#0d1424\]"] button span {
+  color: #475569 !important;
+  transition: all 0.15s ease-in-out !important;
+}
+
+/* Dropdown interactive menu hover states */
+html:not(.dark) header div[class*="bg-\[\#0D1424\]"] button:hover,
+html:not(.dark) header div[class*="bg-\[\#0d1424\]"] button:hover,
+html:not(.dark) header [class*="bg-\[\#0D1424\]"] button:hover,
+html:not(.dark) header [class*="bg-\[\#0d1424\]"] button:hover {
+  background-color: #F1F5F9 !important;
+  border-radius: 8px !important;
+  padding-left: 8px !important;
+}
+
+html:not(.dark) header div[class*="bg-\[\#0D1424\]"] button:hover span,
+html:not(.dark) header div[class*="bg-\[\#0d1424\]"] button:hover span,
+html:not(.dark) header [class*="bg-\[\#0D1424\]"] button:hover span,
+html:not(.dark) header [class*="bg-\[\#0d1424\]"] button:hover span {
+  color: #2563EB !important;
 }
 
 /* Inputs and controls */
