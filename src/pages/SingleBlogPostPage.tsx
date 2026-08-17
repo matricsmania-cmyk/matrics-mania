@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { BlogPost, PageType } from '../types';
 import { BLOG_POSTS_DATA } from '../data/mockData';
 import { getSlugFromTitle } from '../utils/slug';
+import { OptimizedImage } from '../components/OptimizedImage';
 import {
   Calendar,
   Clock,
@@ -16,8 +17,7 @@ import {
   Check,
   Quote,
   ListOrdered,
-  ChevronRight,
-  User
+  ChevronRight
 } from 'lucide-react';
 
 interface SingleBlogPostPageProps {
@@ -37,7 +37,6 @@ export const SingleBlogPostPage: React.FC<SingleBlogPostPageProps> = ({
 }) => {
   const [copiedSnippetIndex, setCopiedSnippetIndex] = useState<number | null>(null);
 
-  // Scroll to top whenever the post changes
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [post.id]);
@@ -59,23 +58,22 @@ export const SingleBlogPostPage: React.FC<SingleBlogPostPageProps> = ({
     setTimeout(() => setCopiedSnippetIndex(null), 3000);
   };
 
-  // Find related articles (excluding current article)
   const relatedPosts = BLOG_POSTS_DATA.filter((p) => p.id !== post.id).slice(0, 3);
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-[#090d16] text-slate-900 dark:text-slate-100 pb-24 animate-fade-in">
+    <div className="min-h-screen bg-[#070B14] text-white pb-24">
       {/* Top Header Navigation & Breadcrumbs */}
-      <div className="bg-white dark:bg-slate-900/80 border-b border-slate-200 dark:border-slate-800 sticky top-16 z-30 backdrop-blur-md">
+      <div className="bg-[#0D1424] border-b border-[#1E293B] sticky top-[80px] z-30">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-wrap items-center justify-between gap-4">
-          <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+          <div className="flex items-center gap-2 text-xs text-[#94A3B8]">
             <button
               onClick={() => onNavigate('blog')}
-              className="hover:text-blue-600 dark:hover:text-blue-400 font-semibold cursor-pointer"
+              className="hover:text-[#60A5FA] font-semibold cursor-pointer text-[#94A3B8]"
             >
               Blog
             </button>
             <ChevronRight className="w-3.5 h-3.5" />
-            <span className="font-medium text-slate-700 dark:text-slate-300 truncate max-w-[200px] sm:max-w-md">
+            <span className="font-medium text-white truncate max-w-[200px] sm:max-w-md">
               {post.title}
             </span>
           </div>
@@ -83,23 +81,23 @@ export const SingleBlogPostPage: React.FC<SingleBlogPostPageProps> = ({
           <div className="flex items-center gap-3">
             <button
               onClick={() => onNavigate('blog')}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-bold hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#070B14] border border-[#1E293B] text-white text-xs font-bold hover:bg-[#131D33] transition-colors cursor-pointer"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
-              <span>Back to All Articles</span>
+              <span>Back to Articles</span>
             </button>
 
             <button
               onClick={handleBookmark}
               title="Bookmark Article"
-              className="p-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
+              className="p-1.5 rounded-lg text-[#94A3B8] hover:bg-[#070B14] cursor-pointer"
             >
               <Bookmark className="w-4 h-4" />
             </button>
             <button
               onClick={handleShare}
               title="Share Link"
-              className="p-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
+              className="p-1.5 rounded-lg text-[#94A3B8] hover:bg-[#070B14] cursor-pointer"
             >
               <Share2 className="w-4 h-4" />
             </button>
@@ -112,50 +110,51 @@ export const SingleBlogPostPage: React.FC<SingleBlogPostPageProps> = ({
         {/* Category & Meta Banner */}
         <div className="space-y-4 text-center md:text-left">
           <div className="flex flex-wrap items-center justify-center md:justify-start gap-2.5">
-            <span className="text-xs font-bold bg-blue-500/10 text-blue-600 dark:text-blue-400 px-3.5 py-1 rounded-full border border-blue-500/20">
+            <span className="text-xs font-bold bg-[#0D1424] text-[#60A5FA] px-3.5 py-1 rounded-full border border-[#1E293B]">
               {post.category}
             </span>
             {post.wordCount && (
-              <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 bg-slate-200 dark:bg-slate-800 px-2.5 py-0.5 rounded-full">
+              <span className="text-[11px] font-semibold text-[#94A3B8] bg-[#0D1424] border border-[#1E293B] px-2.5 py-0.5 rounded-full">
                 {post.wordCount} words
               </span>
             )}
-            <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 bg-slate-200 dark:bg-slate-800 px-2.5 py-0.5 rounded-full">
+            <span className="text-[11px] font-semibold text-[#94A3B8] bg-[#0D1424] border border-[#1E293B] px-2.5 py-0.5 rounded-full">
               {post.readTime}
             </span>
           </div>
 
           {/* Main Article H1 Title */}
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white tracking-tight leading-tight">
             {post.title}
           </h1>
 
           {/* Sub-headline / Excerpt */}
-          <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 font-medium leading-relaxed italic border-l-4 border-blue-500 pl-4 py-1">
+          <p className="text-base sm:text-lg text-[#94A3B8] font-medium leading-relaxed italic border-l-4 border-[#2563EB] pl-4 py-1">
             "{post.excerpt}"
           </p>
 
           {/* Author info bar */}
-          <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-b border-slate-200 dark:border-slate-800 py-4 text-xs text-slate-500 dark:text-slate-400">
+          <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-b border-[#1E293B] py-4 text-xs text-[#94A3B8]">
             <div className="flex items-center gap-3">
-              <img
+              <OptimizedImage
                 src={post.author.avatar}
                 alt={post.author.name}
-                className="w-12 h-12 rounded-full object-cover border-2 border-blue-500 shadow-sm"
+                widthParam={120}
+                className="w-12 h-12 rounded-full object-cover border-2 border-[#1E293B]"
               />
               <div>
-                <p className="font-bold text-slate-900 dark:text-white text-sm">{post.author.name}</p>
-                <p className="text-xs text-slate-500 dark:text-slate-400">{post.author.role}</p>
+                <p className="font-bold text-white text-sm">{post.author.name}</p>
+                <p className="text-xs text-[#94A3B8]">{post.author.role}</p>
               </div>
             </div>
 
-            <div className="flex items-center gap-4 text-slate-500 dark:text-slate-400 font-medium">
+            <div className="flex items-center gap-4 text-[#94A3B8] font-medium">
               <span className="flex items-center gap-1.5">
-                <Calendar className="w-4 h-4 text-blue-500" />
+                <Calendar className="w-4 h-4 text-[#60A5FA]" />
                 Published {post.publishedAt}
               </span>
               <span className="flex items-center gap-1.5">
-                <Clock className="w-4 h-4 text-blue-500" />
+                <Clock className="w-4 h-4 text-[#60A5FA]" />
                 {post.readTime}
               </span>
             </div>
@@ -163,25 +162,27 @@ export const SingleBlogPostPage: React.FC<SingleBlogPostPageProps> = ({
         </div>
 
         {/* Hero Featured Image */}
-        <div className="rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 h-64 sm:h-96 md:h-[450px] w-full relative shadow-xl">
-          <img
+        <div className="rounded-2xl overflow-hidden border border-[#1E293B] h-64 sm:h-96 md:h-[450px] w-full relative">
+          <OptimizedImage
             src={post.featuredImageUrl}
             alt={post.title}
+            widthParam={1100}
+            priority={true}
             className="w-full h-full object-cover"
           />
         </div>
 
         {/* Executive Takeaways Box */}
         {post.keyTakeaways && post.keyTakeaways.length > 0 && (
-          <div className="py-4 space-y-3 border-y border-slate-200 dark:border-slate-800">
-            <div className="flex items-center gap-2 text-blue-600 dark:text-blue-400 font-bold text-xs uppercase tracking-wider">
-              <Sparkles className="w-4 h-4 animate-pulse text-blue-500" />
+          <div className="p-6 rounded-2xl bg-[#0D1424] border border-[#1E293B] space-y-3">
+            <div className="flex items-center gap-2 text-[#60A5FA] font-bold text-xs uppercase tracking-wider">
+              <Sparkles className="w-4 h-4 text-[#60A5FA]" />
               <span>Executive Strategy Summary</span>
             </div>
-            <ul className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs sm:text-sm text-slate-800 dark:text-slate-200">
+            <ul className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs sm:text-sm text-white">
               {post.keyTakeaways.map((item, idx) => (
                 <li key={idx} className="flex items-start gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+                  <CheckCircle2 className="w-4 h-4 text-[#10B981] shrink-0 mt-0.5" />
                   <span>{item}</span>
                 </li>
               ))}
@@ -191,16 +192,16 @@ export const SingleBlogPostPage: React.FC<SingleBlogPostPageProps> = ({
 
         {/* Table of Contents */}
         {post.sections && post.sections.length > 0 && (
-          <div className="py-4 space-y-3 border-b border-slate-200 dark:border-slate-800">
-            <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-slate-100">
-              <ListOrdered className="w-4 h-4 text-blue-500" />
+          <div className="p-6 rounded-2xl bg-[#0D1424] border border-[#1E293B] space-y-3">
+            <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-white">
+              <ListOrdered className="w-4 h-4 text-[#60A5FA]" />
               <span>Table of Contents</span>
             </div>
-            <ul className="space-y-2 text-xs sm:text-sm text-blue-600 dark:text-blue-400 font-semibold">
+            <ul className="space-y-2 text-xs sm:text-sm text-[#60A5FA] font-semibold">
               {post.sections.map((sec, idx) => (
                 <li key={idx}>
-                  <a href={`#sec-${sec.id}`} className="hover:underline flex items-center gap-2">
-                    <span className="text-slate-400 font-normal">0{idx + 1}.</span>
+                  <a href={`#sec-${sec.id}`} className="hover:underline flex items-center gap-2 text-[#94A3B8] hover:text-[#60A5FA]">
+                    <span className="text-[#94A3B8] font-normal">0{idx + 1}.</span>
                     <span>{sec.title}</span>
                   </a>
                 </li>
@@ -210,7 +211,7 @@ export const SingleBlogPostPage: React.FC<SingleBlogPostPageProps> = ({
         )}
 
         {/* Core Introductory Text */}
-        <div className="space-y-4 text-slate-800 dark:text-slate-200 text-base md:text-lg leading-relaxed whitespace-pre-line">
+        <div className="space-y-4 text-white text-base md:text-lg leading-relaxed whitespace-pre-line">
           {post.content}
         </div>
 
@@ -221,34 +222,34 @@ export const SingleBlogPostPage: React.FC<SingleBlogPostPageProps> = ({
               <section
                 key={sec.id}
                 id={`sec-${sec.id}`}
-                className="space-y-5 scroll-mt-24 pt-8 border-t border-slate-200 dark:border-slate-800"
+                className="space-y-5 scroll-mt-24 pt-8 border-t border-[#1E293B]"
               >
-                <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white leading-snug">
+                <h2 className="text-2xl sm:text-3xl font-extrabold text-white leading-snug">
                   {sec.title}
                 </h2>
 
-                <div className="text-slate-800 dark:text-slate-200 text-base leading-relaxed whitespace-pre-line">
+                <div className="text-[#94A3B8] text-base leading-relaxed whitespace-pre-line">
                   {sec.content}
                 </div>
 
                 {/* Optional Quote Box */}
                 {sec.quote && (
-                  <div className="my-4 p-5 rounded-xl bg-purple-500/10 border-l-4 border-purple-500 flex items-start gap-3 italic text-xs sm:text-sm text-slate-800 dark:text-slate-200">
-                    <Quote className="w-5 h-5 text-purple-500 shrink-0 mt-0.5" />
+                  <div className="my-4 p-5 rounded-xl bg-[#0D1424] border-l-4 border-[#2563EB] flex items-start gap-3 italic text-xs sm:text-sm text-white">
+                    <Quote className="w-5 h-5 text-[#2563EB] shrink-0 mt-0.5" />
                     <div>"{sec.quote}"</div>
                   </div>
                 )}
 
                 {/* Key Points */}
                 {sec.keyPoints && sec.keyPoints.length > 0 && (
-                  <div className="p-5 rounded-xl space-y-3 border border-slate-200 dark:border-slate-800">
-                    <p className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">
+                  <div className="p-5 rounded-xl bg-[#0D1424] space-y-3 border border-[#1E293B]">
+                    <p className="text-xs font-bold text-white uppercase tracking-wider">
                       Key Execution Principles:
                     </p>
-                    <ul className="space-y-2 text-xs sm:text-sm text-slate-700 dark:text-slate-300">
+                    <ul className="space-y-2 text-xs sm:text-sm text-[#94A3B8]">
                       {sec.keyPoints.map((point, pIdx) => (
                         <li key={pIdx} className="flex items-start gap-2.5">
-                          <span className="w-2 h-2 rounded-full bg-blue-500 shrink-0 mt-2" />
+                          <span className="w-2 h-2 rounded-full bg-[#60A5FA] shrink-0 mt-2" />
                           <span>{point}</span>
                         </li>
                       ))}
@@ -258,18 +259,18 @@ export const SingleBlogPostPage: React.FC<SingleBlogPostPageProps> = ({
 
                 {/* Table Comparison */}
                 {sec.table && (
-                  <div className="my-6 overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                  <div className="my-6 overflow-x-auto rounded-xl border border-[#1E293B]">
                     <table className="w-full text-left text-xs sm:text-sm">
-                      <thead className="bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white font-bold border-b border-slate-200 dark:border-slate-700">
+                      <thead className="bg-[#070B14] text-white font-bold border-b border-[#1E293B]">
                         <tr>
                           {sec.table.headers.map((h, hIdx) => (
                             <th key={hIdx} className="p-3.5 px-4">{h}</th>
                           ))}
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-slate-200 dark:divide-slate-800 text-slate-700 dark:text-slate-300">
+                      <tbody className="divide-y divide-[#1E293B] text-[#94A3B8]">
                         {sec.table.rows.map((r, rIdx) => (
-                          <tr key={rIdx} className="hover:bg-slate-50 dark:hover:bg-slate-800/40">
+                          <tr key={rIdx} className="hover:bg-[#0D1424]">
                             {r.map((cell, cIdx) => (
                               <td key={cIdx} className="p-3.5 px-4">{cell}</td>
                             ))}
@@ -282,20 +283,20 @@ export const SingleBlogPostPage: React.FC<SingleBlogPostPageProps> = ({
 
                 {/* Code / Schema Snippet */}
                 {sec.codeSnippet && (
-                  <div className="relative rounded-xl bg-slate-950 text-slate-100 p-4 font-mono text-xs overflow-x-auto border border-slate-800 space-y-2">
-                    <div className="flex items-center justify-between text-[11px] text-slate-400 pb-2 border-b border-slate-800">
+                  <div className="relative rounded-xl bg-[#070B14] text-white p-4 font-mono text-xs overflow-x-auto border border-[#1E293B] space-y-2">
+                    <div className="flex items-center justify-between text-[11px] text-[#94A3B8] pb-2 border-b border-[#1E293B]">
                       <span className="flex items-center gap-1.5">
-                        <FileText className="w-3.5 h-3.5 text-blue-400" />
+                        <FileText className="w-3.5 h-3.5 text-[#60A5FA]" />
                         JSON-LD Schema Snippet
                       </span>
                       <button
                         onClick={() => handleCopyCode(sec.codeSnippet!, idx)}
-                        className="flex items-center gap-1 text-xs text-blue-400 hover:text-white cursor-pointer"
+                        className="flex items-center gap-1 text-xs text-[#60A5FA] hover:text-white cursor-pointer"
                       >
                         {copiedSnippetIndex === idx ? (
                           <>
-                            <Check className="w-3.5 h-3.5 text-emerald-400" />
-                            <span className="text-emerald-400">Copied!</span>
+                            <Check className="w-3.5 h-3.5 text-[#4ADE80]" />
+                            <span className="text-[#4ADE80]">Copied!</span>
                           </>
                         ) : (
                           <>
@@ -305,7 +306,7 @@ export const SingleBlogPostPage: React.FC<SingleBlogPostPageProps> = ({
                         )}
                       </button>
                     </div>
-                    <pre className="text-emerald-400 text-xs leading-relaxed">{sec.codeSnippet}</pre>
+                    <pre className="text-[#60A5FA] text-xs leading-relaxed">{sec.codeSnippet}</pre>
                   </div>
                 )}
               </section>
@@ -314,12 +315,12 @@ export const SingleBlogPostPage: React.FC<SingleBlogPostPageProps> = ({
         )}
 
         {/* Tags */}
-        <div className="flex flex-wrap items-center gap-2 pt-6 border-t border-slate-200 dark:border-slate-800">
-          <span className="text-xs font-bold text-slate-500 dark:text-slate-400">Article Topics:</span>
+        <div className="flex flex-wrap items-center gap-2 pt-6 border-t border-[#1E293B]">
+          <span className="text-xs font-bold text-[#94A3B8]">Article Topics:</span>
           {post.tags.map((tag, idx) => (
             <span
               key={idx}
-              className="px-3.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs border border-slate-200 dark:border-slate-700 font-medium"
+              className="px-3.5 py-1 rounded-full bg-[#0D1424] text-white text-xs border border-[#1E293B] font-medium"
             >
               #{tag}
             </span>
@@ -327,28 +328,29 @@ export const SingleBlogPostPage: React.FC<SingleBlogPostPageProps> = ({
         </div>
 
         {/* Author Detailed Card */}
-        <div className="py-6 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center sm:items-start gap-5 text-center sm:text-left">
-          <img
+        <div className="p-6 rounded-2xl bg-[#0D1424] border border-[#1E293B] flex flex-col sm:flex-row items-center sm:items-start gap-5 text-center sm:text-left">
+          <OptimizedImage
             src={post.author.avatar}
             alt={post.author.name}
-            className="w-20 h-20 rounded-full object-cover border-2 border-blue-500 shrink-0 shadow-md"
+            widthParam={160}
+            className="w-16 h-16 rounded-full object-cover border border-[#1E293B] shrink-0"
           />
           <div className="space-y-1.5">
-            <span className="text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest">
+            <span className="text-[10px] font-bold text-[#60A5FA] uppercase tracking-widest">
               Written By Lead Author
             </span>
-            <h4 className="text-lg font-bold text-slate-900 dark:text-white">{post.author.name}</h4>
-            <p className="text-xs font-semibold text-blue-600 dark:text-blue-400">{post.author.role}</p>
-            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 pt-1 leading-relaxed">
-              {post.author.bio || 'Growth Strategist and Performance Lead at Matricsmania.'}
+            <h4 className="text-lg font-bold text-white">{post.author.name}</h4>
+            <p className="text-xs font-semibold text-[#94A3B8]">{post.author.role}</p>
+            <p className="text-xs sm:text-sm text-[#94A3B8] pt-1 leading-relaxed">
+              {post.author.bio || 'Growth Strategist and Performance Lead at MatricsMania.'}
             </p>
           </div>
         </div>
 
         {/* Related Articles Grid */}
         {relatedPosts.length > 0 && (
-          <div className="space-y-6 pt-6 border-t border-slate-200 dark:border-slate-800">
-            <h3 className="text-xl font-extrabold text-slate-900 dark:text-white">
+          <div className="space-y-6 pt-6 border-t border-[#1E293B]">
+            <h3 className="text-xl font-extrabold text-white">
               More Growth Intelligence Articles
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -358,30 +360,31 @@ export const SingleBlogPostPage: React.FC<SingleBlogPostPageProps> = ({
                   <div
                     key={rel.id}
                     onClick={() => onNavigateToBlogSlug(relSlug)}
-                    className="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm hover:shadow-lg transition-all cursor-pointer flex flex-col justify-between group"
+                    className="rounded-2xl bg-[#0D1424] border border-[#1E293B] overflow-hidden hover:border-[#2563EB]/40 transition-colors cursor-pointer flex flex-col justify-between group"
                   >
                     <div>
                       <div className="h-40 overflow-hidden relative">
-                        <img
+                        <OptimizedImage
                           src={rel.featuredImageUrl}
                           alt={rel.title}
+                          widthParam={500}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         />
-                        <span className="absolute top-3 left-3 bg-slate-950/80 backdrop-blur-md text-white font-bold text-[10px] px-2.5 py-1 rounded-full">
+                        <span className="absolute top-3 left-3 bg-[#070B14]/80 text-white font-bold text-[10px] px-2.5 py-1 rounded-full z-10">
                           {rel.category}
                         </span>
                       </div>
                       <div className="p-4 space-y-2">
-                        <h4 className="text-sm font-bold text-slate-900 dark:text-white line-clamp-2 group-hover:text-blue-500 transition-colors">
+                        <h4 className="text-sm font-bold text-white line-clamp-2 group-hover:text-[#60A5FA] transition-colors">
                           {rel.title}
                         </h4>
-                        <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2">
+                        <p className="text-xs text-[#94A3B8] line-clamp-2">
                           {rel.excerpt}
                         </p>
                       </div>
                     </div>
 
-                    <div className="p-4 pt-0 flex items-center justify-between text-xs font-semibold text-blue-600 dark:text-blue-400">
+                    <div className="p-4 pt-0 flex items-center justify-between text-xs font-semibold text-[#60A5FA]">
                       <span>Read Blueprint</span>
                       <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                     </div>
@@ -393,20 +396,20 @@ export const SingleBlogPostPage: React.FC<SingleBlogPostPageProps> = ({
         )}
 
         {/* Bottom CTA Banner */}
-        <div className="p-8 md:p-12 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 rounded-3xl text-white text-center space-y-5 shadow-2xl">
-          <span className="text-xs font-bold uppercase tracking-widest bg-white/20 text-white px-3.5 py-1 rounded-full inline-block">
+        <div className="p-8 md:p-12 bg-[#0D1424] rounded-2xl text-white text-center space-y-5 border border-[#1E293B]">
+          <span className="text-xs font-bold uppercase tracking-widest text-[#60A5FA] inline-block">
             Take Action On These Metrics
           </span>
-          <h3 className="font-extrabold text-2xl sm:text-3xl md:text-4xl leading-tight">
+          <h3 className="font-extrabold text-2xl sm:text-3xl md:text-4xl leading-tight text-white">
             Want these growth metrics engineered for your business?
           </h3>
-          <p className="text-sm sm:text-base text-blue-100 max-w-xl mx-auto leading-relaxed">
+          <p className="text-sm text-[#94A3B8] max-w-xl mx-auto leading-relaxed">
             Our marketing leads will analyze your current search and paid channels and build a 100% custom growth roadmap for your team.
           </p>
-          <div className="pt-2">
+          <div className="pt-2 flex justify-center">
             <button
               onClick={onOpenBooking}
-              className="px-8 py-3.5 rounded-xl bg-white text-blue-900 font-extrabold text-sm shadow-xl hover:bg-slate-100 transition-all cursor-pointer inline-flex items-center gap-2"
+              className="px-8 py-4 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#8B5CF6] hover:from-[#1D4ED8] hover:to-[#7C3AED] text-white font-bold text-xs sm:text-sm transition-all duration-300 shadow-md shadow-blue-500/20 hover:shadow-blue-500/35 cursor-pointer inline-flex items-center gap-2"
             >
               <span>Schedule Free Custom Growth Audit</span>
               <ArrowRight className="w-4 h-4" />

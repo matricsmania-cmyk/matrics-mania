@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useTheme } from '../context/ThemeContext';
 
 interface LogoProps {
   className?: string;
@@ -8,70 +9,106 @@ interface LogoProps {
   textClassName?: string;
 }
 
-export const LogoSymbol: React.FC<{ size?: number | string; className?: string }> = ({
-  size = 40,
-  className = '',
-}) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 100 100"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    className={`shrink-0 transition-transform duration-300 group-hover:scale-105 ${className}`}
-  >
-    {/* Rich Royal Blue Squircle */}
-    <rect width="100" height="100" rx="28" fill="#0136BD" />
+// Eager memory cache preloading for instantaneous theme switching
+if (typeof window !== 'undefined') {
+  const lightPreload = new Image();
+  lightPreload.src = '/matrics-mania-logo-light.webp';
+  const darkPreload = new Image();
+  darkPreload.src = '/matrics-mania-logo-dark.webp';
+}
 
-    {/* Exact White Emblem: Stylized M + Dual Metrics Bars */}
-    <path
-      d="M 31 63 V 36 L 43 51.5 L 51 43.5"
-      stroke="#FFFFFF"
-      strokeWidth="9.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-    <path
-      d="M 55.5 43.5 V 63"
-      stroke="#FFFFFF"
-      strokeWidth="9.5"
-      strokeLinecap="round"
-    />
-    <path
-      d="M 65.5 40.5 V 63"
-      stroke="#FFFFFF"
-      strokeWidth="9.5"
-      strokeLinecap="round"
-    />
-  </svg>
-);
-
-export const Logo: React.FC<LogoProps> = ({
+export const LogoSymbol: React.FC<{
+  size?: number | string;
+  className?: string;
+  lightSrc?: string;
+  darkSrc?: string;
+}> = ({
+  size = 35,
   className = '',
-  size = 40,
-  showText = true,
-  textColor,
-  textClassName = '',
+  lightSrc = '/matrics-mania-logo-light.webp',
+  darkSrc = '/matrics-mania-logo-dark.webp',
 }) => {
-  return (
-    <div className={`flex items-center gap-3 ${className}`}>
-      <LogoSymbol size={size} />
+  const { theme } = useTheme();
+  const pixelSize = typeof size === 'number' ? `${size}px` : size;
+  const isDark = theme === 'dark';
 
-      {showText && (
-        <div className={`flex flex-col text-left ${textClassName}`}>
-          <span
-            className={`text-xl font-extrabold tracking-tight flex items-center gap-1 ${
-              textColor || 'text-slate-900 dark:text-white'
-            }`}
-          >
-            Matricsmania
-            <span className="inline-block w-1.5 h-1.5 rounded-full bg-blue-600" />
-          </span>
-          <span className="block text-[10px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-widest -mt-1">
-            Digital Marketing Agency
-          </span>
-        </div>
-      )}
+  const [lightError, setLightError] = useState(false);
+  const [darkError, setDarkError] = useState(false);
+
+  if ((isDark && darkError) || (!isDark && lightError)) {
+    return (
+      <span
+        style={{ width: pixelSize, height: pixelSize }}
+        className={`shrink-0 inline-flex items-center justify-center font-extrabold text-[#3B82F6] text-lg select-none ${className}`}
+      >
+        M
+      </span>
+    );
+  }
+
+  return (
+    <div
+      style={{ width: pixelSize, height: pixelSize }}
+      className={`relative shrink-0 inline-block transition-transform duration-300 group-hover:scale-105 ${className}`}
+    >
+      {/* Light Mode Logo */}
+      <img
+        src={lightSrc}
+        alt="MatricsMania Logo"
+        loading="eager"
+        decoding="sync"
+        onError={() => setLightError(true)}
+        style={{ width: pixelSize, height: pixelSize }}
+        className={`absolute inset-0 w-full h-full object-contain transition-opacity duration-150 ${
+          isDark ? 'opacity-0 pointer-events-none' : 'opacity-100'
+        }`}
+      />
+
+      {/* Dark Mode Logo */}
+      <img
+        src={darkSrc}
+        alt="MatricsMania Logo"
+        loading="eager"
+        decoding="sync"
+        onError={() => setDarkError(true)}
+        style={{ width: pixelSize, height: pixelSize }}
+        className={`absolute inset-0 w-full h-full object-contain transition-opacity duration-150 ${
+          isDark ? 'opacity-100' : 'opacity-0 pointer-events-none'
+        }`}
+      />
     </div>
   );
 };
+
+export const Logo: React.FC<LogoProps & { lightSrc?: string; darkSrc?: string }> = ({
+  className = '',
+  size = 35,
+  showText = true,
+  textColor,
+  textClassName = '',
+  lightSrc,
+  darkSrc,
+}) => {
+  if (!showText) {
+    return <LogoSymbol size={size} className={className} lightSrc={lightSrc} darkSrc={darkSrc} />;
+  }
+
+  return (
+    <div className={`flex items-center gap-3 ${className}`}>
+      <LogoSymbol size={size} lightSrc={lightSrc} darkSrc={darkSrc} />
+
+      <div className={`flex flex-col text-left ${textClassName}`}>
+        <span
+          className={`text-xl font-extrabold tracking-tight flex items-center gap-1 ${
+            textColor || 'text-white'
+          }`}
+        >
+          MatricsMania
+          <span className="inline-block w-1.5 h-1.5 rounded-full bg-gradient-to-r from-[#2563EB] to-[#8B5CF6]" />
+        </span>
+      </div>
+    </div>
+  );
+};
+
+

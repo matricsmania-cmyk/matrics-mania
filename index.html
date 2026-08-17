@@ -39,9 +39,17 @@
     <meta property="twitter:description" content="We turn clicks into customers with strategy, data science, and technical SEO precision." />
     <meta property="twitter:image" content="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80" />
 
-    <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='28' fill='%230136BD'/><path d='M 31 63 V 36 L 43 51.5 L 51 43.5' stroke='%23FFFFFF' stroke-width='9.5' stroke-linecap='round' stroke-linejoin='round'/><path d='M 55.5 43.5 V 63' stroke='%23FFFFFF' stroke-width='9.5' stroke-linecap='round'/><path d='M 65.5 40.5 V 63' stroke='%23FFFFFF' stroke-width='9.5' stroke-linecap='round'/></svg>" />
+    <!-- Favicon with Exact Monogram -->
+    <link rel="icon" type="image/png" href="/logo.png" />
     
+    <!-- Preload Light & Dark Logos for Instant Theme Mode Switching -->
+    <link rel="preload" as="image" href="/matrics-mania-logo-light.webp" type="image/webp" fetchpriority="high" />
+    <link rel="preload" as="image" href="/matrics-mania-logo-dark.webp" type="image/webp" fetchpriority="high" />
+
+    <!-- Image CDNs Preconnect -->
+    <link rel="preconnect" href="https://images.unsplash.com" crossorigin />
+    <link rel="dns-prefetch" href="https://images.unsplash.com" />
+
     <!-- Google Fonts Preconnect -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

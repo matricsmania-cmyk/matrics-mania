@@ -1,4 +1,4 @@
-import { BlogPost, ServiceItem, CaseStudy, TeamMember, Testimonial, FAQItem } from '../types';
+import { BlogPost, InsightItem, ServiceItem, CaseStudy, WorkProject, TeamMember, Testimonial, FAQItem } from '../types';
 
 export const AGENCY_METRICS = [
   { label: 'Client Revenue Growth', value: '60%' },
@@ -199,42 +199,34 @@ export const CASE_STUDIES_DATA: CaseStudy[] = [
     clientAuthor: 'Marcus Vance',
     clientRole: 'VP of Marketing, Velociti',
     image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1000&q=80'
-  },
+  }
+];
+
+export const WORK_PROJECTS_DATA: WorkProject[] = [
   {
-    id: 'nova-ecommerce',
-    clientName: 'Nova Luxury Apparel',
-    industry: 'D2C E-Commerce',
-    logo: '🚀 NovaShop',
-    title: 'Achieving a 5.2x ROAS & ₹28 Crore Festive Season Revenue',
-    challenge: 'Rising iOS privacy updates crippled Nova’s Facebook ad efficiency, scaling CAC above their product profit margin.',
-    solution: 'We introduced TikTok & Instagram Reels Spark Ads, deployed server-side Meta conversions API, and redesigned their mobile product landing pages for speed.',
-    results: [
-      { metric: '5.2x', label: 'Blended Ad ROAS' },
-      { metric: '₹28 Cr', label: 'Festive Revenue Generated' },
-      { metric: '+62%', label: 'Mobile Conversion Rate' }
+    id: 'scaling-inbound-pipeline',
+    title: 'Enterprise SaaS Demand Engine & LinkedIn ABM',
+    client: 'Velociti SaaS Systems',
+    category: 'Paid Creative & Ads',
+    industry: 'B2B Enterprise SaaS',
+    thumbnail: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80',
+    summary: 'Designed multi-touch Account-Based Marketing ad creatives and high-converting interactive software product demo funnels.',
+    scope: [
+      'LinkedIn ABM Ad Creatives & Motion Hooks',
+      'Interactive Product Tour Landing Page',
+      'Meta CAPI Server-Side Lead Attribution',
+      'HubSpot CRM Pipeline Qualification Routing'
     ],
-    testimonialQuote: 'The team at Matricsmania feels like an extension of our internal team. They don’t just run ads; they overhaul the entire conversion experience.',
-    clientAuthor: 'Elena Rostova',
-    clientRole: 'Founder & CEO, Nova Apparel',
-    image: 'https://images.unsplash.com/photo-1556742049-0a670f4a4591?auto=format&fit=crop&w=1000&q=80'
-  },
-  {
-    id: 'peak-fintech',
-    clientName: 'Peak Financial Group',
-    industry: 'FinTech & Capital',
-    logo: '📈 PeakFin',
-    title: 'Dominating Competitive High-CPC Keywords in Financial Advisory',
-    challenge: 'Competing against trillion-dollar institutional banks for top Google search spots where CPCs exceeded ₹7,500 per click.',
-    solution: 'Implemented zero-click SEO snippets, authority whitepaper lead engines, and high-converting interactive retirement calculators.',
-    results: [
-      { metric: '#1', label: 'Rank for 18 Core Keywords' },
-      { metric: '8,400+', label: 'High-Net-Worth Consultations' },
-      { metric: '3.8x', label: 'LTV to CAC Ratio' }
-    ],
-    testimonialQuote: 'In finance, trust is everything. Matricsmania helped us dominate Google organically while building immense brand authority.',
-    clientAuthor: 'David Sterling',
-    clientRole: 'Managing Director, Peak Financial',
-    image: 'https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=1000&q=80'
+    tools: ['Figma', 'LinkedIn Ads Manager', 'HubSpot', 'Next.js', 'Google Tag Manager'],
+    keyMetric: {
+      value: '+410%',
+      label: 'Qualified Inbound Pipeline Leads'
+    },
+    beforeAfter: {
+      before: '14% demo conversion rate via slow email outreach',
+      after: '42% interactive demo completion with instant calendar booking'
+    },
+    caseStudyId: 'velociti-saas'
   }
 ];
 
@@ -356,211 +348,6 @@ By implementing server-side HTML streaming, next-gen image compression, and edge
           'Zero CLS prevents user frustration and improves conversion rates.',
           'Edge caching and pre-rendered static shells eliminate server response latency.'
         ]
-      }
-    ]
-  },
-  {
-    id: 'b2',
-    title: 'Maxing Out Meta & TikTok Ads: How to Maintain 4.5x+ ROAS in a Privacy-First Era',
-    slug: 'maxing-out-meta-and',
-    excerpt: 'Third-party cookies are dead. Here is how leading performance marketing teams leverage server-side Conversions API (CAPI), AI bid caps, and high-velocity creative testing to scale paid media profitably.',
-    wordCount: 1680,
-    category: 'Paid Media',
-    publishedAt: 'July 28, 2026',
-    readTime: '8 min read',
-    featuredImageUrl: 'https://images.unsplash.com/photo-1557838923-2985c318be48?auto=format&fit=crop&w=1200&q=80',
-    tags: ['PPC', 'Meta Ads', 'TikTok Ads', 'CAPI', 'Attribution', 'Creative Testing'],
-    keyTakeaways: [
-      'Deploy Server-Side Conversions API (CAPI) with full user data parameters to recover lost event tracking.',
-      'Adopt Creative Velocity: test 5 to 10 unique ad creative angles weekly instead of constantly tweaking audience filters.',
-      'Implement first-party lead capture mechanisms like interactive calculators and custom quizzes to build zero-party data pools.',
-      'Utilize cost-cap and bid-cap bidding strategies to insulate ad spend during volatile auction cycles.'
-    ],
-    author: {
-      name: 'Sarah Chen',
-      role: 'VP of Paid Media & Performance Marketing',
-      avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=200&q=80',
-      bio: 'Sarah has managed over $35 Million in profitable ad spend across Meta, TikTok, and Google, specializing in aggressive scale-up strategies.'
-    },
-    content: `
-Scaling paid media profitably in 2026 requires a total rethink of performance marketing architecture. Browser-based pixel tracking alone misses anywhere from 20% to 40% of conversion events due to iOS privacy controls, ad blockers, and cookie deprecation.
-
-Agencies that rely on old interest-targeting tactics find their Customer Acquisition Cost (CAC) skyrocketing. Winning brands focus on three core pillars: First-Party Server-Side Data Infrastructure, High-Velocity Creative Engine, and Algorithmic Bidding Controls.
-    `,
-    sections: [
-      {
-        id: 'capi-setup',
-        title: '1. Server-Side Conversions API (CAPI) Execution',
-        content: `
-To restore 100% attribution accuracy, conversion events must be dispatched directly from your secure server or CRM database directly to Meta and TikTok Graph APIs.
-
-When a user completes a purchase or fills out a lead form, server-to-server triggers send hashed customer parameters (Email, Phone, IP, User Agent, First/Last Name) along with exact order values.
-        `,
-        codeSnippet: `// Server-Side Event Dispatch Example
-fetch('https://graph.facebook.com/v19.0/YOUR_PIXEL_ID/events', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    data: [{
-      event_name: 'Purchase',
-      event_time: Math.floor(Date.now() / 1000),
-      user_data: {
-        em: [hashSHA256('customer@example.com')],
-        ph: [hashSHA256('+919876543210')]
-      },
-      custom_data: { currency: 'INR', value: 14999 }
-    }],
-    access_token: process.env.META_CAPI_TOKEN
-  })
-});`
-      },
-      {
-        id: 'creative-engine',
-        title: '2. Creative Velocity: Creative is the New Targeting',
-        content: `
-Modern ad algorithms rely on the visual content of the video or image to determine who receives the ad. Rather than building 50 granular audience interest sets, high-performing accounts run broad targeting and let 8-10 distinct creative hooks segment the audience.
-        `,
-        table: {
-          headers: ['Creative Hook Type', 'Target Audience Psychology', 'Average CTR Range'],
-          rows: [
-            ['Problem-Agitation Teardown', 'High-intent problem seekers needing quick fix', '2.8% - 4.2%'],
-            ['Founder Story & Behind the Scenes', 'Brand-conscious consumers valuing authenticity', '1.9% - 3.1%'],
-            ['Interactive Calculation Highlight', 'Analytic buyers seeking quantified ROI proof', '3.4% - 5.0%'],
-            ['UGC Unboxing & Live Review', 'Social proof driven impulse buyers', '2.2% - 3.8%']
-          ]
-        }
-      }
-    ]
-  },
-  {
-    id: 'b3',
-    title: 'Building a High-Converting B2B SaaS Funnel: From Cold Click to Booked Demo',
-    slug: 'building-a-highconverting-b2b',
-    excerpt: 'Why 92% of SaaS website visitors leave without converting, and the 5 specific landing page friction points you must eliminate to double demo booking pipeline.',
-    wordCount: 1550,
-    category: 'Analytics',
-    publishedAt: 'July 15, 2026',
-    readTime: '7 min read',
-    featuredImageUrl: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80',
-    tags: ['CRO', 'B2B SaaS', 'Landing Pages', 'Sales Funnel', 'Conversion Engineering'],
-    keyTakeaways: [
-      'Pass the 3-Second Above-The-Fold Clarity test with explicit value positioning.',
-      'Replace static product screenshots with interactive sandbox demos and ROI calculators.',
-      'Implement multi-step micro-questionnaires to boost form completion by up to 64%.',
-      'Display live customer verification badges and quantified outcome metrics.'
-    ],
-    author: {
-      name: 'Michael Ross',
-      role: 'Lead Conversion Rate Optimizer & Web Architect',
-      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80',
-      bio: 'Michael specializes in conversion engineering and behavioral design, helping scale-up companies unlock higher LTV and lower demo CAC.'
-    },
-    content: `
-B2B SaaS buyers are exhausted by vague marketing buzzwords, forced sales calls, and hidden pricing tiers. When high-intent buyers land on your homepage or landing page, they demand immediate clarity, interactive product proof, and zero scheduling friction.
-
-If your landing page relies on generic slogans like "Supercharge Your Growth", you are losing qualified buyer prospects to agile competitors every single day. Here is how Matricsmania audits and transforms low-converting SaaS funnels.
-    `,
-    sections: [
-      {
-        id: 'hero-clarity',
-        title: '1. The 3-Second Hero Test',
-        content: `
-Your hero section must communicate three distinct points in under 3 seconds:
-1. **What is the product?** (e.g., "AI-Powered Revenue Attribution Platform")
-2. **Who is it built for?** (e.g., "For CMOs and Performance Marketing Leads")
-3. **What is the outcome?** (e.g., "Track 100% of ad revenue and scale ROAS")
-
-Remove floating decorative background clutter and replace it with direct product UI previews that build visual trust instantly.
-        `
-      },
-      {
-        id: 'micro-forms',
-        title: '2. Multi-Step Micro-Forms vs Heavy Static Forms',
-        content: `
-Asking for 10 form fields upfront causes massive bounce rates. By breaking registration into 2 progressive micro-steps (Step 1: Work Email & Industry; Step 2: Company Size & Desired Outcome), user completion rates jump dramatically.
-        `,
-        quote: 'Reducing cognitive strain during sign-up is the highest-leverage conversion lever in B2B software.'
-      }
-    ]
-  },
-  {
-    id: 'b4',
-    title: 'Leveraging AI Automation in Content Marketing Without Losing Brand Soul',
-    slug: 'leveraging-ai-automation-in',
-    excerpt: 'How elite marketing teams use LLMs for outline research, topic discovery, and multi-channel distribution while preserving human editorial authority.',
-    wordCount: 1420,
-    category: 'AI Marketing',
-    publishedAt: 'July 02, 2026',
-    readTime: '6 min read',
-    featuredImageUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80',
-    tags: ['AI Marketing', 'Content Strategy', 'Brand Authority', 'Automation'],
-    keyTakeaways: [
-      'Use LLMs for data synthesis, outlines, and research—never publish unedited raw AI output.',
-      'Inject primary source data, real client screenshots, and expert interviews into every piece.',
-      'Automate multi-channel repurposing into LinkedIn carousels, X threads, and newsletter briefs.'
-    ],
-    author: {
-      name: 'Jessica Taylor',
-      role: 'Director of Brand Content & Editorial',
-      avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=200&q=80',
-      bio: 'Jessica leads editorial strategy at Matricsmania, turning complex technical data into high-converting narratives.'
-    },
-    content: `
-Generic AI content generation tools have flooded the web with low-value, repetitive articles. Readers can spot unedited AI text instantly, leading to brand fatigue and algorithmic search penalties.
-
-At Matricsmania, we treat AI as an intelligence multiplier rather than a replacement for human expertise.
-    `,
-    sections: [
-      {
-        id: 'ai-research',
-        title: '1. AI for Research & Data Synthesis',
-        content: `
-Instead of asking AI to write an entire article, feed LLMs customer support tickets, sales call transcripts, and industry research papers to identify exact user questions and terminology.
-        `
-      }
-    ]
-  },
-  {
-    id: 'b5',
-    title: 'The Master Guide to Marketing Attribution: Multi-Touch vs First-Touch Models',
-    slug: 'the-master-guide-to',
-    excerpt: 'Unpack the differences between Linear, Time-Decay, W-Shaped, and Algorithmic attribution models to properly evaluate customer acquisition metrics across channels.',
-    wordCount: 1750,
-    category: 'Brand Strategy',
-    publishedAt: 'June 20, 2026',
-    readTime: '8 min read',
-    featuredImageUrl: 'https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=1200&q=80',
-    tags: ['Analytics', 'Attribution', 'GA4', 'Data Science', 'ROI'],
-    keyTakeaways: [
-      'Move beyond misleading single-click attribution models.',
-      'Implement W-shaped attribution for B2B cycles with multiple decision makers.',
-      'Centralize ad spend and revenue data inside unified executive dashboards.'
-    ],
-    author: {
-      name: 'David Sterling',
-      role: 'Chief Data Officer',
-      avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80',
-      bio: 'David directs marketing analytics infrastructure, building real-time Looker and PowerBI attribution engines.'
-    },
-    content: `
-Relying solely on last-click attribution leads to poor budget allocation decisions. Top-of-funnel brand campaigns and SEO guides get zero credit, while retargeting ads receive 100% of the revenue praise.
-    `,
-    sections: [
-      {
-        id: 'attribution-comparison',
-        title: '1. Evaluating Attribution Models Side-by-Side',
-        content: `
-Different business models require distinct attribution logic. Below is a structural comparison of primary attribution methodologies.
-        `,
-        table: {
-          headers: ['Model Type', 'Credit Distribution Logic', 'Best Suited For'],
-          rows: [
-            ['First-Touch', '100% credit to original discovery source', 'Top-of-funnel brand awareness evaluation'],
-            ['Last-Touch', '100% credit to final click before order', 'Short transactional impulse e-commerce purchases'],
-            ['Linear', 'Equal credit split across all touchpoints', 'Multi-channel nurture campaigns'],
-            ['W-Shaped', '30% First Touch, 30% Lead, 30% Opp, 10% Middle', 'Complex B2B SaaS sales cycles']
-          ]
-        }
       }
     ]
   }
@@ -701,4 +488,168 @@ export const MILESTONES_DATA = [
   { year: '2023', title: 'Multi-Channel Scaling', description: 'Expanded into full-funnel performance ads (Meta, Google, YouTube) & CRO web engineering.' },
   { year: '2024', title: 'AI Intelligence Suite Launch', description: 'Integrated predictive customer lifetime value models & server-side attribution engines.' },
   { year: '2026', title: 'Global Impact & Regional Presence', description: 'Now managing growth portfolios across India, APAC, Europe, and North America.' }
+];
+
+export const INSIGHTS_DATA: InsightItem[] = [
+  {
+    id: 'ins-1',
+    title: 'The 2026 State of B2B SaaS Growth & Pipeline Benchmarks Report',
+    slug: 'state-of-b2b-saas-growth-2026',
+    category: 'Benchmark Report',
+    type: 'Research Report',
+    excerpt: 'An empirical research study evaluating CAC, LTV, demo conversion rates, and multi-channel attribution across 180+ growth-stage SaaS companies.',
+    publishedAt: 'August 12, 2026',
+    readTime: '12 min read',
+    downloadablePdf: '/docs/State_of_B2B_SaaS_Growth_2026.pdf',
+    keyMetrics: [
+      { label: 'Avg Outbound CAC Surge', value: '+34%' },
+      { label: 'Top Inbound ROAS', value: '4.8x' },
+      { label: 'Demo Conversion Rate', value: '3.8%' },
+      { label: 'Attribution Drift Rate', value: '-28%' }
+    ],
+    featuredImageUrl: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80',
+    author: {
+      name: 'Marcus Vance',
+      role: 'Chief Executive Officer',
+      avatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=200&q=80',
+      bio: 'Marcus analyzes macro marketing trends and pipeline dynamics across B2B software and digital enterprises.'
+    },
+    summaryPoints: [
+      'Outbound sales efficiency decreased by 34% due to email spam filters and lower SDR response rates.',
+      'Inbound semantic SEO and LinkedIn ABM delivered a 4.8x higher ROI compared to traditional cold outreach.',
+      'Companies implementing server-side CAPI and multi-touch attribution reduced customer acquisition cost by 28%.'
+    ],
+    fullReportContent: `
+This benchmark report aggregates real performance metrics from over 180 B2B SaaS companies generating between $1M and $25M ARR. Our data science team analyzed ad spend, organic search rankings, conversion funnels, and CRM pipeline progressions to identify key factors separating market leaders from trailing startups.
+
+Key Finding 1: Outbound SDR effectiveness has dropped to historic lows. SDRs now require 3.4x more activities to book a single qualified demo compared to 2023.
+
+Key Finding 2: High-intent organic search and LinkedIn Account-Based Marketing (ABM) are driving 72% of closed-won pipeline ARR.
+    `,
+    sections: [
+      {
+        id: 'cac-trends',
+        title: '1. CAC Inflation & Channel Efficiency Shifting',
+        content: `
+Customer Acquisition Cost (CAC) across B2B SaaS increased by an average of 34% year-over-year for outbound channels, while inbound semantic SEO and interactive sandbox demos reduced blended CAC by 28%.
+        `,
+        dataPoints: [
+          { label: 'Outbound Cold Email CAC', value: '₹1,45,000 / demo' },
+          { label: 'Inbound Semantic Search CAC', value: '₹42,000 / demo' },
+          { label: 'LinkedIn ABM Qualified CAC', value: '₹68,000 / demo' }
+        ],
+        table: {
+          headers: ['Acquisition Channel', 'Avg Cost Per Demo', 'Closing Win Rate', 'Payback Period'],
+          rows: [
+            ['Inbound Organic Search (SEO)', '₹42,000', '28.4%', '4.2 Months'],
+            ['LinkedIn Account-Based Ads', '₹68,000', '22.1%', '6.1 Months'],
+            ['Google Search Ads', '₹85,000', '18.6%', '7.8 Months'],
+            ['Outbound Cold Calling & SDRs', '₹1,45,000', '11.2%', '14.5 Months']
+          ]
+        }
+      },
+      {
+        id: 'attribution-gap',
+        title: '2. Multi-Touch Attribution & First-Party Data Architecture',
+        content: `
+Over 82% of SaaS executives surveyed admitted that last-click Google Analytics reports misattributed major enterprise deals. Adopting first-party server-side tracking (CAPI + CRM integration) restored pipeline visibility and allowed marketing leads to reallocate budget effectively.
+        `
+      }
+    ]
+  },
+  {
+    id: 'ins-2',
+    title: 'Generative AI & LLM Search Visibility Index 2026',
+    slug: 'ai-search-visibility-benchmark-2026',
+    category: 'Industry Study',
+    type: 'Data Benchmark',
+    excerpt: 'How 500 leading enterprise software brands are cited across ChatGPT, Perplexity AI, Google AI Overviews, and Claude.',
+    publishedAt: 'August 04, 2026',
+    readTime: '10 min read',
+    downloadablePdf: '/docs/AI_Search_Visibility_Index_2026.pdf',
+    keyMetrics: [
+      { label: 'Avg AI Overview Citation Share', value: '41%' },
+      { label: 'Top Ranking Factor', value: 'Entity Schema' },
+      { label: 'Vector Similarity Threshold', value: '0.84' }
+    ],
+    featuredImageUrl: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1200&q=80',
+    author: {
+      name: 'Alex Vance',
+      role: 'Head of Technical SEO & Data Architecture',
+      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80',
+      bio: 'Alex researches generative search engines, vector retrieval architectures, and schema optimization.'
+    },
+    summaryPoints: [
+      'Over 60% of technical B2B buyer queries now yield an AI Overview before traditional organic web links.',
+      'Websites with rich JSON-LD TechArticle and FAQ schema receive 3.2x more AI citations.',
+      'First-party research data and verified statistics increase Perplexity and Claude recommendation odds by 88%.'
+    ],
+    fullReportContent: `
+The Generative AI Search Visibility Index evaluates how modern large language models index, retrieve, and cite web pages when answering commercial buyer prompts. Our study analyzed 12,000 industry queries across ChatGPT, Perplexity, Google AI Overviews, and Claude.
+
+Key Finding: LLM search engines prioritize structured data tables and unambiguous entity definitions over backlink quantity.
+    `
+  },
+  {
+    id: 'ins-3',
+    title: 'Q4 Festive Season D2C E-Commerce Paid Media ROI Audit',
+    slug: 'd2c-ecommerce-festive-media-roi-2026',
+    category: 'ROI Audit',
+    type: 'Market Teardown',
+    excerpt: 'An exhaustive analysis of ₹250 Crore+ in festive ad spend across Meta, TikTok, Google Ads, and Instagram Reels.',
+    publishedAt: 'July 20, 2026',
+    readTime: '9 min read',
+    downloadablePdf: '/docs/D2C_Festive_Media_ROI_Audit_2026.pdf',
+    keyMetrics: [
+      { label: 'Managed Ad Spend Analyzed', value: '₹250 Cr+' },
+      { label: 'Blended ROAS Average', value: '4.6x' },
+      { label: 'Conversion Lift with Reels', value: '+54%' }
+    ],
+    featuredImageUrl: 'https://images.unsplash.com/photo-1556742049-0a670f4a4591?auto=format&fit=crop&w=1200&q=80',
+    author: {
+      name: 'Sarah Chen',
+      role: 'VP of Paid Media',
+      avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=200&q=80',
+      bio: 'Sarah leads multi-channel media buying and conversion optimization strategies.'
+    },
+    summaryPoints: [
+      'Short-form video creatives (Reels and TikTok Spark Ads) delivered 54% higher conversion rates than static banners.',
+      'Server-side CAPI integration protected ad accounts against 35% pixel signal loss during high-traffic shopping sprees.',
+      '1-click checkout optimizations boosted mobile conversion rates from 2.1% to 4.8%.'
+    ],
+    fullReportContent: `
+During peak Q4 festive shopping periods, ad auctions experience intense CPM spikes. This audit provides direct data-backed rules for budget scaling, creative variation cycling, and retention triggers.
+    `
+  },
+  {
+    id: 'ins-4',
+    title: 'The Executive Guide to First-Party Data & Multi-Touch Attribution Architecture',
+    slug: 'cmo-guide-multi-touch-attribution',
+    category: 'Executive Whitepaper',
+    type: 'Whitepaper',
+    excerpt: 'A comprehensive playbook for CMOs and C-suite leaders transitioning from third-party cookie tracking to unified server-side analytics.',
+    publishedAt: 'June 28, 2026',
+    readTime: '11 min read',
+    downloadablePdf: '/docs/CMO_Multi_Touch_Attribution_Guide.pdf',
+    keyMetrics: [
+      { label: 'Attribution Accuracy Level', value: '99.4%' },
+      { label: 'Ad Budget Wastage Saved', value: '32%' },
+      { label: 'Executive Reporting Hours', value: '-85%' }
+    ],
+    featuredImageUrl: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80',
+    author: {
+      name: 'David Sterling',
+      role: 'Chief Data Officer',
+      avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80',
+      bio: 'David specializes in data warehousing, server-side tracking, and executive BI dashboards.'
+    },
+    summaryPoints: [
+      'Third-party cookie deprecation blinds legacy analytics platforms; server-side tracking is no longer optional.',
+      'Multi-touch W-shaped attribution reveals hidden top-of-funnel ROI that single-click models erase.',
+      'Automated Looker dashboards save 40+ manual reporting hours monthly while delivering live C-suite transparency.'
+    ],
+    fullReportContent: `
+This whitepaper outlines the step-by-step engineering roadmap required to unify GA4, Meta CAPI, Google Ads, and Stripe CRM data into a single source of truth.
+    `
+  }
 ];

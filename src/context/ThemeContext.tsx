@@ -1,11 +1,16 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import { THEME_PALETTE, VISUAL_PROPORTIONS, THEME_CLASSES, COLORS } from '../theme';
 
-type Theme = 'light' | 'dark';
+export type Theme = 'light' | 'dark';
 
 interface ThemeContextType {
   theme: Theme;
   toggleTheme: () => void;
   setTheme: (theme: Theme) => void;
+  palette: typeof THEME_PALETTE;
+  proportions: typeof VISUAL_PROPORTIONS;
+  classes: typeof THEME_CLASSES;
+  colors: typeof COLORS;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -16,8 +21,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     if (saved === 'light' || saved === 'dark') {
       return saved;
     }
-    // Default to dark for high-tech agency feel or match system
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'dark';
+    return 'dark';
   });
 
   useEffect(() => {
@@ -39,7 +43,17 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   };
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme, setTheme }}>
+    <ThemeContext.Provider
+      value={{
+        theme,
+        toggleTheme,
+        setTheme,
+        palette: THEME_PALETTE,
+        proportions: VISUAL_PROPORTIONS,
+        classes: THEME_CLASSES,
+        colors: COLORS,
+      }}
+    >
       {children}
     </ThemeContext.Provider>
   );
@@ -52,3 +66,6 @@ export const useTheme = (): ThemeContextType => {
   }
   return context;
 };
+
+export * from '../theme';
+

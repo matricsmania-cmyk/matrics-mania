@@ -42,30 +42,26 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOpenBooking }) =
   }, [monthlySpend, customerValue, conversionRate, industry]);
 
   return (
-    <div className="w-full bg-slate-900 text-white rounded-2xl p-6 md:p-10 border border-slate-800 shadow-2xl relative overflow-hidden">
-      {/* Background Glow */}
-      <div className="absolute -top-24 -right-24 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-purple-600/20 rounded-full blur-3xl pointer-events-none" />
-
+    <div className="w-full bg-[#0D1424] text-white rounded-2xl p-6 md:p-10 border border-[#1E293B] relative overflow-hidden">
       <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
         {/* Controls Column */}
         <div className="lg:col-span-7 space-y-6">
-          <div className="flex items-center gap-2 text-blue-400 font-semibold text-sm uppercase tracking-wider">
+          <div className="flex items-center gap-2 text-[#60A5FA] font-semibold text-xs uppercase tracking-wider">
             <Calculator className="w-4 h-4" />
-            <span>Interactive ROI & Revenue Forecaster (INR)</span>
+            <span>Interactive ROI &amp; Revenue Forecaster (INR)</span>
           </div>
 
-          <h3 className="text-2xl md:text-3xl font-bold tracking-tight">
-            See How Much Revenue Matricsmania Can Generate For You
+          <h3 className="text-2xl md:text-3xl font-bold tracking-tight text-white">
+            See How Much Revenue MatricsMania Can Generate For You
           </h3>
-          <p className="text-slate-400 text-sm leading-relaxed">
+          <p className="text-[#94A3B8] text-sm leading-relaxed">
             Adjust your monthly marketing budget in Rupees (₹) and target parameters to calculate estimated monthly customer acquisition and Return on Ad Spend (ROAS).
           </p>
 
           <div className="space-y-5 pt-2">
             {/* Industry Selector */}
             <div>
-              <label className="block text-xs font-semibold uppercase text-slate-400 mb-2">
+              <label className="block text-xs font-semibold uppercase text-[#94A3B8] mb-2">
                 Industry Category
               </label>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -79,10 +75,10 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOpenBooking }) =
                     key={item.id}
                     type="button"
                     onClick={() => setIndustry(item.id)}
-                    className={`py-2 px-3 rounded-lg text-xs font-medium border transition-all ${
+                    className={`py-2 px-3 rounded-lg text-xs font-medium border transition-all cursor-pointer ${
                       industry === item.id
-                        ? 'bg-blue-600 text-white border-blue-500 shadow-md shadow-blue-600/30'
-                        : 'bg-slate-800/80 text-slate-300 border-slate-700 hover:bg-slate-800'
+                        ? 'bg-gradient-to-r from-[#2563EB] to-[#8B5CF6] text-white border-transparent shadow-sm'
+                        : 'bg-[#070B14] text-[#94A3B8] border-[#1E293B] hover:bg-[#131D33] hover:text-white'
                     }`}
                   >
                     {item.label}
@@ -94,8 +90,8 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOpenBooking }) =
             {/* Slider 1: Monthly Budget */}
             <div className="space-y-2">
               <div className="flex justify-between text-sm font-medium">
-                <span className="text-slate-300">Monthly Ad & Growth Budget</span>
-                <span className="text-blue-400 font-bold">₹{monthlySpend.toLocaleString('en-IN')}</span>
+                <span className="text-[#94A3B8]">Monthly Ad &amp; Growth Budget</span>
+                <span className="text-white font-bold">₹{monthlySpend.toLocaleString('en-IN')}</span>
               </div>
               <input
                 type="range"
@@ -104,20 +100,20 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOpenBooking }) =
                 step="25000"
                 value={monthlySpend}
                 onChange={(e) => setMonthlySpend(Number(e.target.value))}
-                className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-blue-500"
+                className="w-full h-2 bg-[#131D33] rounded-lg appearance-none cursor-pointer accent-[#2563EB]"
               />
-              <div className="flex justify-between text-[11px] text-slate-500">
+              <div className="flex justify-between text-[11px] text-[#64748B]">
                 <span>₹25,000/mo</span>
-                <span>₹10,000,000/mo</span>
-                <span>₹50,000,000/mo</span>
+                <span>₹25,00,000/mo</span>
+                <span>₹50,00,000/mo</span>
               </div>
             </div>
 
             {/* Slider 2: Customer LTV / Deal Value */}
             <div className="space-y-2">
               <div className="flex justify-between text-sm font-medium">
-                <span className="text-slate-300">Avg Deal / Lifetime Value (LTV)</span>
-                <span className="text-purple-400 font-bold">₹{customerValue.toLocaleString('en-IN')}</span>
+                <span className="text-[#94A3B8]">Avg Deal / Lifetime Value (LTV)</span>
+                <span className="text-white font-bold">₹{customerValue.toLocaleString('en-IN')}</span>
               </div>
               <input
                 type="range"
@@ -126,15 +122,15 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOpenBooking }) =
                 step="5000"
                 value={customerValue}
                 onChange={(e) => setCustomerValue(Number(e.target.value))}
-                className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-purple-500"
+                className="w-full h-2 bg-[#131D33] rounded-lg appearance-none cursor-pointer accent-[#2563EB]"
               />
             </div>
 
             {/* Slider 3: Current Conversion Rate */}
             <div className="space-y-2">
               <div className="flex justify-between text-sm font-medium">
-                <span className="text-slate-300">Current Site Conversion Rate</span>
-                <span className="text-emerald-400 font-bold">{conversionRate}%</span>
+                <span className="text-[#94A3B8]">Current Site Conversion Rate</span>
+                <span className="text-[#10B981] font-bold">{conversionRate}%</span>
               </div>
               <input
                 type="range"
@@ -143,58 +139,58 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOpenBooking }) =
                 step="0.1"
                 value={conversionRate}
                 onChange={(e) => setConversionRate(Number(e.target.value))}
-                className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-500"
+                className="w-full h-2 bg-[#131D33] rounded-lg appearance-none cursor-pointer accent-[#10B981]"
               />
             </div>
           </div>
         </div>
 
         {/* Results Card Column */}
-        <div className="lg:col-span-5 bg-slate-800/80 backdrop-blur-xl border border-slate-700/80 rounded-2xl p-6 space-y-6 shadow-xl">
-          <div className="flex items-center justify-between pb-4 border-b border-slate-700">
-            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+        <div className="lg:col-span-5 bg-[#070B14] border border-[#1E293B] rounded-2xl p-6 space-y-6">
+          <div className="flex items-center justify-between pb-4 border-b border-[#1E293B]">
+            <span className="text-xs font-semibold text-[#94A3B8] uppercase tracking-wider">
               Projected Monthly Impact
             </span>
-            <span className="inline-flex items-center gap-1 text-xs font-bold bg-emerald-500/20 text-emerald-400 px-2.5 py-1 rounded-full border border-emerald-500/30">
+            <span className="inline-flex items-center gap-1 text-xs font-bold bg-[#10B981]/10 text-[#34D399] px-2.5 py-1 rounded-full border border-[#10B981]/30">
               <Zap className="w-3 h-3" />
-              Matricsmania Lift
+              MatricsMania Lift
             </span>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            <div className="bg-slate-900/90 p-4 rounded-xl border border-slate-800">
-              <div className="text-xs text-slate-400 flex items-center gap-1.5 mb-1">
-                <IndianRupee className="w-3.5 h-3.5 text-blue-400" /> Projected Revenue
+            <div className="bg-[#0D1424] p-4 rounded-xl border border-[#1E293B]">
+              <div className="text-xs text-[#94A3B8] flex items-center gap-1.5 mb-1">
+                <IndianRupee className="w-3.5 h-3.5 text-[#60A5FA]" /> Projected Revenue
               </div>
-              <div className="text-xl md:text-2xl font-black text-blue-400">₹{calculations.revenue}</div>
+              <div className="text-xl md:text-2xl font-extrabold text-white">₹{calculations.revenue}</div>
             </div>
 
-            <div className="bg-slate-900/90 p-4 rounded-xl border border-slate-800">
-              <div className="text-xs text-slate-400 flex items-center gap-1.5 mb-1">
-                <TrendingUp className="w-3.5 h-3.5 text-emerald-400" /> Estimated ROAS
+            <div className="bg-[#0D1424] p-4 rounded-xl border border-[#1E293B]">
+              <div className="text-xs text-[#94A3B8] flex items-center gap-1.5 mb-1">
+                <TrendingUp className="w-3.5 h-3.5 text-[#10B981]" /> Estimated ROAS
               </div>
-              <div className="text-xl md:text-2xl font-black text-emerald-400">{calculations.roas}</div>
+              <div className="text-xl md:text-2xl font-extrabold text-[#10B981]">{calculations.roas}</div>
             </div>
 
-            <div className="bg-slate-900/90 p-4 rounded-xl border border-slate-800">
-              <div className="text-xs text-slate-400 flex items-center gap-1.5 mb-1">
-                <Users className="w-3.5 h-3.5 text-purple-400" /> Customers / Mo
+            <div className="bg-[#0D1424] p-4 rounded-xl border border-[#1E293B]">
+              <div className="text-xs text-[#94A3B8] flex items-center gap-1.5 mb-1">
+                <Users className="w-3.5 h-3.5 text-[#8B5CF6]" /> Customers / Mo
               </div>
               <div className="text-xl font-bold text-white">{calculations.conversions}</div>
-              <div className="text-[10px] text-emerald-400 font-medium mt-1">
+              <div className="text-[10px] text-[#10B981] font-medium mt-1">
                 +{calculations.extraCustomers} extra vs baseline
               </div>
             </div>
 
-            <div className="bg-slate-900/90 p-4 rounded-xl border border-slate-800">
-              <div className="text-xs text-slate-400 flex items-center gap-1.5 mb-1">
-                <Target className="w-3.5 h-3.5 text-pink-400" /> High-Intent Clicks
+            <div className="bg-[#0D1424] p-4 rounded-xl border border-[#1E293B]">
+              <div className="text-xs text-[#94A3B8] flex items-center gap-1.5 mb-1">
+                <Target className="w-3.5 h-3.5 text-[#60A5FA]" /> High-Intent Clicks
               </div>
               <div className="text-xl font-bold text-white">{calculations.clicks}</div>
             </div>
           </div>
 
-          <div className="p-3 bg-blue-950/40 rounded-xl border border-blue-500/30 text-xs text-blue-200">
+          <div className="p-3 bg-[#131D33] rounded-xl border border-[#1E293B] text-xs text-[#94A3B8]">
             💡 <strong>Calculated Strategy:</strong> Based on combining full-funnel CRO landing page optimization with targeted algorithmic bidding.
           </div>
 
@@ -206,7 +202,7 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOpenBooking }) =
                 projectedRevenue: `₹${calculations.revenue}/mo`,
               })
             }
-            className="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-bold text-sm shadow-lg shadow-blue-600/30 transition-all flex items-center justify-center gap-2 group cursor-pointer"
+            className="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#8B5CF6] hover:from-[#1D4ED8] hover:to-[#7C3AED] text-white font-bold text-sm transition-all shadow-md shadow-blue-500/20 flex items-center justify-center gap-2 group cursor-pointer active:scale-[0.98]"
           >
             <span>Lock In This Growth Model</span>
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
