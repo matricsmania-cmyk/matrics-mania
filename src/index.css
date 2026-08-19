@@ -450,35 +450,44 @@ html:not(.dark) header button:not(.bg-gradient-to-r):not([class*="bg-blue-"]):ho
 }
 
 /* Dropdown containers and headers */
-html:not(.dark) header div[class*="bg-\[\#0D1424\]"],
-html:not(.dark) header div[class*="bg-\[\#0d1424\]"] {
+header [class*="absolute"] *,
+header nav [class*="border-l-2"] *,
+[class*="dropdown"] * {
+  user-select: text !important;
+  -webkit-user-select: text !important;
+}
+
+html:not(.dark) header [class*="absolute"] div[class*="bg-\[\#0D1424\]"],
+html:not(.dark) header [class*="absolute"] div[class*="bg-\[\#0d1424\]"],
+html:not(.dark) header [class*="absolute"] [class*="bg-\[\#0D1424\]"],
+html:not(.dark) header [class*="absolute"] [class*="bg-\[\#0d1424\]"] {
   background-color: #FFFFFF !important;
   border-color: #E2E8F0 !important;
   box-shadow: 0 10px 30px -5px rgba(0,0,0,0.1), 0 4px 12px -2px rgba(0,0,0,0.05) !important;
 }
 
-html:not(.dark) header div[class*="bg-\[\#0D1424\]"] button span,
-html:not(.dark) header div[class*="bg-\[\#0d1424\]"] button span,
-html:not(.dark) header [class*="bg-\[\#0D1424\]"] button span,
-html:not(.dark) header [class*="bg-\[\#0d1424\]"] button span {
+html:not(.dark) header [class*="absolute"] div[class*="bg-\[\#0D1424\]"] button span,
+html:not(.dark) header [class*="absolute"] div[class*="bg-\[\#0d1424\]"] button span,
+html:not(.dark) header [class*="absolute"] [class*="bg-\[\#0D1424\]"] button span,
+html:not(.dark) header [class*="absolute"] [class*="bg-\[\#0d1424\]"] button span {
   color: #475569 !important;
   transition: all 0.15s ease-in-out !important;
 }
 
 /* Dropdown interactive menu hover states */
-html:not(.dark) header div[class*="bg-\[\#0D1424\]"] button:hover,
-html:not(.dark) header div[class*="bg-\[\#0d1424\]"] button:hover,
-html:not(.dark) header [class*="bg-\[\#0D1424\]"] button:hover,
-html:not(.dark) header [class*="bg-\[\#0d1424\]"] button:hover {
+html:not(.dark) header [class*="absolute"] div[class*="bg-\[\#0D1424\]"] button:hover,
+html:not(.dark) header [class*="absolute"] div[class*="bg-\[\#0d1424\]"] button:hover,
+html:not(.dark) header [class*="absolute"] [class*="bg-\[\#0D1424\]"] button:hover,
+html:not(.dark) header [class*="absolute"] [class*="bg-\[\#0d1424\]"] button:hover {
   background-color: #F1F5F9 !important;
   border-radius: 8px !important;
   padding-left: 8px !important;
 }
 
-html:not(.dark) header div[class*="bg-\[\#0D1424\]"] button:hover span,
-html:not(.dark) header div[class*="bg-\[\#0d1424\]"] button:hover span,
-html:not(.dark) header [class*="bg-\[\#0D1424\]"] button:hover span,
-html:not(.dark) header [class*="bg-\[\#0d1424\]"] button:hover span {
+html:not(.dark) header [class*="absolute"] div[class*="bg-\[\#0D1424\]"] button:hover span,
+html:not(.dark) header [class*="absolute"] div[class*="bg-\[\#0d1424\]"] button:hover span,
+html:not(.dark) header [class*="absolute"] [class*="bg-\[\#0D1424\]"] button:hover span,
+html:not(.dark) header [class*="absolute"] [class*="bg-\[\#0d1424\]"] button:hover span {
   color: #2563EB !important;
 }
 

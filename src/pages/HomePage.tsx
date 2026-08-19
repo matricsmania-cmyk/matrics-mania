@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'motion/react';
 import { PageType } from '../types';
-import { SERVICES_DATA, CASE_STUDIES_DATA, TESTIMONIALS_DATA, AGENCY_METRICS, BLOG_POSTS_DATA } from '../data/mockData';
+import { CASE_STUDIES_DATA, TESTIMONIALS_DATA, AGENCY_METRICS, BLOG_POSTS_DATA } from '../data/mockData';
 import { getSlugFromTitle } from '../utils/slug';
 import { AuditSimulator } from '../components/AuditSimulator';
 import { ScrollReveal } from '../components/ScrollReveal';
@@ -78,7 +78,7 @@ export const HomePage: React.FC<HomePageProps> = ({
             >
               <motion.h1
                 style={{ y: h1Y, opacity: h1Opacity }}
-                className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight max-w-4xl mx-auto leading-[1.15] select-none text-white"
+                className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight max-w-4xl mx-auto leading-[1.15] text-white"
               >
                 <span className="block">
                   Building Ambitious Brands with

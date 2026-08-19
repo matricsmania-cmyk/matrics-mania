@@ -63,8 +63,8 @@ export const CustomCursor: React.FC = () => {
 
   if (isTouchDevice) return null;
 
-  // Ball color for modern dark theme
-  const ballColor = '#FFFFFF';
+  // Ball color based on theme: deep navy blue for light mode, white for dark mode
+  const ballColor = theme === 'dark' ? '#FFFFFF' : '#0136BD';
 
   // Dimensions:
   // Default: larger round ball (18px)
@@ -88,8 +88,12 @@ export const CustomCursor: React.FC = () => {
           height: `${size}px`,
           backgroundColor: ballColor,
           boxShadow: isHovered
-            ? '0 0 10px rgba(59, 130, 246, 0.9), 0 0 20px rgba(139, 92, 246, 0.5)'
-            : '0 2px 8px rgba(0,0,0,0.8), 0 0 4px rgba(37, 99, 235, 0.3)',
+            ? (theme === 'dark' 
+                ? '0 0 10px rgba(59, 130, 246, 0.9), 0 0 20px rgba(139, 92, 246, 0.5)' 
+                : '0 0 8px rgba(1, 54, 189, 0.6)')
+            : (theme === 'dark'
+                ? '0 2px 8px rgba(0,0,0,0.8), 0 0 4px rgba(37, 99, 235, 0.3)'
+                : '0 2px 8px rgba(1, 54, 189, 0.15), 0 0 4px rgba(1, 54, 189, 0.1)'),
         }}
       />
     </div>

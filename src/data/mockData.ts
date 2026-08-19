@@ -1,4 +1,4 @@
-import { BlogPost, InsightItem, ServiceItem, CaseStudy, WorkProject, TeamMember, Testimonial, FAQItem } from '../types';
+import { BlogPost, ServiceItem, CaseStudy, WorkProject, TeamMember, Testimonial, FAQItem } from '../types';
 
 export const AGENCY_METRICS = [
   { label: 'Client Revenue Growth', value: '60%' },
@@ -230,128 +230,9 @@ export const WORK_PROJECTS_DATA: WorkProject[] = [
   }
 ];
 
-export const BLOG_POSTS_DATA: BlogPost[] = [
-  {
-    id: 'b1',
-    title: 'The 2026 SEO Blueprint: How Semantic Search & AI Overviews Are Changing Organic Rankings',
-    slug: 'the-2026-seo-blueprint',
-    excerpt: 'Traditional keyword stuffing is dead. Discover how vector embeddings, entity relationships, structured schema, and GEO (Generative Engine Optimization) dictate top Google search visibility in 2026.',
-    wordCount: 1840,
-    category: 'SEO & Growth',
-    publishedAt: 'August 8, 2026',
-    readTime: '9 min read',
-    featuredImageUrl: 'https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?auto=format&fit=crop&w=1200&q=80',
-    tags: ['SEO', 'AI Search', 'Core Web Vitals', 'Generative Engine', 'Vector Search'],
-    keyTakeaways: [
-      'Transition content from basic keyword targeting to multidimensional semantic entity maps.',
-      'Optimize for Generative AI summaries by including data-dense tables, verified metrics, and direct answers.',
-      'Maintain sub-second server response times and zero Cumulative Layout Shift (CLS) for maximal crawling depth.',
-      'Implement custom JSON-LD Schema markup for every entity, product, review, and author credential.'
-    ],
-    author: {
-      name: 'Alex Vance',
-      role: 'Head of Technical SEO & Data Architecture',
-      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80',
-      bio: 'Alex has spearheaded organic search strategy for multi-million ARR SaaS platforms and global e-commerce powerhouses, generating over 45M organic pageviews.'
-    },
-    content: `
-Search Engine Optimization in 2026 has undergone its most dramatic evolution since RankBrain. The arrival of Google AI Overviews, conversational search assistants, and vector-based semantic retrieval engines means that traditional keyword density strategies no longer produce sustainable organic growth.
+import { INSIGHTS_POSTS_DATA } from './insightsData';
 
-Modern search engines do not read web pages as strings of text; they parse them as multidimensional knowledge graphs composed of interconnected entities, claims, and verified facts. If your content lacks structural density, primary research data, and explicit schema architecture, it will be ignored by both classical indexing bots and generative AI summaries.
-
-In this deep dive, we outline the exact 4-pillar technical SEO framework Matricsmania uses to secure tier-1 rankings for enterprise SaaS platforms, financial institutions, and fast-scaling D2C brands.
-    `,
-    sections: [
-      {
-        id: 'entity-mapping',
-        title: '1. The Evolution from Keywords to Semantic Entity Maps',
-        content: `
-Historically, SEO agencies targeted individual search queries (e.g., "best CRM for SaaS"). In 2026, search algorithms map queries to underlying *Entities*—distinct concepts, objects, or brands stored in knowledge vaults.
-
-When a user searches for a solution, Google evaluates your domain's **Topical Authority Score (TAS)** across the entire entity graph. If your website only publishes fragmented 500-word articles without depth, search crawlers mark your domain as low-authority.
-
-To build semantic completeness:
-• Map out core industry entities, parent attributes, and child concepts.
-• Answer primary, secondary, and tertiary intent variations within unified topic silos.
-• Interlink pages using descriptive entity anchor text rather than generic 'click here' links.
-        `,
-        keyPoints: [
-          'Knowledge Graphs evaluate entity relationships rather than simple keyword frequencies.',
-          'Topical authority requires covering parent, child, and lateral sub-topics thoroughly.',
-          'Anchor text must reinforce semantic context across internal linking silos.'
-        ],
-        quote: 'In 2026, Google does not rank pages; it ranks trusted authority nodes within specific knowledge domains.'
-      },
-      {
-        id: 'geo-framework',
-        title: '2. Generative Engine Optimization (GEO): Winning AI Overview Citations',
-        content: `
-Over 65% of commercial search queries now generate an inline AI Overview. To be featured as a cited source inside AI summaries, your content must satisfy Generative Engine Optimization (GEO) standards.
-
-AI summarization models favor content that contains:
-1. **Verified Numerical Data**: Specific percentages, revenue figures, and case study outcomes.
-2. **Direct Answer Block**: A concise 40–60 word paragraph at the top of each sub-section directly defining the topic.
-3. **Structured HTML Tables**: AI crawlers pull table rows directly into user response windows.
-        `,
-        table: {
-          headers: ['Optimization Dimension', 'Traditional SEO Strategy', '2026 GEO Framework'],
-          rows: [
-            ['Targeting Unit', 'Individual Keyword Strings', 'Multidimensional Entity Graphs'],
-            ['Content Format', 'Fluffy 2,000 word blog posts', 'Data-dense structured modules & tables'],
-            ['Credibility Signal', 'Backlink count alone', 'Primary research + Author Schema + Citation Graph'],
-            ['User Experience', 'Ad-heavy scroll traps', 'Sub-second render with zero layout shifts']
-          ]
-        }
-      },
-      {
-        id: 'technical-schema',
-        title: '3. Technical Schema Architecture & JSON-LD Entity Injection',
-        content: `
-Search engines require unambiguous JSON-LD schema markup to classify your site. Below is the precise schema snippet Matricsmania embeds on client article hubs to feed knowledge graphs:
-        `,
-        codeSnippet: `{
-  "@context": "https://schema.org",
-  "@type": "TechArticle",
-  "headline": "The 2026 Technical SEO Blueprint",
-  "author": {
-    "@type": "Person",
-    "name": "Alex Vance",
-    "jobTitle": "Head of Technical SEO",
-    "sameAs": ["https://linkedin.com/in/alexvance-seo"]
-  },
-  "publisher": {
-    "@type": "Organization",
-    "name": "Matricsmania",
-    "logo": "https://matricsmania.com/logo.png"
-  },
-  "about": [
-    { "@type": "Thing", "name": "Semantic Search" },
-    { "@type": "Thing", "name": "Generative Engine Optimization" }
-  ]
-}`
-      },
-      {
-        id: 'core-web-vitals',
-        title: '4. Performance Engineering & Core Web Vitals Optimization',
-        content: `
-Page speed is no longer just a minor ranking tie-breaker; it is an absolute requirement for indexation. Google’s 2026 crawling infrastructure penalizes slow, JavaScript-heavy sites that consume excessive server execution time.
-
-Key performance benchmarks required for top 3 rankings:
-• **Interaction to Next Paint (INP)**: Less than 120 milliseconds.
-• **Largest Contentful Paint (LCP)**: Less than 0.8 seconds.
-• **Cumulative Layout Shift (CLS)**: Exactly 0.00.
-
-By implementing server-side HTML streaming, next-gen image compression, and edge caching via Cloudflare, Matricsmania clients consistently achieve 98+ PageSpeed scores on mobile devices.
-        `,
-        keyPoints: [
-          'Sub-second LCP ensures max indexing efficiency by search engine bots.',
-          'Zero CLS prevents user frustration and improves conversion rates.',
-          'Edge caching and pre-rendered static shells eliminate server response latency.'
-        ]
-      }
-    ]
-  }
-];
+export const BLOG_POSTS_DATA: BlogPost[] = INSIGHTS_POSTS_DATA;
 
 export const TEAM_MEMBERS_DATA: TeamMember[] = [
   {
@@ -483,173 +364,42 @@ export const FAQS_DATA: FAQItem[] = [
   }
 ];
 
-export const MILESTONES_DATA = [
-  { year: '2021', title: 'Agency Foundation', description: 'Matricsmania launched in Bengaluru as a specialized data analytics & SEO consultancy.' },
-  { year: '2023', title: 'Multi-Channel Scaling', description: 'Expanded into full-funnel performance ads (Meta, Google, YouTube) & CRO web engineering.' },
-  { year: '2024', title: 'AI Intelligence Suite Launch', description: 'Integrated predictive customer lifetime value models & server-side attribution engines.' },
-  { year: '2026', title: 'Global Impact & Regional Presence', description: 'Now managing growth portfolios across India, APAC, Europe, and North America.' }
+export const TEAM_DATA: TeamMember[] = [
+  {
+    id: 'team-1',
+    name: 'Marcus Vance',
+    role: 'Principal Growth Architect & Founder',
+    bio: 'Former growth engineering lead specializing in search indexing systems, algorithmic bidding, and multi-touch revenue attribution.',
+    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
+    specialties: ['Technical SEO', 'GEO Systems', 'Conversion Engineering'],
+    socials: {
+      linkedin: 'https://linkedin.com',
+      email: 'marcus@matricsmania.com',
+    },
+  },
+  {
+    id: 'team-2',
+    name: 'Aarav Mehta',
+    role: 'Head of Search & LLM Retrieval',
+    bio: 'Pioneered semantic knowledge graph architecture and Generative Engine Optimization frameworks across enterprise B2B SaaS.',
+    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80',
+    specialties: ['Knowledge Graphs', 'Core Web Vitals', 'Search Indexing'],
+    socials: {
+      linkedin: 'https://linkedin.com',
+      email: 'aarav@matricsmania.com',
+    },
+  },
+  {
+    id: 'team-3',
+    name: 'Elena Rostova',
+    role: 'Director of Performance Media',
+    bio: 'Over $40M managed in paid acquisition budgets with automated algorithmic bidding and server-side conversion API architectures.',
+    avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80',
+    specialties: ['Meta & Google Ads', 'CAPI Integration', 'Attribution Modeling'],
+    socials: {
+      linkedin: 'https://linkedin.com',
+      email: 'elena@matricsmania.com',
+    },
+  },
 ];
 
-export const INSIGHTS_DATA: InsightItem[] = [
-  {
-    id: 'ins-1',
-    title: 'The 2026 State of B2B SaaS Growth & Pipeline Benchmarks Report',
-    slug: 'state-of-b2b-saas-growth-2026',
-    category: 'Benchmark Report',
-    type: 'Research Report',
-    excerpt: 'An empirical research study evaluating CAC, LTV, demo conversion rates, and multi-channel attribution across 180+ growth-stage SaaS companies.',
-    publishedAt: 'August 12, 2026',
-    readTime: '12 min read',
-    downloadablePdf: '/docs/State_of_B2B_SaaS_Growth_2026.pdf',
-    keyMetrics: [
-      { label: 'Avg Outbound CAC Surge', value: '+34%' },
-      { label: 'Top Inbound ROAS', value: '4.8x' },
-      { label: 'Demo Conversion Rate', value: '3.8%' },
-      { label: 'Attribution Drift Rate', value: '-28%' }
-    ],
-    featuredImageUrl: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80',
-    author: {
-      name: 'Marcus Vance',
-      role: 'Chief Executive Officer',
-      avatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=200&q=80',
-      bio: 'Marcus analyzes macro marketing trends and pipeline dynamics across B2B software and digital enterprises.'
-    },
-    summaryPoints: [
-      'Outbound sales efficiency decreased by 34% due to email spam filters and lower SDR response rates.',
-      'Inbound semantic SEO and LinkedIn ABM delivered a 4.8x higher ROI compared to traditional cold outreach.',
-      'Companies implementing server-side CAPI and multi-touch attribution reduced customer acquisition cost by 28%.'
-    ],
-    fullReportContent: `
-This benchmark report aggregates real performance metrics from over 180 B2B SaaS companies generating between $1M and $25M ARR. Our data science team analyzed ad spend, organic search rankings, conversion funnels, and CRM pipeline progressions to identify key factors separating market leaders from trailing startups.
-
-Key Finding 1: Outbound SDR effectiveness has dropped to historic lows. SDRs now require 3.4x more activities to book a single qualified demo compared to 2023.
-
-Key Finding 2: High-intent organic search and LinkedIn Account-Based Marketing (ABM) are driving 72% of closed-won pipeline ARR.
-    `,
-    sections: [
-      {
-        id: 'cac-trends',
-        title: '1. CAC Inflation & Channel Efficiency Shifting',
-        content: `
-Customer Acquisition Cost (CAC) across B2B SaaS increased by an average of 34% year-over-year for outbound channels, while inbound semantic SEO and interactive sandbox demos reduced blended CAC by 28%.
-        `,
-        dataPoints: [
-          { label: 'Outbound Cold Email CAC', value: '₹1,45,000 / demo' },
-          { label: 'Inbound Semantic Search CAC', value: '₹42,000 / demo' },
-          { label: 'LinkedIn ABM Qualified CAC', value: '₹68,000 / demo' }
-        ],
-        table: {
-          headers: ['Acquisition Channel', 'Avg Cost Per Demo', 'Closing Win Rate', 'Payback Period'],
-          rows: [
-            ['Inbound Organic Search (SEO)', '₹42,000', '28.4%', '4.2 Months'],
-            ['LinkedIn Account-Based Ads', '₹68,000', '22.1%', '6.1 Months'],
-            ['Google Search Ads', '₹85,000', '18.6%', '7.8 Months'],
-            ['Outbound Cold Calling & SDRs', '₹1,45,000', '11.2%', '14.5 Months']
-          ]
-        }
-      },
-      {
-        id: 'attribution-gap',
-        title: '2. Multi-Touch Attribution & First-Party Data Architecture',
-        content: `
-Over 82% of SaaS executives surveyed admitted that last-click Google Analytics reports misattributed major enterprise deals. Adopting first-party server-side tracking (CAPI + CRM integration) restored pipeline visibility and allowed marketing leads to reallocate budget effectively.
-        `
-      }
-    ]
-  },
-  {
-    id: 'ins-2',
-    title: 'Generative AI & LLM Search Visibility Index 2026',
-    slug: 'ai-search-visibility-benchmark-2026',
-    category: 'Industry Study',
-    type: 'Data Benchmark',
-    excerpt: 'How 500 leading enterprise software brands are cited across ChatGPT, Perplexity AI, Google AI Overviews, and Claude.',
-    publishedAt: 'August 04, 2026',
-    readTime: '10 min read',
-    downloadablePdf: '/docs/AI_Search_Visibility_Index_2026.pdf',
-    keyMetrics: [
-      { label: 'Avg AI Overview Citation Share', value: '41%' },
-      { label: 'Top Ranking Factor', value: 'Entity Schema' },
-      { label: 'Vector Similarity Threshold', value: '0.84' }
-    ],
-    featuredImageUrl: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1200&q=80',
-    author: {
-      name: 'Alex Vance',
-      role: 'Head of Technical SEO & Data Architecture',
-      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80',
-      bio: 'Alex researches generative search engines, vector retrieval architectures, and schema optimization.'
-    },
-    summaryPoints: [
-      'Over 60% of technical B2B buyer queries now yield an AI Overview before traditional organic web links.',
-      'Websites with rich JSON-LD TechArticle and FAQ schema receive 3.2x more AI citations.',
-      'First-party research data and verified statistics increase Perplexity and Claude recommendation odds by 88%.'
-    ],
-    fullReportContent: `
-The Generative AI Search Visibility Index evaluates how modern large language models index, retrieve, and cite web pages when answering commercial buyer prompts. Our study analyzed 12,000 industry queries across ChatGPT, Perplexity, Google AI Overviews, and Claude.
-
-Key Finding: LLM search engines prioritize structured data tables and unambiguous entity definitions over backlink quantity.
-    `
-  },
-  {
-    id: 'ins-3',
-    title: 'Q4 Festive Season D2C E-Commerce Paid Media ROI Audit',
-    slug: 'd2c-ecommerce-festive-media-roi-2026',
-    category: 'ROI Audit',
-    type: 'Market Teardown',
-    excerpt: 'An exhaustive analysis of ₹250 Crore+ in festive ad spend across Meta, TikTok, Google Ads, and Instagram Reels.',
-    publishedAt: 'July 20, 2026',
-    readTime: '9 min read',
-    downloadablePdf: '/docs/D2C_Festive_Media_ROI_Audit_2026.pdf',
-    keyMetrics: [
-      { label: 'Managed Ad Spend Analyzed', value: '₹250 Cr+' },
-      { label: 'Blended ROAS Average', value: '4.6x' },
-      { label: 'Conversion Lift with Reels', value: '+54%' }
-    ],
-    featuredImageUrl: 'https://images.unsplash.com/photo-1556742049-0a670f4a4591?auto=format&fit=crop&w=1200&q=80',
-    author: {
-      name: 'Sarah Chen',
-      role: 'VP of Paid Media',
-      avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=200&q=80',
-      bio: 'Sarah leads multi-channel media buying and conversion optimization strategies.'
-    },
-    summaryPoints: [
-      'Short-form video creatives (Reels and TikTok Spark Ads) delivered 54% higher conversion rates than static banners.',
-      'Server-side CAPI integration protected ad accounts against 35% pixel signal loss during high-traffic shopping sprees.',
-      '1-click checkout optimizations boosted mobile conversion rates from 2.1% to 4.8%.'
-    ],
-    fullReportContent: `
-During peak Q4 festive shopping periods, ad auctions experience intense CPM spikes. This audit provides direct data-backed rules for budget scaling, creative variation cycling, and retention triggers.
-    `
-  },
-  {
-    id: 'ins-4',
-    title: 'The Executive Guide to First-Party Data & Multi-Touch Attribution Architecture',
-    slug: 'cmo-guide-multi-touch-attribution',
-    category: 'Executive Whitepaper',
-    type: 'Whitepaper',
-    excerpt: 'A comprehensive playbook for CMOs and C-suite leaders transitioning from third-party cookie tracking to unified server-side analytics.',
-    publishedAt: 'June 28, 2026',
-    readTime: '11 min read',
-    downloadablePdf: '/docs/CMO_Multi_Touch_Attribution_Guide.pdf',
-    keyMetrics: [
-      { label: 'Attribution Accuracy Level', value: '99.4%' },
-      { label: 'Ad Budget Wastage Saved', value: '32%' },
-      { label: 'Executive Reporting Hours', value: '-85%' }
-    ],
-    featuredImageUrl: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80',
-    author: {
-      name: 'David Sterling',
-      role: 'Chief Data Officer',
-      avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80',
-      bio: 'David specializes in data warehousing, server-side tracking, and executive BI dashboards.'
-    },
-    summaryPoints: [
-      'Third-party cookie deprecation blinds legacy analytics platforms; server-side tracking is no longer optional.',
-      'Multi-touch W-shaped attribution reveals hidden top-of-funnel ROI that single-click models erase.',
-      'Automated Looker dashboards save 40+ manual reporting hours monthly while delivering live C-suite transparency.'
-    ],
-    fullReportContent: `
-This whitepaper outlines the step-by-step engineering roadmap required to unify GA4, Meta CAPI, Google Ads, and Stripe CRM data into a single source of truth.
-    `
-  }
-];

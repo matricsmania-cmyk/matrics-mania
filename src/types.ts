@@ -10,57 +10,38 @@ export type PageType =
   | 'careers'
   | 'faq'
   | 'blog'
-  | 'insights'
   | 'company'
   | 'about'
   | 'contact';
 
-export interface InsightSection {
-  id: string;
-  title: string;
-  content: string;
-  keyPoints?: string[];
-  dataPoints?: { label: string; value: string }[];
-  quote?: string;
-  table?: {
-    headers: string[];
-    rows: string[][];
-  };
-}
+export type BlogCategory =
+  | 'Industry Intelligence';
 
-export interface InsightItem {
-  id: string;
-  title: string;
-  slug: string;
-  category: 'Benchmark Report' | 'Industry Study' | 'ROI Audit' | 'Executive Whitepaper' | 'Market Data';
-  type: 'Research Report' | 'Data Benchmark' | 'Market Teardown' | 'Whitepaper';
-  excerpt: string;
-  publishedAt: string;
-  readTime: string;
-  downloadablePdf?: string;
-  keyMetrics: { label: string; value: string }[];
-  featuredImageUrl: string;
-  author: {
-    name: string;
-    role: string;
-    avatar: string;
-    bio?: string;
-  };
-  summaryPoints: string[];
-  fullReportContent: string;
-  sections?: InsightSection[];
-}
+export type BlogContentType =
+  | 'Guide'
+  | 'Analysis'
+  | 'Research'
+  | 'Framework'
+  | 'Case Learning'
+  | 'Opinion';
 
 export interface BlogSection {
   id: string;
   title: string;
   content: string;
+  subtitle?: string;
   keyPoints?: string[];
   quote?: string;
   codeSnippet?: string;
+  codeLanguage?: string;
   table?: {
     headers: string[];
     rows: string[][];
+  };
+  diagram?: {
+    type: 'flow' | 'comparison' | 'matrix' | 'steps';
+    title: string;
+    items: { label: string; description: string; tag?: string }[];
   };
 }
 
@@ -68,22 +49,46 @@ export interface BlogPost {
   id: string;
   title: string;
   slug: string;
+  standfirst?: string;
   excerpt: string;
   content: string;
   sections?: BlogSection[];
-  category: 'SEO & Growth' | 'Paid Media' | 'AI Marketing' | 'Analytics' | 'Brand Strategy';
+  category: BlogCategory;
+  contentType: BlogContentType;
   author: {
     name: string;
     role: string;
     avatar: string;
     bio?: string;
   };
+  reviewer?: {
+    name: string;
+    role: string;
+  };
   publishedAt: string;
+  updatedAt?: string;
   readTime: string;
   wordCount?: number;
   featuredImageUrl: string;
   tags: string[];
   keyTakeaways: string[];
+  relatedServiceSlug?: string;
+  relatedServiceName?: string;
+  relatedIndustrySlug?: string;
+  relatedIndustryName?: string;
+  relatedCaseStudySlug?: string;
+  originalStudyData?: {
+    sampleSize: string;
+    timeframe: string;
+    methodology: string;
+    stats: { label: string; value: string; note: string }[];
+  };
+  ctaContext?: {
+    headline: string;
+    subheadline: string;
+    buttonText: string;
+    serviceSlug?: string;
+  };
 }
 
 export interface ServiceItem {
