@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useMemo } from 'react';
 import { SERVICES_DATA } from '../data/mockData';
 import { Check, ShieldCheck, Zap, ArrowRight } from 'lucide-react';

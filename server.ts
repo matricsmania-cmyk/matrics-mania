@@ -1,54 +1,64 @@
 import express from "express";
-import path from "path";
-import fs from "fs";
-import { createServer as createViteServer } from "vite";
+import next from "next";
+
+const dev = process.env.NODE_ENV !== "production";
+const PORT = 3000;
+const HOST = "0.0.0.0";
+
+const nextApp = next({ dev, hostname: HOST, port: PORT });
+const handle = nextApp.getRequestHandler();
 
 async function startServer() {
+  await nextApp.prepare();
   const app = express();
-  const PORT = 3000;
 
-  // API routes FIRST
-  app.get("/api/health", (req, res) => {
+  app.set("trust proxy", true);
+
+  // Allow cross-origin requests for proxy & preview environments
+  app.use((req, res, next) => {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, PATCH, DELETE");
+    res.setHeader("Access-Control-Allow-Headers", "*");
+
+    // Remove origin header on GET requests for /_next/ resources so Next.js dev server treats them as standard same-origin requests behind proxies
+    if (req.method === "GET" && req.path.startsWith("/_next/")) {
+      delete req.headers.origin;
+    } else {
+      const originOrReferer = (req.headers.origin as string) || (req.headers.referer as string);
+      if (originOrReferer) {
+        try {
+          const url = new URL(originOrReferer);
+          req.headers["host"] = url.host;
+          req.headers["x-forwarded-host"] = url.host;
+          req.headers["x-forwarded-proto"] = url.protocol.replace(":", "");
+        } catch {
+          // ignore invalid URL parsing
+        }
+      }
+    }
+
+    if (req.method === "OPTIONS") {
+      return res.sendStatus(200);
+    }
+    next();
+  });
+
+  // Health check endpoint
+  app.get("/api/health", (_req, res) => {
     res.json({ status: "ok" });
   });
 
-  // Vite middleware for development
-  if (process.env.NODE_ENV !== "production") {
-    const vite = await createViteServer({
-      server: { middlewareMode: true },
-      appType: "spa",
-    });
-    app.use(vite.middlewares);
+  // Delegate all page routing, 404s, metadata injection, sitemap, and robots to Next.js App Router
+  app.all("*", (req, res) => {
+    return handle(req, res);
+  });
 
-    // Fallback for SPA routing in development
-    app.get('*', async (req, res, next) => {
-      // Avoid intercepting actual static assets or API requests
-      if (req.originalUrl.startsWith('/api') || req.originalUrl.includes('.')) {
-        return next();
-      }
-      try {
-        let template = await fs.promises.readFile(
-          path.resolve(process.cwd(), 'index.html'),
-          'utf-8'
-        );
-        template = await vite.transformIndexHtml(req.originalUrl, template);
-        res.status(200).set({ 'Content-Type': 'text/html' }).end(template);
-      } catch (e) {
-        vite.ssrFixStacktrace(e as Error);
-        next(e);
-      }
-    });
-  } else {
-    const distPath = path.join(process.cwd(), 'dist');
-    app.use(express.static(distPath));
-    app.get('*', (req, res) => {
-      res.sendFile(path.join(distPath, 'index.html'));
-    });
-  }
-
-  app.listen(PORT, "0.0.0.0", () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+  app.listen(PORT, HOST, () => {
+    console.log(`Server listening on http://${HOST}:${PORT}`);
   });
 }
 
-startServer();
+startServer().catch((err) => {
+  console.error("Error starting server:", err);
+  process.exit(1);
+});

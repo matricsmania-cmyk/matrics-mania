@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState } from 'react';
 import { BlogPost } from '../types';
 import { OptimizedImage } from './OptimizedImage';

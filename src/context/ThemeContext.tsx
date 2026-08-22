@@ -1,3 +1,5 @@
+'use client';
+
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { THEME_PALETTE, VISUAL_PROPORTIONS, THEME_CLASSES, COLORS } from '../theme';
 
@@ -17,9 +19,11 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [theme, setThemeState] = useState<Theme>(() => {
-    const saved = localStorage.getItem('matricsmania-theme');
-    if (saved === 'light' || saved === 'dark') {
-      return saved;
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('matricsmania-theme');
+      if (saved === 'light' || saved === 'dark') {
+        return saved;
+      }
     }
     return 'dark';
   });

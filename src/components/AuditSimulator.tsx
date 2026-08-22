@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState } from 'react';
 import { Search, ShieldAlert, CheckCircle, AlertTriangle, ArrowRight, Loader2, RefreshCw } from 'lucide-react';
 import { AuditResult } from '../types';
@@ -109,20 +111,25 @@ export const AuditSimulator: React.FC<AuditSimulatorProps> = ({ onOpenBooking, o
         {/* Input Form */}
         <form onSubmit={handleRunAudit} className="flex flex-col sm:flex-row gap-3 max-w-xl mx-auto pt-2">
           <div className="relative flex-1">
+            <label htmlFor="audit-domain-input" className="sr-only">
+              Website Domain for Audit
+            </label>
             <input
+              id="audit-domain-input"
               type="text"
+              aria-label="Website Domain for Audit"
               placeholder="Enter domain (e.g. mycompany.com)"
               value={domain}
               onChange={(e) => setDomain(e.target.value)}
               disabled={isScanning}
               className="w-full px-4 py-3.5 pl-11 rounded-xl bg-[#070B14] border border-[#1E293B] text-white placeholder-[#64748B] text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] disabled:opacity-50"
             />
-            <Search className="w-4 h-4 text-[#60A5FA] absolute left-4 top-1/2 -translate-y-1/2" />
+            <Search className="w-4 h-4 text-[#60A5FA] absolute left-4 top-1/2 -translate-y-1/2" aria-hidden="true" />
           </div>
           <button
             type="submit"
             disabled={isScanning}
-            className="px-6 py-3.5 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#8B5CF6] hover:from-[#1D4ED8] hover:to-[#7C3AED] text-white font-bold text-sm shadow-md shadow-blue-500/20 transition-all flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer active:scale-[0.98]"
+            className="px-6 py-3.5 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#8B5CF6] hover:from-[#1D4ED8] hover:to-[#7C3AED] text-white font-bold text-sm shadow-md shadow-blue-500/20 transition-all flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#2563EB] active:scale-[0.98]"
           >
             {isScanning ? (
               <>

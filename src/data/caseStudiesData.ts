@@ -274,7 +274,7 @@ export const CASE_STUDIES_STORE: Record<string, CaseStudyDetailData> = {
         phaseNumber: '02',
         phaseName: 'Hyperlocal GEO & NRI Precision Bidding',
         duration: 'Month 2 – 4',
-        actions: ['Launched geo-fenced Google Search and Meta video ads across Dubai, Singapore, and Bangalore tech corridors.'],
+        actions: ['Launched geo-fenced Google Search and Meta video ads across Dubai and Bangalore tech corridors.'],
         deliverables: ['GCC NRI acquisition funnel', 'Bangalore tech corridor campaign'],
       },
     ],

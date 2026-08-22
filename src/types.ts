@@ -1,3 +1,10 @@
+/**
+ * Legacy Type Bridge and Domain Model Re-exports
+ */
+
+export * from './models';
+
+// Legacy UI Types for backward compatibility
 export type PageType =
   | 'home'
   | 'services'
@@ -15,7 +22,11 @@ export type PageType =
   | 'contact';
 
 export type BlogCategory =
-  | 'Industry Intelligence';
+  | 'Industry Intelligence'
+  | 'Search Architecture'
+  | 'Paid Demand Science'
+  | 'Conversion Engineering'
+  | 'B2B Growth Playbooks';
 
 export type BlogContentType =
   | 'Guide'
@@ -23,6 +34,7 @@ export type BlogContentType =
   | 'Research'
   | 'Framework'
   | 'Case Learning'
+  | 'Whitepaper'
   | 'Opinion';
 
 export interface BlogSection {
@@ -133,7 +145,7 @@ export interface WorkProject {
   caseStudyId?: string;
 }
 
-export interface CaseStudy {
+export interface LegacyCaseStudy {
   id: string;
   clientName: string;
   industry: string;
@@ -165,7 +177,7 @@ export interface TeamMember {
   specialties: string[];
 }
 
-export interface Testimonial {
+export interface LegacyTestimonial {
   id: string;
   quote: string;
   name: string;

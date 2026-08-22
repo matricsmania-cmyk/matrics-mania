@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useMemo } from 'react';
 import { Calculator, TrendingUp, IndianRupee, Users, ArrowRight, Zap, Target } from 'lucide-react';
 
@@ -90,17 +92,22 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOpenBooking }) =
             {/* Slider 1: Monthly Budget */}
             <div className="space-y-2">
               <div className="flex justify-between text-sm font-medium">
-                <span className="text-[#94A3B8]">Monthly Ad &amp; Growth Budget</span>
+                <label htmlFor="roi-monthly-spend" className="text-[#94A3B8]">Monthly Ad &amp; Growth Budget</label>
                 <span className="text-white font-bold">₹{monthlySpend.toLocaleString('en-IN')}</span>
               </div>
               <input
+                id="roi-monthly-spend"
                 type="range"
                 min="25000"
                 max="5000000"
                 step="25000"
+                aria-label="Monthly Ad and Growth Budget"
+                aria-valuemin={25000}
+                aria-valuemax={5000000}
+                aria-valuenow={monthlySpend}
                 value={monthlySpend}
                 onChange={(e) => setMonthlySpend(Number(e.target.value))}
-                className="w-full h-2 bg-[#131D33] rounded-lg appearance-none cursor-pointer accent-[#2563EB]"
+                className="w-full h-2 bg-[#131D33] rounded-lg appearance-none cursor-pointer accent-[#2563EB] focus:outline-none focus:ring-2 focus:ring-[#2563EB]"
               />
               <div className="flex justify-between text-[11px] text-[#64748B]">
                 <span>₹25,000/mo</span>
@@ -112,34 +119,44 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOpenBooking }) =
             {/* Slider 2: Customer LTV / Deal Value */}
             <div className="space-y-2">
               <div className="flex justify-between text-sm font-medium">
-                <span className="text-[#94A3B8]">Avg Deal / Lifetime Value (LTV)</span>
+                <label htmlFor="roi-customer-ltv" className="text-[#94A3B8]">Avg Deal / Lifetime Value (LTV)</label>
                 <span className="text-white font-bold">₹{customerValue.toLocaleString('en-IN')}</span>
               </div>
               <input
+                id="roi-customer-ltv"
                 type="range"
                 min="1000"
                 max="1000000"
                 step="5000"
+                aria-label="Average Deal Lifetime Value"
+                aria-valuemin={1000}
+                aria-valuemax={1000000}
+                aria-valuenow={customerValue}
                 value={customerValue}
                 onChange={(e) => setCustomerValue(Number(e.target.value))}
-                className="w-full h-2 bg-[#131D33] rounded-lg appearance-none cursor-pointer accent-[#2563EB]"
+                className="w-full h-2 bg-[#131D33] rounded-lg appearance-none cursor-pointer accent-[#2563EB] focus:outline-none focus:ring-2 focus:ring-[#2563EB]"
               />
             </div>
 
             {/* Slider 3: Current Conversion Rate */}
             <div className="space-y-2">
               <div className="flex justify-between text-sm font-medium">
-                <span className="text-[#94A3B8]">Current Site Conversion Rate</span>
+                <label htmlFor="roi-conversion-rate" className="text-[#94A3B8]">Current Site Conversion Rate</label>
                 <span className="text-[#10B981] font-bold">{conversionRate}%</span>
               </div>
               <input
+                id="roi-conversion-rate"
                 type="range"
                 min="0.5"
                 max="8"
                 step="0.1"
+                aria-label="Current Site Conversion Rate"
+                aria-valuemin={0.5}
+                aria-valuemax={8}
+                aria-valuenow={conversionRate}
                 value={conversionRate}
                 onChange={(e) => setConversionRate(Number(e.target.value))}
-                className="w-full h-2 bg-[#131D33] rounded-lg appearance-none cursor-pointer accent-[#10B981]"
+                className="w-full h-2 bg-[#131D33] rounded-lg appearance-none cursor-pointer accent-[#2563EB] focus:outline-none focus:ring-2 focus:ring-[#2563EB]"
               />
             </div>
           </div>

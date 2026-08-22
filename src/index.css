@@ -284,22 +284,9 @@
   background: #2563EB;
 }
 
-/* Hide default system mouse cursor on pointer-capable devices so only the custom round ball is visible */
-@media (pointer: fine) {
-  *,
-  *::before,
-  *::after,
-  html,
-  body,
-  button,
-  a,
-  input,
-  select,
-  textarea,
-  [role="button"],
-  .cursor-pointer {
-    cursor: none !important;
-  }
+/* Ensure standard cursor pointers across interactive elements */
+.cursor-pointer {
+  cursor: pointer;
 }
 
 /* HIGHLY SOPHISTICATED SYSTEM-WIDE OVERRIDES FOR LIGHT MODE */
@@ -343,7 +330,7 @@ html:not(.dark) .border-slate-800 {
 html:not(.dark) .divide-\[\#1E293B\],
 html:not(.dark) .divide-\[\#1e293b\] > *,
 html:not(.dark) .divide-slate-800 > *,
-html:not(.dark) .divide-[#1E293B] > * {
+html:not(.dark) .divide-\[\#1E293B\] > * {
   border-color: #E2E8F0 !important;
 }
 
@@ -398,15 +385,15 @@ html:not(.dark) button.bg-brand-accent * {
 /* Maintain high-contrast emerald green for positive indicators/checks in light mode */
 html:not(.dark) .text-emerald-400,
 html:not(.dark) .text-green-400,
-html:not(.dark) .text-[#34D399],
-html:not(.dark) .text-[#34d399],
+html:not(.dark) .text-\[\#34D399\],
+html:not(.dark) .text-\[\#34d399\],
 html:not(.dark) .text-emerald-500 {
   color: #059669 !important;
 }
 
 /* Translate soft blue/indigo links to legible brand blue in light mode */
-html:not(.dark) .text-[#60A5FA],
-html:not(.dark) .text-[#60a5fa] {
+html:not(.dark) .text-\[\#60A5FA\],
+html:not(.dark) .text-\[\#60a5fa\] {
   color: #2563EB !important;
 }
 
@@ -533,6 +520,69 @@ html:not(.dark) .bg-\[\#0d1424\] {
   background-color: #F8FAFC !important;
   border-color: #E2E8F0 !important;
 }
+
+/* ==========================================================================
+   PERFORMANCE & ACCESSIBILITY: PREFERS-REDUCED-MOTION & RENDERING STABILITY
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .aurora-container,
+  .aurora-container::before,
+  .animated-gradient-text {
+    animation: none !important;
+    transform: none !important;
+  }
+}
+
+/* Accessible, high-contrast keyboard focus ring defaults */
+:focus-visible {
+  outline: 2px solid #3B82F6 !important;
+  outline-offset: 2px !important;
+}
+
+html:not(.dark) :focus-visible {
+  outline: 2px solid #0136BD !important;
+  outline-offset: 2px !important;
+}
+
+/* Ensure skip links and screen-reader elements are cleanly exposed to assistive tech */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.focus\:not-sr-only:focus {
+  position: static;
+  width: auto;
+  height: auto;
+  padding: inherit;
+  margin: inherit;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+
+/* Optimize off-screen rendering for long pages without layout shift */
+.content-auto {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 700px;
+}
+
 
 
 

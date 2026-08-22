@@ -1,4 +1,4 @@
-import { BlogPost, ServiceItem, CaseStudy, WorkProject, TeamMember, Testimonial, FAQItem } from '../types';
+import { BlogPost, ServiceItem, LegacyCaseStudy, WorkProject, TeamMember, Testimonial, FAQItem } from '../types';
 
 export const AGENCY_METRICS = [
   { label: 'Client Revenue Growth', value: '60%' },
@@ -181,7 +181,7 @@ export const SERVICES_DATA: ServiceItem[] = [
   }
 ];
 
-export const CASE_STUDIES_DATA: CaseStudy[] = [
+export const CASE_STUDIES_DATA: LegacyCaseStudy[] = [
   {
     id: 'velociti-saas',
     clientName: 'Velociti Cloud',

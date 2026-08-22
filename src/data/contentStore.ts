@@ -104,3 +104,8 @@ export function getAllTeamMembers(): TeamMember[] {
 export function getAllTestimonials(): Testimonial[] {
   return TESTIMONIALS_DATA;
 }
+
+// Export domain-model compliant MockDataProvider
+export { mockDataProvider, MockDataProvider } from '../providers/MockDataProvider';
+export { type ContentProvider } from '../providers/ContentProvider';
+

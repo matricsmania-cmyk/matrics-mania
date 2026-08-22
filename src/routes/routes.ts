@@ -8,7 +8,7 @@ export interface RouteMatch {
 export interface RouteDefinition {
   id: string;
   pattern: RegExp;
-  template: 'static' | 'service' | 'industry' | 'location' | 'insight' | 'case-study';
+  template: 'static' | 'service' | 'industry' | 'location' | 'insight' | 'case-study' | 'profile';
   getCanonical: (params: Record<string, string>) => string;
 }
 
@@ -98,6 +98,12 @@ export const ROUTES: RouteDefinition[] = [
     getCanonical: (p) => `${BASE_URL}/insights/${p.slug}/`,
   },
   {
+    id: 'author-detail',
+    pattern: /^\/authors\/([a-zA-Z0-9_-]+)\/?$/,
+    template: 'profile',
+    getCanonical: (p) => `${BASE_URL}/authors/${p.slug}/`,
+  },
+  {
     id: 'process',
     pattern: /^\/process\/?$/,
     template: 'static',
@@ -120,6 +126,18 @@ export const ROUTES: RouteDefinition[] = [
     pattern: /^\/contact\/?$/,
     template: 'static',
     getCanonical: () => `${BASE_URL}/contact/`,
+  },
+  {
+    id: 'privacy',
+    pattern: /^\/privacy\/?$/,
+    template: 'static',
+    getCanonical: () => `${BASE_URL}/privacy/`,
+  },
+  {
+    id: 'terms',
+    pattern: /^\/terms\/?$/,
+    template: 'static',
+    getCanonical: () => `${BASE_URL}/terms/`,
   },
 ];
 
@@ -175,11 +193,11 @@ export function resolveRoute(rawPath: string): RouteMatch {
     }
   }
 
-  // Fallback to home
+  // Unmatched Route -> 404 Not Found
   return {
-    pathname: '/',
-    routeId: 'home',
+    pathname: normalized,
+    routeId: 'not-found',
     params: {},
-    canonicalUrl: `${BASE_URL}/`,
+    canonicalUrl: `${BASE_URL}${normalized}`,
   };
 }
