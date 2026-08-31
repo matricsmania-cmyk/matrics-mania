@@ -2,11 +2,23 @@ import { Media } from '../models/media';
 import { SEO, RobotsDirectives } from '../models/seo';
 import { BreadcrumbItem } from '../models/breadcrumb';
 
+function cleanDomainUrl(val: string | undefined, defaultUrl: string): string {
+  if (!val) return defaultUrl;
+  let cleaned = val.trim();
+  if (cleaned.includes('=')) {
+    cleaned = cleaned.substring(cleaned.lastIndexOf('=') + 1).trim();
+  }
+  if (!cleaned.startsWith('http://') && !cleaned.startsWith('https://')) {
+    cleaned = defaultUrl;
+  }
+  return cleaned.replace(/\/$/, '');
+}
+
 /**
  * Global Domain Constants
  */
-export const PUBLIC_DOMAIN = (process.env.NEXT_PUBLIC_SITE_URL || 'https://matricsmania.com').replace(/\/$/, '');
-export const CMS_DOMAIN = (process.env.NEXT_PUBLIC_WORDPRESS_URL || process.env.WORDPRESS_URL || 'https://cms.matricsmania.com').replace(/\/$/, '');
+export const PUBLIC_DOMAIN = cleanDomainUrl(process.env.NEXT_PUBLIC_SITE_URL, 'https://matricsmania.com');
+export const CMS_DOMAIN = cleanDomainUrl(process.env.NEXT_PUBLIC_WORDPRESS_URL || process.env.WORDPRESS_URL, 'https://cms.matricsmania.com');
 export const DEFAULT_SITE_NAME = 'MatricsMania';
 export const DEFAULT_LOCALE = 'en_IN';
 export const DEFAULT_LANG = 'en-IN';
