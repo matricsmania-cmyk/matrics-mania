@@ -2,20 +2,20 @@
 
 import React, { createContext, useContext, useMemo } from 'react';
 import { ContentProvider } from './ContentProvider';
-import { mockDataProvider } from './MockDataProvider';
+import { wordPressProvider } from './WordPressProvider';
 
 interface ContentContextValue {
   provider: ContentProvider;
 }
 
 const ContentContext = createContext<ContentContextValue>({
-  provider: mockDataProvider,
+  provider: wordPressProvider,
 });
 
 export const ContentContextProvider: React.FC<{
   provider?: ContentProvider;
   children: React.ReactNode;
-}> = ({ provider = mockDataProvider, children }) => {
+}> = ({ provider = wordPressProvider, children }) => {
   const value = useMemo(() => ({ provider }), [provider]);
   return <ContentContext.Provider value={value}>{children}</ContentContext.Provider>;
 };

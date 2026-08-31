@@ -98,41 +98,80 @@ export function normalizeWpMedia(rawMedia?: RawWpEmbeddedMedia): Media {
 }
 
 /**
- * Normalizes SEO metadata from Yoast/RankMath or raw WP post fallback
+ * Normalizes SEO metadata from ACF custom fields, Yoast/RankMath, or raw WP post fallback
  */
 export function normalizeWpSeo(rawPost: RawWpBasePost, canonicalUrlFallback?: string): SEO {
+  const acf = rawPost.acf || {};
   const yoast = rawPost.yoast_head_json;
   const rankMath = rawPost.rank_math_seo;
 
   const fallbackTitle = sanitizePlainText(rawPost.title?.rendered) + ' | MatricsMania Growth Systems';
   const fallbackExcerpt = sanitizePlainText(rawPost.excerpt?.rendered) || 'Growth engineering and technical search systems for B2B enterprises.';
-  const canonicalUrl = yoast?.canonical || rankMath?.canonical || canonicalUrlFallback || rawPost.link || `https://matricsmania.com/${rawPost.slug}/`;
 
+  // Map acf.metatitle -> seoTitle / metaTitle
+  const title = acf.metatitle || yoast?.title || rankMath?.title || fallbackTitle;
+
+  // Map acf.metadescription -> metaDescription
+  const metaDescription = acf.metadescription || yoast?.description || rankMath?.description || fallbackExcerpt;
+
+  // Map acf.canonicalurl -> canonicalUrl
+  const canonicalUrl = acf.canonicalurl || yoast?.canonical || rankMath?.canonical || canonicalUrlFallback || rawPost.link || `https://matricsmania.com/${rawPost.slug}/`;
+
+  // Map acf.ogtitle -> ogTitle
+  const ogTitle = acf.ogtitle || yoast?.og_title || rankMath?.openGraph?.title || title;
+
+  // Map acf.ogdescription -> ogDescription
+  const ogDescription = acf.ogdescription || yoast?.og_description || rankMath?.openGraph?.description || metaDescription;
+
+  // Map acf.ogimage -> ogImage
   const ogImageUrl =
+    acf.ogimage ||
     yoast?.og_image?.[0]?.url ||
     rankMath?.openGraph?.images?.[0]?.url ||
     rawPost._embedded?.['wp:featuredmedia']?.[0]?.source_url ||
     'https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1200';
 
   const twitterImageUrl =
+    acf.ogimage ||
     yoast?.twitter_image ||
     rankMath?.twitter?.image ||
     ogImageUrl;
 
-  const robotsIndex = yoast?.robots?.index !== 'noindex' && rankMath?.robots?.index !== false;
-  const robotsFollow = yoast?.robots?.follow !== 'nofollow' && rankMath?.robots?.follow !== false;
+  // Map acf.robotsindex -> robotsIndex
+  let robotsIndex = true;
+  if (acf.robotsindex !== undefined && acf.robotsindex !== null) {
+    if (typeof acf.robotsindex === 'boolean') {
+      robotsIndex = acf.robotsindex;
+    } else if (typeof acf.robotsindex === 'string') {
+      robotsIndex = acf.robotsindex !== 'noindex' && acf.robotsindex !== '0' && acf.robotsindex !== 'false';
+    }
+  } else {
+    robotsIndex = yoast?.robots?.index !== 'noindex' && rankMath?.robots?.index !== false;
+  }
+
+  // Map acf.robotsfollow -> robotsFollow
+  let robotsFollow = true;
+  if (acf.robotsfollow !== undefined && acf.robotsfollow !== null) {
+    if (typeof acf.robotsfollow === 'boolean') {
+      robotsFollow = acf.robotsfollow;
+    } else if (typeof acf.robotsfollow === 'string') {
+      robotsFollow = acf.robotsfollow !== 'nofollow' && acf.robotsfollow !== '0' && acf.robotsfollow !== 'false';
+    }
+  } else {
+    robotsFollow = yoast?.robots?.follow !== 'nofollow' && rankMath?.robots?.follow !== false;
+  }
 
   return {
-    seoTitle: yoast?.title || rankMath?.title || fallbackTitle,
-    metaDescription: yoast?.description || rankMath?.description || fallbackExcerpt,
+    seoTitle: title,
+    metaDescription,
     canonicalUrl,
     robotsIndex,
     robotsFollow,
-    ogTitle: yoast?.og_title || rankMath?.openGraph?.title || fallbackTitle,
-    ogDescription: yoast?.og_description || rankMath?.openGraph?.description || fallbackExcerpt,
+    ogTitle,
+    ogDescription,
     ogImage: ogImageUrl,
-    twitterTitle: yoast?.twitter_title || rankMath?.twitter?.title || fallbackTitle,
-    twitterDescription: yoast?.twitter_description || rankMath?.twitter?.description || fallbackExcerpt,
+    twitterTitle: ogTitle,
+    twitterDescription: ogDescription,
     twitterImage: twitterImageUrl,
     robotsDirectives: {
       index: robotsIndex,
@@ -140,8 +179,8 @@ export function normalizeWpSeo(rawPost: RawWpBasePost, canonicalUrlFallback?: st
       maxSnippet: yoast?.robots?.['max-snippet'] ? parseInt(yoast.robots['max-snippet'], 10) : undefined,
     },
     openGraph: {
-      title: yoast?.og_title || fallbackTitle,
-      description: yoast?.og_description || fallbackExcerpt,
+      title: ogTitle,
+      description: ogDescription,
       url: canonicalUrl,
       type: (yoast?.og_type as any) || 'website',
       siteName: yoast?.og_site_name || 'MatricsMania',
@@ -150,8 +189,8 @@ export function normalizeWpSeo(rawPost: RawWpBasePost, canonicalUrlFallback?: st
     },
     twitter: {
       card: yoast?.twitter_card || 'summary_large_image',
-      title: yoast?.twitter_title || fallbackTitle,
-      description: yoast?.twitter_description || fallbackExcerpt,
+      title: ogTitle,
+      description: ogDescription,
       image: twitterImageUrl,
     },
   };
@@ -228,9 +267,15 @@ export function normalizeWpService(raw: RawWpServicePost): Service {
   const embeddedMedia = raw._embedded?.['wp:featuredmedia']?.[0];
   const featuredImage = normalizeWpMedia(embeddedMedia);
 
-  const industries = (acf.related_industries || []).map((i) => normalizeEntityRef(i, 'Industry'));
-  const insights = (acf.related_insights || []).map((i) => normalizeEntityRef(i, 'Insight'));
-  const caseStudies = (acf.related_case_studies || []).map((i) => normalizeEntityRef(i, 'Case Study'));
+  const industries = Array.isArray(acf.related_industries)
+    ? acf.related_industries.map((i) => normalizeEntityRef(i, 'Industry'))
+    : [];
+  const insights = Array.isArray(acf.related_insights)
+    ? acf.related_insights.map((i) => normalizeEntityRef(i, 'Insight'))
+    : [];
+  const caseStudies = Array.isArray(acf.related_case_studies)
+    ? acf.related_case_studies.map((i) => normalizeEntityRef(i, 'Case Study'))
+    : [];
 
   const relationships: ServiceRelationships = {
     industries,
@@ -251,7 +296,7 @@ export function normalizeWpService(raw: RawWpServicePost): Service {
     seo: normalizeWpSeo(raw, `https://matricsmania.com/services/${raw.slug}/`),
     relationships,
 
-    serviceCode: acf.service_code || `SRV-${raw.slug.toUpperCase().slice(0, 4)}`,
+    serviceCode: acf.servicecode || acf.service_code || `SRV-${raw.slug.toUpperCase().slice(0, 4)}`,
     category: (acf.category as any) || 'Search & Organic Architecture',
     categorySlug: acf.category_slug || 'search-architecture',
     iconName: acf.icon_name || 'Terminal',

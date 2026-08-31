@@ -32,6 +32,7 @@ import { Insight } from '../models/entities/insight';
 import { CaseStudy } from '../models/entities/caseStudy';
 import { Page } from '../models/entities/page';
 import { SEO } from '../models/seo';
+import { WordPressProvider } from '../providers/WordPressProvider';
 
 // Test Assertion Utilities
 class ContractAssertionError extends Error {
@@ -119,6 +120,41 @@ const mockRawServicePost: RawWpServicePost = {
     deliverables_summary: ['Crawl Budget Audit', 'Core Web Vitals Engineering'],
     related_industries: [201],
     related_case_studies: [301],
+  },
+};
+
+// Raw WordPress payload directly matching live ACF REST field format
+const mockLiveWpServicePost: RawWpServicePost = {
+  id: 102,
+  date: '2026-02-01T12:00:00',
+  date_gmt: '2026-02-01T12:00:00',
+  modified: '2026-02-05T14:00:00',
+  modified_gmt: '2026-02-05T14:00:00',
+  slug: 'paid-media-architecture',
+  status: 'publish',
+  type: 'services',
+  link: 'https://cms.matricsmania.com/services/paid-media-architecture/',
+  title: { rendered: 'Paid Media &amp; Demand Architecture' },
+  content: { rendered: '<p>High-ACV B2B performance marketing and demand generation.</p>' },
+  excerpt: { rendered: '<p>High-ACV performance marketing.</p>' },
+  author: 1,
+  featured_media: 503,
+  comment_status: 'closed',
+  ping_status: 'closed',
+  template: '',
+  meta: {},
+  acf: {
+    servicecode: 'SRV-PAID-01',
+    category: 'Paid Media & Demand Systems',
+    metatitle: 'B2B Paid Media Architecture | MatricsMania',
+    metadescription: 'Engineered Paid Media and Demand Systems for Enterprise B2B.',
+    canonicalurl: 'https://matricsmania.com/services/paid-media-architecture/',
+    ogtitle: 'B2B Paid Media Systems',
+    ogdescription: 'Engineered Paid Media and Demand Systems.',
+    ogimage: 'https://matricsmania.com/images/og-paid-media.png',
+    robotsindex: true,
+    robotsfollow: true,
+    // Relationships absent to test safe default [] without data fabrication
   },
 };
 
@@ -262,9 +298,10 @@ export function runCmsContractTest(): { success: boolean; testsRun: number; fail
   console.log('RUNNING CMS CONTRACT VALIDATION TEST SUITE');
   console.log('------------------------------------------------------------');
 
-  // 1. SERVICE CONTRACT TEST
+  // 1. SERVICE CONTRACT TEST (Live ACF & Fallback Validation)
   try {
     testsRun++;
+    // Test 1A: Fallback / Yoast Service Post
     const service: Service = normalizeWpService(mockRawServicePost);
     assertDefined('Service', 'id', service.id);
     assertString('Service', 'slug', service.slug, false);
@@ -278,6 +315,64 @@ export function runCmsContractTest(): { success: boolean; testsRun: number; fail
     assertString('Service', 'serviceCode', service.serviceCode, false);
     assertString('Service', 'category', service.category, false);
     validateSeoContract('Service', service.seo);
+
+    // Test 1B: Live ACF Lowercase REST Fields & Safe Empty Relationships
+    const liveService: Service = normalizeWpService(mockLiveWpServicePost);
+    assertDefined('LiveService', 'id', liveService.id);
+    assertString('LiveService', 'serviceCode', liveService.serviceCode, false);
+    if (liveService.serviceCode !== 'SRV-PAID-01') {
+      throw new ContractAssertionError('LiveService', 'serviceCode', 'SRV-PAID-01', liveService.serviceCode);
+    }
+    if (liveService.category !== 'Paid Media & Demand Systems') {
+      throw new ContractAssertionError('LiveService', 'category', 'Paid Media & Demand Systems', liveService.category);
+    }
+    if (liveService.seo.seoTitle !== 'B2B Paid Media Architecture | MatricsMania') {
+      throw new ContractAssertionError('LiveService', 'seo.seoTitle', 'B2B Paid Media Architecture | MatricsMania', liveService.seo.seoTitle);
+    }
+    if (liveService.seo.metaDescription !== 'Engineered Paid Media and Demand Systems for Enterprise B2B.') {
+      throw new ContractAssertionError('LiveService', 'seo.metaDescription', 'Engineered Paid Media and Demand Systems for Enterprise B2B.', liveService.seo.metaDescription);
+    }
+    if (liveService.seo.canonicalUrl !== 'https://matricsmania.com/services/paid-media-architecture/') {
+      throw new ContractAssertionError('LiveService', 'seo.canonicalUrl', 'https://matricsmania.com/services/paid-media-architecture/', liveService.seo.canonicalUrl);
+    }
+    if (liveService.seo.ogTitle !== 'B2B Paid Media Systems') {
+      throw new ContractAssertionError('LiveService', 'seo.ogTitle', 'B2B Paid Media Systems', liveService.seo.ogTitle);
+    }
+    if (liveService.seo.ogDescription !== 'Engineered Paid Media and Demand Systems.') {
+      throw new ContractAssertionError('LiveService', 'seo.ogDescription', 'Engineered Paid Media and Demand Systems.', liveService.seo.ogDescription);
+    }
+    if (liveService.seo.ogImage !== 'https://matricsmania.com/images/og-paid-media.png') {
+      throw new ContractAssertionError('LiveService', 'seo.ogImage', 'https://matricsmania.com/images/og-paid-media.png', liveService.seo.ogImage);
+    }
+    if (liveService.seo.robotsIndex !== true || liveService.seo.robotsFollow !== true) {
+      throw new ContractAssertionError('LiveService', 'seo.robotsIndex/Follow', 'true', { index: liveService.seo.robotsIndex, follow: liveService.seo.robotsFollow });
+    }
+    if (liveService.relationships.industries.length !== 0) {
+      throw new ContractAssertionError('LiveService', 'relationships.industries', 'empty array []', liveService.relationships.industries);
+    }
+    if (liveService.relationships.insights.length !== 0) {
+      throw new ContractAssertionError('LiveService', 'relationships.insights', 'empty array []', liveService.relationships.insights);
+    }
+    if (liveService.relationships.caseStudies.length !== 0) {
+      throw new ContractAssertionError('LiveService', 'relationships.caseStudies', 'empty array []', liveService.relationships.caseStudies);
+    }
+    validateSeoContract('LiveService', liveService.seo);
+
+    // Test 1C: WordPressProvider Service Boundary & Fallback Verification
+    const wpProvider = new WordPressProvider('https://cms.matricsmania.com');
+    if (wpProvider.getBaseUrl() !== 'https://cms.matricsmania.com') {
+      throw new ContractAssertionError('WordPressProvider', 'baseUrl', 'https://cms.matricsmania.com', wpProvider.getBaseUrl());
+    }
+    const defaultServices = wpProvider.getAllServices();
+    if (!Array.isArray(defaultServices) || defaultServices.length === 0) {
+      throw new ContractAssertionError('WordPressProvider', 'getAllServices (fallback)', 'non-empty array', defaultServices);
+    }
+    wpProvider.setServicesCache([liveService]);
+    const cachedService = wpProvider.getServiceBySlug('paid-media-architecture');
+    if (!cachedService || cachedService.serviceCode !== 'SRV-PAID-01') {
+      throw new ContractAssertionError('WordPressProvider', 'getServiceBySlug', 'SRV-PAID-01', cachedService?.serviceCode);
+    }
+
     console.log('✓ Service CPT Contract Passed');
   } catch (err: any) {
     failures.push(err.message || String(err));

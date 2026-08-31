@@ -169,8 +169,20 @@ export interface RawWpBasePost {
 export interface RawWpServicePost extends RawWpBasePost {
   type: 'services';
   acf?: {
-    service_code?: string;
+    // Live ACF REST field names used by WordPress Service payload
+    servicecode?: string;
     category?: string;
+    metatitle?: string;
+    metadescription?: string;
+    canonicalurl?: string;
+    ogtitle?: string;
+    ogdescription?: string;
+    ogimage?: string;
+    robotsindex?: boolean | string;
+    robotsfollow?: boolean | string;
+
+    // Backward-compatible fallback fields & extended metadata
+    service_code?: string;
     category_slug?: string;
     icon_name?: string;
     short_description?: string;

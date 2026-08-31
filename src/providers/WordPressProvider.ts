@@ -55,14 +55,29 @@ import { mockDataProvider } from './MockDataProvider';
 export class WordPressProvider implements ContentProvider {
   private baseUrl: string;
   private fallbackProvider: ContentProvider;
+  private servicesCache: Service[] | null = null;
+  private serviceMap: Map<string, Service> = new Map();
 
   constructor(baseUrl?: string) {
-    this.baseUrl = (baseUrl || process.env.NEXT_PUBLIC_WORDPRESS_URL || process.env.WORDPRESS_URL || '').replace(/\/$/, '');
+    this.baseUrl = (
+      baseUrl ||
+      (typeof process !== 'undefined' ? (process.env.NEXT_PUBLIC_WORDPRESS_URL || process.env.WORDPRESS_URL) : '') ||
+      'https://cms.matricsmania.com'
+    ).replace(/\/$/, '');
     this.fallbackProvider = mockDataProvider;
   }
 
-  private isConfigured(): boolean {
+  public getBaseUrl(): string {
+    return this.baseUrl;
+  }
+
+  public isConfigured(): boolean {
     return Boolean(this.baseUrl && this.baseUrl.startsWith('http'));
+  }
+
+  public setServicesCache(services: Service[]): void {
+    this.servicesCache = services;
+    services.forEach((s) => this.serviceMap.set(s.slug, s));
   }
 
   // --- PAGES ---
@@ -74,16 +89,22 @@ export class WordPressProvider implements ContentProvider {
     return this.fallbackProvider.getAllPages();
   }
 
-  // --- SERVICES ---
+  // --- SERVICES (Live WordPress Integration with Mock Fallback) ---
   getServiceBySlug(slug: string): Service | null {
+    if (this.serviceMap.has(slug)) {
+      return this.serviceMap.get(slug)!;
+    }
     return this.fallbackProvider.getServiceBySlug(slug);
   }
 
   getAllServices(): Service[] {
+    if (this.servicesCache && this.servicesCache.length > 0) {
+      return this.servicesCache;
+    }
     return this.fallbackProvider.getAllServices();
   }
 
-  // --- INDUSTRIES ---
+  // --- INDUSTRIES (Deferred until Service E2E verified) ---
   getIndustryBySlug(slug: string): Industry | null {
     return this.fallbackProvider.getIndustryBySlug(slug);
   }
@@ -92,7 +113,7 @@ export class WordPressProvider implements ContentProvider {
     return this.fallbackProvider.getAllIndustries();
   }
 
-  // --- LOCATIONS ---
+  // --- LOCATIONS (Deferred until Service E2E verified) ---
   getLocationBySlug(slug: string): Location | null {
     return this.fallbackProvider.getLocationBySlug(slug);
   }
@@ -101,7 +122,7 @@ export class WordPressProvider implements ContentProvider {
     return this.fallbackProvider.getAllLocations();
   }
 
-  // --- CASE STUDIES ---
+  // --- CASE STUDIES (Deferred until Service E2E verified) ---
   getCaseStudyBySlug(slug: string): CaseStudy | null {
     return this.fallbackProvider.getCaseStudyBySlug(slug);
   }
@@ -110,7 +131,7 @@ export class WordPressProvider implements ContentProvider {
     return this.fallbackProvider.getAllCaseStudies();
   }
 
-  // --- INSIGHTS ---
+  // --- INSIGHTS (Deferred until Service E2E verified) ---
   getInsightBySlug(slug: string): Insight | null {
     return this.fallbackProvider.getInsightBySlug(slug);
   }
@@ -163,7 +184,20 @@ export class WordPressProvider implements ContentProvider {
 
   // --- SEARCH ---
   searchContent(query: string) {
-    return this.fallbackProvider.searchContent(query);
+    const q = query.toLowerCase();
+    const activeServices = this.getAllServices().filter(
+      (s) =>
+        s.title.toLowerCase().includes(q) ||
+        s.shortDescription?.toLowerCase().includes(q) ||
+        s.serviceCode?.toLowerCase().includes(q)
+    );
+    const mockResults = this.fallbackProvider.searchContent(query);
+    return {
+      services: activeServices.length > 0 ? activeServices : mockResults.services,
+      industries: mockResults.industries,
+      insights: mockResults.insights,
+      caseStudies: mockResults.caseStudies,
+    };
   }
 
   /**
@@ -172,8 +206,12 @@ export class WordPressProvider implements ContentProvider {
   async fetchFromWordPress<T>(endpoint: string): Promise<T | null> {
     if (!this.isConfigured()) return null;
     try {
-      const res = await fetch(`${this.baseUrl}/wp-json/wp/v2/${endpoint}`, {
-        headers: { 'Content-Type': 'application/json' },
+      const cleanEndpoint = endpoint.replace(/^\//, '');
+      const res = await fetch(`${this.baseUrl}/wp-json/wp/v2/${cleanEndpoint}`, {
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
         next: { revalidate: 3600 },
       });
       if (!res.ok) return null;
@@ -183,44 +221,49 @@ export class WordPressProvider implements ContentProvider {
     }
   }
 
+  /**
+   * Async Service retrieval from live WordPress REST API.
+   * Endpoint: /wp/v2/services?slug=<slug>&_embed=true
+   */
   async asyncGetServiceBySlug(slug: string): Promise<Service | null> {
-    const raw = await this.fetchFromWordPress<RawWpServicePost[]>(`services?slug=${encodeURIComponent(slug)}&_embed=true`);
-    if (raw && raw[0]) {
-      return normalizeWpService(raw[0]);
+    if (!slug) return null;
+
+    if (this.isConfigured()) {
+      try {
+        const raw = await this.fetchFromWordPress<RawWpServicePost[]>(
+          `services?slug=${encodeURIComponent(slug)}&_embed=true`
+        );
+        if (raw && Array.isArray(raw) && raw[0]) {
+          const service = normalizeWpService(raw[0]);
+          this.serviceMap.set(service.slug, service);
+          return service;
+        }
+      } catch {
+        // Graceful fallback to mock data provider
+      }
     }
     return this.getServiceBySlug(slug);
   }
 
-  async asyncGetIndustryBySlug(slug: string): Promise<Industry | null> {
-    const raw = await this.fetchFromWordPress<RawWpIndustryPost[]>(`industries?slug=${encodeURIComponent(slug)}&_embed=true`);
-    if (raw && raw[0]) {
-      return normalizeWpIndustry(raw[0]);
+  /**
+   * Async retrieval of all services from live WordPress REST API.
+   * Endpoint: /wp/v2/services?_embed=true&per_page=100
+   */
+  async asyncGetAllServices(): Promise<Service[]> {
+    if (this.isConfigured()) {
+      try {
+        const raw = await this.fetchFromWordPress<RawWpServicePost[]>('services?_embed=true&per_page=100');
+        if (raw && Array.isArray(raw) && raw.length > 0) {
+          const services = raw.map((post) => normalizeWpService(post));
+          this.servicesCache = services;
+          services.forEach((s) => this.serviceMap.set(s.slug, s));
+          return services;
+        }
+      } catch {
+        // Graceful fallback to mock data provider
+      }
     }
-    return this.getIndustryBySlug(slug);
-  }
-
-  async asyncGetLocationBySlug(slug: string): Promise<Location | null> {
-    const raw = await this.fetchFromWordPress<RawWpLocationPost[]>(`locations?slug=${encodeURIComponent(slug)}&_embed=true`);
-    if (raw && raw[0]) {
-      return normalizeWpLocation(raw[0]);
-    }
-    return this.getLocationBySlug(slug);
-  }
-
-  async asyncGetInsightBySlug(slug: string): Promise<Insight | null> {
-    const raw = await this.fetchFromWordPress<RawWpInsightPost[]>(`posts?slug=${encodeURIComponent(slug)}&_embed=true`);
-    if (raw && raw[0]) {
-      return normalizeWpInsight(raw[0]);
-    }
-    return this.getInsightBySlug(slug);
-  }
-
-  async asyncGetCaseStudyBySlug(slug: string): Promise<CaseStudy | null> {
-    const raw = await this.fetchFromWordPress<RawWpCaseStudyPost[]>(`case-studies?slug=${encodeURIComponent(slug)}&_embed=true`);
-    if (raw && raw[0]) {
-      return normalizeWpCaseStudy(raw[0]);
-    }
-    return this.getCaseStudyBySlug(slug);
+    return this.getAllServices();
   }
 }
 

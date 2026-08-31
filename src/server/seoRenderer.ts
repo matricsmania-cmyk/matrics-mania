@@ -1,5 +1,5 @@
 import { resolveRoute, RouteMatch } from '../routes/routes';
-import { mockDataProvider } from '../providers/MockDataProvider';
+import { wordPressProvider } from '../providers/WordPressProvider';
 import { ContentProvider } from '../providers/ContentProvider';
 import { resolveSeoMetadata, getStaticRouteSeo, SEOResolved, PUBLIC_DOMAIN } from '../utils/seo';
 import { generateCompleteSchemaGraph } from '../utils/structuredData';
@@ -34,7 +34,7 @@ export function get404SeoMetadata(requestedPath: string): SEOResolved {
  */
 export function resolveServerRoute(
   requestUrl: string,
-  provider: ContentProvider = mockDataProvider
+  provider: ContentProvider = wordPressProvider
 ): ServerRouteResolution {
   const routeMatch = resolveRoute(requestUrl);
   const routeId = routeMatch.routeId;
@@ -364,7 +364,7 @@ export function resolveServerSeoForUrl(requestUrl: string): {
 export function injectServerSeoIntoHtml(
   htmlTemplate: string,
   requestUrl: string,
-  provider: ContentProvider = mockDataProvider
+  provider: ContentProvider = wordPressProvider
 ): { html: string; statusCode: 200 | 404 | 500; isNotFound: boolean } {
   const resolution = resolveServerRoute(requestUrl, provider);
   const { seo, schema, statusCode, isNotFound } = resolution;
