@@ -185,6 +185,41 @@ const mockRawIndustryPost: RawWpIndustryPost = {
   },
 };
 
+// Raw WordPress payload directly matching live WordPress ID:38 Healthcare Industry
+const mockLiveWpIndustryPost: RawWpIndustryPost = {
+  id: 38,
+  date: '2026-02-10T10:00:00',
+  date_gmt: '2026-02-10T10:00:00',
+  modified: '2026-02-15T15:30:00',
+  modified_gmt: '2026-02-15T15:30:00',
+  slug: 'healthcare',
+  status: 'publish',
+  type: 'industries',
+  link: 'https://cms.matricsmania.com/industries/healthcare/',
+  title: { rendered: 'Healthcare' },
+  content: { rendered: '<p>HIPAA-compliant patient acquisition and clinical search architecture.</p>' },
+  excerpt: { rendered: '<p>Scaling clinical patient volume.</p>' },
+  author: 1,
+  featured_media: 508,
+  comment_status: 'closed',
+  ping_status: 'closed',
+  template: '',
+  meta: {},
+  acf: {
+    industrycode: 'IND-HLTH-01',
+    tagline: 'HIPAA-Compliant Patient Acquisition & Medical E-E-A-T',
+    marketsummary: 'Scaling clinical patient volume while maintaining absolute compliance with medical ethics boards and patient privacy laws.',
+    metatitle: 'Healthcare & Clinical Growth Systems | MatricsMania',
+    metadescription: 'Medical board verified SEO, clinical trial patient recruitment, and HIPAA-compliant patient intake systems.',
+    canonicalurl: 'https://cms.matricsmania.com/industries/healthcare/',
+    ogtitle: 'Healthcare & Clinical Growth Systems | MatricsMania',
+    ogdescription: 'Patient acquisition and medical search architecture.',
+    ogimage: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=1200',
+    robotsindex: true,
+    robotsfollow: true,
+  },
+};
+
 const mockRawLocationPost: RawWpLocationPost = {
   id: 401,
   date: '2026-01-05T08:00:00',
@@ -382,6 +417,7 @@ export function runCmsContractTest(): { success: boolean; testsRun: number; fail
   // 2. INDUSTRY CONTRACT TEST
   try {
     testsRun++;
+    // Test 2A: Fallback Industry Post
     const industry: Industry = normalizeWpIndustry(mockRawIndustryPost);
     assertDefined('Industry', 'id', industry.id);
     assertString('Industry', 'slug', industry.slug, false);
@@ -392,6 +428,64 @@ export function runCmsContractTest(): { success: boolean; testsRun: number; fail
     assertString('Industry', 'tagline', industry.tagline);
     assertString('Industry', 'marketSummary', industry.marketSummary);
     validateSeoContract('Industry', industry.seo);
+
+    // Test 2B: Live ACF Lowercase REST Fields & Canonical Domain Sanitization
+    const liveIndustry: Industry = normalizeWpIndustry(mockLiveWpIndustryPost);
+    assertDefined('LiveIndustry', 'id', liveIndustry.id);
+    if (liveIndustry.id !== 38) {
+      throw new ContractAssertionError('LiveIndustry', 'id', '38', liveIndustry.id);
+    }
+    if (liveIndustry.slug !== 'healthcare') {
+      throw new ContractAssertionError('LiveIndustry', 'slug', 'healthcare', liveIndustry.slug);
+    }
+    if (liveIndustry.title !== 'Healthcare') {
+      throw new ContractAssertionError('LiveIndustry', 'title', 'Healthcare', liveIndustry.title);
+    }
+    if (liveIndustry.industryCode !== 'IND-HLTH-01') {
+      throw new ContractAssertionError('LiveIndustry', 'industryCode', 'IND-HLTH-01', liveIndustry.industryCode);
+    }
+    if (liveIndustry.tagline !== 'HIPAA-Compliant Patient Acquisition & Medical E-E-A-T') {
+      throw new ContractAssertionError('LiveIndustry', 'tagline', 'HIPAA-Compliant Patient Acquisition & Medical E-E-A-T', liveIndustry.tagline);
+    }
+    if (!liveIndustry.marketSummary.includes('clinical patient volume')) {
+      throw new ContractAssertionError('LiveIndustry', 'marketSummary', 'clinical patient volume...', liveIndustry.marketSummary);
+    }
+    if (liveIndustry.seo.seoTitle !== 'Healthcare & Clinical Growth Systems | MatricsMania') {
+      throw new ContractAssertionError('LiveIndustry', 'seo.seoTitle', 'Healthcare & Clinical Growth Systems | MatricsMania', liveIndustry.seo.seoTitle);
+    }
+    if (!liveIndustry.seo.metaDescription.includes('Medical board verified SEO')) {
+      throw new ContractAssertionError('LiveIndustry', 'seo.metaDescription', 'Medical board verified SEO...', liveIndustry.seo.metaDescription);
+    }
+    // Must normalize CMS canonical URL to public domain
+    if (liveIndustry.seo.canonicalUrl !== 'https://matricsmania.com/industries/healthcare/') {
+      throw new ContractAssertionError('LiveIndustry', 'seo.canonicalUrl', 'https://matricsmania.com/industries/healthcare/', liveIndustry.seo.canonicalUrl);
+    }
+    if (liveIndustry.seo.robotsIndex !== true || liveIndustry.seo.robotsFollow !== true) {
+      throw new ContractAssertionError('LiveIndustry', 'seo.robotsIndex/Follow', 'true', { index: liveIndustry.seo.robotsIndex, follow: liveIndustry.seo.robotsFollow });
+    }
+    if (liveIndustry.relationships.services.length !== 0) {
+      throw new ContractAssertionError('LiveIndustry', 'relationships.services', 'empty array []', liveIndustry.relationships.services);
+    }
+    if (liveIndustry.relationships.insights.length !== 0) {
+      throw new ContractAssertionError('LiveIndustry', 'relationships.insights', 'empty array []', liveIndustry.relationships.insights);
+    }
+    if (liveIndustry.relationships.caseStudies.length !== 0) {
+      throw new ContractAssertionError('LiveIndustry', 'relationships.caseStudies', 'empty array []', liveIndustry.relationships.caseStudies);
+    }
+    validateSeoContract('LiveIndustry', liveIndustry.seo);
+
+    // Test 2C: WordPressProvider Industry Boundary & Fallback Verification
+    const wpProvider = new WordPressProvider('https://cms.matricsmania.com');
+    const defaultIndustries = wpProvider.getAllIndustries();
+    if (!Array.isArray(defaultIndustries) || defaultIndustries.length === 0) {
+      throw new ContractAssertionError('WordPressProvider', 'getAllIndustries (fallback)', 'non-empty array', defaultIndustries);
+    }
+    wpProvider.setIndustriesCache([liveIndustry]);
+    const cachedIndustry = wpProvider.getIndustryBySlug('healthcare');
+    if (!cachedIndustry || cachedIndustry.industryCode !== 'IND-HLTH-01') {
+      throw new ContractAssertionError('WordPressProvider', 'getIndustryBySlug', 'IND-HLTH-01', cachedIndustry?.industryCode);
+    }
+
     console.log('✓ Industry CPT Contract Passed');
   } catch (err: any) {
     failures.push(err.message || String(err));

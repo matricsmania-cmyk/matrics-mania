@@ -209,8 +209,21 @@ export interface RawWpServicePost extends RawWpBasePost {
 export interface RawWpIndustryPost extends RawWpBasePost {
   type: 'industries';
   acf?: {
-    industry_code?: string;
+    // Live ACF REST field names used by WordPress Industry payload
+    industrycode?: string;
     tagline?: string;
+    marketsummary?: string;
+    metatitle?: string;
+    metadescription?: string;
+    canonicalurl?: string;
+    ogtitle?: string;
+    ogdescription?: string;
+    ogimage?: string;
+    robotsindex?: boolean | string;
+    robotsfollow?: boolean | string;
+
+    // Backward-compatible fallback fields
+    industry_code?: string;
     market_summary?: string;
     challenges?: { title: string; description: string; impact_level: string; typical_cac_waste: string }[];
     benchmarks?: { metric: string; industry_average: string; matrics_mania_engineered: string; delta_percent: string }[];

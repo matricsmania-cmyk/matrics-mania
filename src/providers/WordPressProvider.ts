@@ -57,6 +57,8 @@ export class WordPressProvider implements ContentProvider {
   private fallbackProvider: ContentProvider;
   private servicesCache: Service[] | null = null;
   private serviceMap: Map<string, Service> = new Map();
+  private industriesCache: Industry[] | null = null;
+  private industryMap: Map<string, Industry> = new Map();
 
   constructor(baseUrl?: string) {
     this.baseUrl = (
@@ -78,6 +80,11 @@ export class WordPressProvider implements ContentProvider {
   public setServicesCache(services: Service[]): void {
     this.servicesCache = services;
     services.forEach((s) => this.serviceMap.set(s.slug, s));
+  }
+
+  public setIndustriesCache(industries: Industry[]): void {
+    this.industriesCache = industries;
+    industries.forEach((i) => this.industryMap.set(i.slug, i));
   }
 
   // --- PAGES ---
@@ -104,12 +111,18 @@ export class WordPressProvider implements ContentProvider {
     return this.fallbackProvider.getAllServices();
   }
 
-  // --- INDUSTRIES (Deferred until Service E2E verified) ---
+  // --- INDUSTRIES (Live WordPress Integration with Mock Fallback) ---
   getIndustryBySlug(slug: string): Industry | null {
+    if (this.industryMap.has(slug)) {
+      return this.industryMap.get(slug)!;
+    }
     return this.fallbackProvider.getIndustryBySlug(slug);
   }
 
   getAllIndustries(): Industry[] {
+    if (this.industriesCache && this.industriesCache.length > 0) {
+      return this.industriesCache;
+    }
     return this.fallbackProvider.getAllIndustries();
   }
 
@@ -264,6 +277,51 @@ export class WordPressProvider implements ContentProvider {
       }
     }
     return this.getAllServices();
+  }
+
+  /**
+   * Async Industry retrieval from live WordPress REST API.
+   * Endpoint: /wp/v2/industries?slug=<slug>&_embed=true
+   */
+  async asyncGetIndustryBySlug(slug: string): Promise<Industry | null> {
+    if (!slug) return null;
+
+    if (this.isConfigured()) {
+      try {
+        const raw = await this.fetchFromWordPress<RawWpIndustryPost[]>(
+          `industries?slug=${encodeURIComponent(slug)}&_embed=true`
+        );
+        if (raw && Array.isArray(raw) && raw[0]) {
+          const industry = normalizeWpIndustry(raw[0]);
+          this.industryMap.set(industry.slug, industry);
+          return industry;
+        }
+      } catch {
+        // Graceful fallback to mock data provider
+      }
+    }
+    return this.getIndustryBySlug(slug);
+  }
+
+  /**
+   * Async retrieval of all industries from live WordPress REST API.
+   * Endpoint: /wp/v2/industries?_embed=true&per_page=100
+   */
+  async asyncGetAllIndustries(): Promise<Industry[]> {
+    if (this.isConfigured()) {
+      try {
+        const raw = await this.fetchFromWordPress<RawWpIndustryPost[]>('industries?_embed=true&per_page=100');
+        if (raw && Array.isArray(raw) && raw.length > 0) {
+          const industries = raw.map((post) => normalizeWpIndustry(post));
+          this.industriesCache = industries;
+          industries.forEach((i) => this.industryMap.set(i.slug, i));
+          return industries;
+        }
+      } catch {
+        // Graceful fallback to mock data provider
+      }
+    }
+    return this.getAllIndustries();
   }
 }
 

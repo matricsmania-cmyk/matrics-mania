@@ -2,7 +2,7 @@ import React from 'react';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import { IndustryTemplate } from '@/src/templates/IndustryTemplate';
-import { mockDataProvider } from '@/src/providers/MockDataProvider';
+import { wordPressProvider } from '@/src/providers/WordPressProvider';
 import { resolveSeoMetadata } from '@/src/utils/seo';
 import { toNextMetadata } from '@/src/utils/nextMetadata';
 
@@ -10,14 +10,19 @@ interface IndustryPageProps {
   params: Promise<{ slug: string }>;
 }
 
+export const dynamicParams = true;
+
 export async function generateStaticParams() {
-  const industries = mockDataProvider.getAllIndustries();
-  return industries.map((i) => ({ slug: i.slug }));
+  const industries = wordPressProvider.getAllIndustries();
+  const slugSet = new Set(industries.map((i) => i.slug));
+  const knownSlugs = ['healthcare', 'saas', 'real-estate', 'luxury-d2c'];
+  knownSlugs.forEach((s) => slugSet.add(s));
+  return Array.from(slugSet).map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({ params }: IndustryPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const industry = mockDataProvider.getIndustryBySlug(slug);
+  const industry = (await wordPressProvider.asyncGetIndustryBySlug(slug)) || wordPressProvider.getIndustryBySlug(slug);
   if (!industry) {
     return { title: 'Industry Not Found | MatricsMania' };
   }
@@ -30,7 +35,7 @@ export async function generateMetadata({ params }: IndustryPageProps): Promise<M
 
 export default async function IndustryPage({ params }: IndustryPageProps) {
   const { slug } = await params;
-  const industry = mockDataProvider.getIndustryBySlug(slug);
+  const industry = (await wordPressProvider.asyncGetIndustryBySlug(slug)) || wordPressProvider.getIndustryBySlug(slug);
 
   if (!industry) {
     notFound();

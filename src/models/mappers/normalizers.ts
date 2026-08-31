@@ -115,7 +115,17 @@ export function normalizeWpSeo(rawPost: RawWpBasePost, canonicalUrlFallback?: st
   const metaDescription = acf.metadescription || yoast?.description || rankMath?.description || fallbackExcerpt;
 
   // Map acf.canonicalurl -> canonicalUrl
-  const canonicalUrl = acf.canonicalurl || yoast?.canonical || rankMath?.canonical || canonicalUrlFallback || rawPost.link || `https://matricsmania.com/${rawPost.slug}/`;
+  const rawCanonical = acf.canonicalurl || yoast?.canonical || rankMath?.canonical || canonicalUrlFallback || rawPost.link || `https://matricsmania.com/${rawPost.slug}/`;
+  let canonicalUrl = rawCanonical.trim();
+  if (canonicalUrl.includes('#')) canonicalUrl = canonicalUrl.split('#')[0];
+  if (canonicalUrl.includes('?')) canonicalUrl = canonicalUrl.split('?')[0];
+  canonicalUrl = canonicalUrl.replace(/^https?:\/\/cms\.matricsmania\.com/i, 'https://matricsmania.com');
+  if (canonicalUrl.startsWith('/')) {
+    canonicalUrl = `https://matricsmania.com${canonicalUrl}`;
+  }
+  if (!canonicalUrl.endsWith('/')) {
+    canonicalUrl = `${canonicalUrl}/`;
+  }
 
   // Map acf.ogtitle -> ogTitle
   const ogTitle = acf.ogtitle || yoast?.og_title || rankMath?.openGraph?.title || title;
@@ -346,9 +356,15 @@ export function normalizeWpIndustry(raw: RawWpIndustryPost): Industry {
   const embeddedMedia = raw._embedded?.['wp:featuredmedia']?.[0];
   const featuredImage = normalizeWpMedia(embeddedMedia);
 
-  const services = (acf.related_services || []).map((s) => normalizeEntityRef(s, 'Service'));
-  const insights = (acf.related_insights || []).map((i) => normalizeEntityRef(i, 'Insight'));
-  const caseStudies = (acf.related_case_studies || []).map((c) => normalizeEntityRef(c, 'Case Study'));
+  const services = Array.isArray(acf.related_services)
+    ? acf.related_services.map((s) => normalizeEntityRef(s, 'Service'))
+    : [];
+  const insights = Array.isArray(acf.related_insights)
+    ? acf.related_insights.map((i) => normalizeEntityRef(i, 'Insight'))
+    : [];
+  const caseStudies = Array.isArray(acf.related_case_studies)
+    ? acf.related_case_studies.map((c) => normalizeEntityRef(c, 'Case Study'))
+    : [];
 
   const relationships: IndustryRelationships = {
     services,
@@ -360,7 +376,7 @@ export function normalizeWpIndustry(raw: RawWpIndustryPost): Industry {
     id: raw.id,
     slug: raw.slug,
     title: sanitizePlainText(raw.title?.rendered),
-    excerpt: sanitizePlainText(raw.excerpt?.rendered) || acf.market_summary || '',
+    excerpt: sanitizePlainText(raw.excerpt?.rendered) || acf.marketsummary || acf.market_summary || '',
     content: raw.content?.rendered || '',
     featuredImage,
     publishedAt: raw.date,
@@ -369,36 +385,44 @@ export function normalizeWpIndustry(raw: RawWpIndustryPost): Industry {
     seo: normalizeWpSeo(raw, `https://matricsmania.com/industries/${raw.slug}/`),
     relationships,
 
-    industryCode: acf.industry_code || `IND-${raw.slug.toUpperCase().slice(0, 3)}`,
+    industryCode: acf.industrycode || acf.industry_code || `IND-${raw.slug ? raw.slug.toUpperCase().slice(0, 3) : 'GEN'}`,
     tagline: acf.tagline || 'Sector-Specific High-Velocity Growth Architecture',
-    marketSummary: acf.market_summary || sanitizePlainText(raw.excerpt?.rendered),
-    challenges: (acf.challenges || []).map((c) => ({
-      title: c.title,
-      description: c.description,
-      impactLevel: (c.impact_level as any) || 'High',
-      typicalCACWaste: c.typical_cac_waste,
-    })),
-    benchmarks: (acf.benchmarks || []).map((b) => ({
-      metric: b.metric,
-      industryAverage: b.industry_average,
-      matricsManiaEngineered: b.matrics_mania_engineered,
-      deltaPercent: b.delta_percent,
-    })),
-    playbookPillars: (acf.playbook_pillars || []).map((p) => ({
-      phase: p.phase,
-      title: p.title,
-      actionItems: p.action_items || [],
-      expectedImpact: p.expected_impact,
-    })),
-    complianceStandards: acf.compliance_standards || [],
+    marketSummary: acf.marketsummary || acf.market_summary || sanitizePlainText(raw.excerpt?.rendered) || '',
+    challenges: Array.isArray(acf.challenges)
+      ? acf.challenges.map((c) => ({
+          title: c.title,
+          description: c.description,
+          impactLevel: (c.impact_level as any) || 'High',
+          typicalCACWaste: c.typical_cac_waste,
+        }))
+      : [],
+    benchmarks: Array.isArray(acf.benchmarks)
+      ? acf.benchmarks.map((b) => ({
+          metric: b.metric,
+          industryAverage: b.industry_average,
+          matricsManiaEngineered: b.matrics_mania_engineered,
+          deltaPercent: b.delta_percent,
+        }))
+      : [],
+    playbookPillars: Array.isArray(acf.playbook_pillars)
+      ? acf.playbook_pillars.map((p) => ({
+          phase: p.phase,
+          title: p.title,
+          actionItems: p.action_items || [],
+          expectedImpact: p.expected_impact,
+        }))
+      : [],
+    complianceStandards: Array.isArray(acf.compliance_standards) ? acf.compliance_standards : [],
     typicalSalesCycle: acf.typical_sales_cycle || '60-90 Days',
     averageACV: acf.average_acv || '$50k - $250k',
-    faqs: (acf.faqs || []).map((f, idx) => ({
-      id: `faq-ind-${raw.id}-${idx}`,
-      question: f.question,
-      answer: f.answer,
-      category: 'Industry Playbook',
-    })),
+    faqs: Array.isArray(acf.faqs)
+      ? acf.faqs.map((f, idx) => ({
+          id: `faq-ind-${raw.id}-${idx}`,
+          question: f.question,
+          answer: f.answer,
+          category: 'Industry Playbook',
+        }))
+      : [],
   };
 }
 
