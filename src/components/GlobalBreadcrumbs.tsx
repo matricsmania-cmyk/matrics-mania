@@ -119,7 +119,7 @@ export const GlobalBreadcrumbs: React.FC<GlobalBreadcrumbsProps> = ({
                     </a>
                   )}
 
-                  <meta key={`meta-${idx}`} itemProp="position" content={String(idx + 1)} />
+                  <span itemProp="position" className="hidden" aria-hidden="true">{idx + 1}</span>
 
                   {!isLast && (
                     <ChevronRight

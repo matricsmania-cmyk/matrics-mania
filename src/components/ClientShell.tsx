@@ -9,17 +9,18 @@ import { CookieConsent } from './CookieConsent';
 import { BookingModal } from './BookingModal';
 import { ThemeProvider } from '../context/ThemeContext';
 import { ContentContextProvider } from '../providers/ContentContext';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 
 export function ClientShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const router = useRouter();
   const [isBookingOpen, setIsBookingOpen] = useState(false);
   const [bookingPrefill, setBookingPrefill] = useState<any>(undefined);
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
   const handleNavigate = (path: string) => {
-    router.push(path);
+    if (typeof window !== 'undefined') {
+      window.location.href = path;
+    }
   };
 
   const handleOpenBooking = (prefillInfo?: any) => {
@@ -45,10 +46,12 @@ export function ClientShell({ children }: { children: React.ReactNode }) {
       <ContentContextProvider>
         <Navbar
           currentPath={pathname || '/'}
+          onNavigate={handleNavigate}
+          onOpenBooking={handleOpenBooking}
         />
-        <GlobalBreadcrumbs />
+        <GlobalBreadcrumbs currentPath={pathname || '/'} onNavigate={handleNavigate} />
         <main className="flex-grow">{children}</main>
-        <Footer />
+        <Footer onNavigate={handleNavigate} />
         <ToastContainer toasts={toasts} onDismiss={handleDismissToast} />
         <CookieConsent />
         <BookingModal

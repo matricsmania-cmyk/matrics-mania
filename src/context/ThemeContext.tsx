@@ -73,7 +73,15 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 export const useTheme = (): ThemeContextType => {
   const context = useContext(ThemeContext);
   if (!context) {
-    throw new Error('useTheme must be used within a ThemeProvider');
+    return {
+      theme: 'dark',
+      toggleTheme: () => {},
+      setTheme: () => {},
+      palette: THEME_PALETTE,
+      proportions: VISUAL_PROPORTIONS,
+      classes: THEME_CLASSES,
+      colors: COLORS,
+    };
   }
   return context;
 };

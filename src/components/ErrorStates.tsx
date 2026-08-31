@@ -1,7 +1,6 @@
 'use client';
 
 import React, { ErrorInfo, ReactNode, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import {
   AlertTriangle,
   ArrowLeft,
@@ -35,10 +34,12 @@ export const NotFoundState: React.FC<NotFoundStateProps> = ({
   onNavigate: propNavigate,
   onOpenBooking,
 }) => {
-  const router = useRouter();
   const handleNav = (path: string) => {
-    if (propNavigate) propNavigate(path);
-    else router.push(path);
+    if (propNavigate) {
+      propNavigate(path);
+    } else if (typeof window !== 'undefined') {
+      window.location.href = path;
+    }
   };
   const [searchQuery, setSearchQuery] = useState('');
 

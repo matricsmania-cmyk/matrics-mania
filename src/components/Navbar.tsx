@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   Menu,
@@ -39,7 +38,6 @@ export const Navbar: React.FC<NavbarProps> = ({
   onNavigate,
   onOpenBooking,
 }) => {
-  const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileSectionOpen, setMobileSectionOpen] = useState<string | null>(null);
   const [activeDropdown, setActiveDropdown] = useState<DesktopDropdown>(null);
@@ -98,8 +96,8 @@ export const Navbar: React.FC<NavbarProps> = ({
       e.preventDefault();
       if (onNavigate) {
         onNavigate(href);
-      } else {
-        router.push(href);
+      } else if (typeof window !== 'undefined') {
+        window.location.href = href;
       }
       setActiveDropdown(null);
       setMobileMenuOpen(false);

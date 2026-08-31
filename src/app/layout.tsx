@@ -13,9 +13,6 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en-IN" className="dark">
-      <head>
-        <link rel="icon" type="image/webp" href="/matrics-mania-logo-dark.webp" />
-      </head>
       <body className="bg-[#070B14] text-slate-100 font-sans antialiased selection:bg-blue-600 selection:text-white min-h-screen flex flex-col">
         <ClientShell>{children}</ClientShell>
       </body>

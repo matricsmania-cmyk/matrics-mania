@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import {
   ArrowRight,
   ShieldCheck,
@@ -33,7 +32,6 @@ export const Footer: React.FC<FooterProps> = ({
   onOpenBooking,
   onShowToast,
 }) => {
-  const router = useRouter();
   const [intelEmail, setIntelEmail] = useState('');
   const [isSubscribing, setIsSubscribing] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
@@ -43,8 +41,8 @@ export const Footer: React.FC<FooterProps> = ({
       e.preventDefault();
       if (onNavigate) {
         onNavigate(href);
-      } else {
-        router.push(href);
+      } else if (typeof window !== 'undefined') {
+        window.location.href = href;
       }
     }
   };

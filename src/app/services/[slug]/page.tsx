@@ -10,9 +10,31 @@ interface ServicePageProps {
   params: Promise<{ slug: string }>;
 }
 
+export const dynamicParams = true;
+
 export async function generateStaticParams() {
   const services = wordPressProvider.getAllServices();
-  return services.map((s) => ({ slug: s.slug }));
+  const slugSet = new Set(services.map((s) => s.slug));
+  const knownSlugs = [
+    'technical-seo',
+    'seo-growth',
+    'generative-engine-optimization',
+    'semantic-knowledge-graphs',
+    'b2b-seo-strategy',
+    'paid-media-architecture',
+    'performance-marketing',
+    'paid-search-engineering',
+    'server-side-capi',
+    'abm-retargeting',
+    'web-cro-engineering',
+    'cro-revenue-experimentation',
+    'multi-touch-attribution',
+    'growth-audit-blueprint',
+    'content-authority',
+    'growth-intelligence',
+  ];
+  knownSlugs.forEach((s) => slugSet.add(s));
+  return Array.from(slugSet).map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({ params }: ServicePageProps): Promise<Metadata> {

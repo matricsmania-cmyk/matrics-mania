@@ -23,7 +23,7 @@ export const ContentContextProvider: React.FC<{
 export const useContentProvider = (): ContentProvider => {
   const context = useContext(ContentContext);
   if (!context) {
-    throw new Error('useContentProvider must be used within a ContentContextProvider');
+    return wordPressProvider;
   }
   return context.provider;
 };

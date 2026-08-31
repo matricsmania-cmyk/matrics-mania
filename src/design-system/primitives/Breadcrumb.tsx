@@ -76,7 +76,7 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({
                 <span itemProp="name">{item.label}</span>
               )}
 
-              <meta key={`meta-${index}`} itemProp="position" content={String(index + 1)} />
+              <span itemProp="position" className="hidden" aria-hidden="true">{index + 1}</span>
 
               {!isLast && (
                 <span className="text-[#475569] shrink-0" aria-hidden="true">

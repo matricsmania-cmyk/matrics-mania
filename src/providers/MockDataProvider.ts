@@ -299,6 +299,230 @@ export const MOCK_AUTHORS: Author[] = [
 // ----------------------------------------------------------------------------
 export const MOCK_SERVICES: Service[] = [
   {
+    id: 'srv-technical-seo',
+    slug: 'technical-seo',
+    title: 'Technical SEO & Search Architecture',
+    serviceCode: 'SRV-SEO-01',
+    excerpt: 'Algorithmic search architecture, programmatic taxonomy expansion, and Core Web Vitals optimization engineered for dominant organic discovery.',
+    content: `
+      <h2>Technical Organic Infrastructure</h2>
+      <p>Search engines are deterministic retrieval algorithms. We discard traditional spray-and-pray content tactics in favor of structured entity graphs, log-file crawl optimization, and programmatic information architectures.</p>
+      <h3>Core Focus Areas</h3>
+      <ul>
+        <li>Log-file crawl budget reclamation and automated dynamic rendering.</li>
+        <li>Entity-first Schema.org JSON-LD graph generation across entire multi-lingual catalogs.</li>
+        <li>Sub-second Core Web Vitals (LCP &lt; 1.2s, INP &lt; 50ms, CLS 0.00).</li>
+        <li>Bottom-of-funnel (BOFU) comparison and high-intent competitor capture taxonomy.</li>
+      </ul>
+    `,
+    category: 'Search & Organic Architecture',
+    categorySlug: 'search-architecture',
+    iconName: 'Search',
+    shortDescription: 'Algorithmic search architecture, programmatic taxonomy expansion, and Core Web Vitals optimization.',
+    tagline: 'Engineered for Organic Monopoly',
+    positioningStatement: 'Search engines are deterministic retrieval algorithms, not subjective marketing channels. We treat SEO as an infrastructure engineering problem—optimizing crawl paths, structured entity schemas, edge rendering speed, and programmatic taxonomy expansion to systematically capture high-intent commercial demand.',
+    whyTraditionalFails: 'Traditional SEO agencies deliver 60-page PDF audit decks filled with generic checklist recommendations that product and engineering teams ignore. Without production code PRs, log-file validation, or programmatic schema graphs, audits gather dust while crawl waste compounds.',
+    diagnosis: {
+      headline: 'Common Search Architecture Failure Modes',
+      summary: 'Most mature web platforms suffer from severe organic retrieval friction that throttles qualified discovery before a single page rank score is calculated.',
+      symptoms: [
+        {
+          code: 'SYM-01',
+          title: 'Crawl Budget Depletion & Bot Loops',
+          description: 'Search bots waste 60%+ of crawl requests on infinite faceted navigation loops, orphan query parameters, and unindexed internal redirect chains.',
+          impact: 'Critical Indexation Delay',
+          remediation: 'Automated edge-worker URL normalization and dynamic robots.txt parameter trapping.',
+        },
+        {
+          code: 'SYM-02',
+          title: 'Entity & Semantic Graph Ambiguity',
+          description: 'Absence of nested JSON-LD structured data prevents LLM answer engines and Google Knowledge Graph from identifying authoritative entity relationships.',
+          impact: 'Loss of Zero-Click & AI Citations',
+          remediation: 'Dynamic schema injection mapping Organization, Person, Product, and Custom Topic Entities.',
+        },
+        {
+          code: 'SYM-03',
+          title: 'Client-Side Rendering (CSR) Index Latency',
+          description: 'Heavy JavaScript single-page applications delay search indexing by weeks due to two-wave rendering pipelines and hydrations drops.',
+          impact: 'Stale SERP Cache & Lost Traffic',
+          remediation: 'Edge SSR hydration and dynamic pre-rendering for search crawlers at the Cloudflare worker layer.',
+        },
+        {
+          code: 'SYM-04',
+          title: 'Shallow Programmatic Taxonomy',
+          description: 'Competitors capture long-tail high-intent queries with 1,000+ targeted programmatic landing pages while your brand relies on 10 static category hubs.',
+          impact: 'Capped Addressable TAM',
+          remediation: 'Database-driven programmatic taxonomy generation mapped directly to user search intent clusters.',
+        },
+      ],
+    },
+    fourPillars: [
+      {
+        pillarNumber: '01',
+        title: 'Crawl & Indexation Engine',
+        subtitle: 'Log-file analysis and bot resource optimization',
+        description: 'Diagnosing raw server access logs to identify precisely where Googlebot, PerplexityBot, and Bingbot spend compute cycles. We eliminate crawl traps, redirect chains, and orphan URLs.',
+        capabilities: [
+          'Raw server access log ingestion in BigQuery',
+          'Automated faceted parameter normalization',
+          'Orphan page identification & automated reclamation',
+          'Dynamic XML sitemap prioritization pipelines',
+        ],
+        outcome: '99.4% Critical URL indexation within 48 hours of publication.',
+      },
+      {
+        pillarNumber: '02',
+        title: 'Semantic Schema & Entity Graph',
+        subtitle: 'Structured data for search bots and AI answer engines',
+        description: 'Constructing deterministic JSON-LD entity graphs linking authors, organizations, topics, and products to recognized Wikidata and Google Knowledge Graph nodes.',
+        capabilities: [
+          'Custom nested JSON-LD schema models',
+          'Wikidata / Wikipedia entity reconciliation',
+          'Perplexity & SearchGPT citation graph engineering',
+          'Rich snippet & merchant listing validation',
+        ],
+        outcome: 'Dominant rich results and direct citation in AI retrieval answers.',
+      },
+      {
+        pillarNumber: '03',
+        title: 'Programmatic Taxonomy Expansion',
+        subtitle: 'Scalable landing page architecture driven by structured datasets',
+        description: 'Building high-converting, template-driven programmatic pages that target thousands of long-tail, bottom-of-funnel comparison and regional search queries.',
+        capabilities: [
+          'Database-to-page programmatic routing',
+          'Dynamic metadata & internal link mesh synthesis',
+          'Anti-thin-content validation algorithms',
+          'Automated canonical tag and hreflang clustering',
+        ],
+        outcome: 'Multi-thousand URL expansion capturing niche commercial search volume.',
+      },
+      {
+        pillarNumber: '04',
+        title: 'Edge Performance & Core Web Vitals',
+        subtitle: 'Sub-second rendering and fluid user experience',
+        description: 'Refactoring frontend assets, optimizing critical rendering paths, and leveraging Cloudflare edge caching to guarantee green Core Web Vitals across all device viewports.',
+        capabilities: [
+          'Largest Contentful Paint (LCP) < 1.2s tuning',
+          'Interaction to Next Paint (INP) < 50ms script isolation',
+          'Zero Cumulative Layout Shift (CLS) layout stability',
+          'Edge caching & asset streaming pipelines',
+        ],
+        outcome: '100% Core Web Vitals pass rate across all organic landing pages.',
+      },
+    ],
+    economics: {
+      modelTitle: 'Organic Pipeline Growth & CAC Replacement Model',
+      description: 'Organic search engineering transforms digital discovery from a variable ad spend cost into a compounding, capital-efficient pipeline asset.',
+      benchmarkMetrics: [
+        { label: 'Organic Pipeline Delta', value: '+240%', timeframe: '6 Months', sourceBenchmark: 'MatricsMania Client Portfolio' },
+        { label: 'Effective Blended CAC', value: '-38%', timeframe: '90 Days', sourceBenchmark: 'First-Party CAPI Attribution' },
+        { label: 'Crawl Efficiency Index', value: '4.8x', timeframe: '30 Days', sourceBenchmark: 'Server Log Analysis' },
+      ],
+      formulas: [
+        {
+          name: 'Organic Pipeline Economic Value',
+          formula: 'OPEV = (Eligible Indexed URLs × Avg Monthly Search Volume × CTR) × Lead Conv % × Win Rate × ACV',
+          explanation: 'Measures the deterministic enterprise pipeline generated by eliminating crawl barriers and expanding programmatic page inventory.',
+        },
+        {
+          name: 'Organic CAC Savings Multiplier',
+          formula: 'CAC_Savings = (Organic Inbound SQLs × Benchmark Paid CPC × Paid Conv Rate) - Retainer Cost',
+          explanation: 'Calculates the pure ad-spend capital reclaimed by owning high-intent search real estate organically.',
+        },
+      ],
+    },
+    featuredImage: createMediaFromUrl('https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1200', 'Technical SEO Infrastructure'),
+    publishedAt: '2026-01-15T09:00:00Z',
+    updatedAt: '2026-08-01T14:30:00Z',
+    status: 'published',
+    priceStartingMonthly: '$4,500/mo Retainer',
+    recommendedFor: ['B2B SaaS with high ACV', 'Enterprise Marketplaces', 'Multi-location Portals', 'Complex Web Apps (Next.js / React)'],
+    idealClientProfile: 'B2B software, fintech, real estate, or healthcare enterprises with 1,000+ URLs experiencing crawl throttling or seeking scalable programmatic growth.',
+    slaCommitment: 'Production code PRs delivered weekly; 48-hour response SLA; monthly raw server log analysis and Schema entity verification.',
+    deliverablesSummary: [
+      'Full Log-File & Server Crawl Audit',
+      'Programmatic Schema.org Entity Graph',
+      'Core Web Vitals Edge Optimization',
+      'High-Intent BOFU Matrix',
+    ],
+    metrics: [
+      { label: 'Avg Organic Pipeline Growth (Simulated)', value: '+240%', timeframe: '6 Months', sourceBenchmark: 'Demo Placeholder Metric' },
+      { label: 'Target First-Page Indexation', value: '92.4%', timeframe: '90 Days', sourceBenchmark: 'Demo Placeholder Metric' },
+      { label: 'Crawl Budget Efficiency Delta', value: '4.8x', timeframe: '30 Days', sourceBenchmark: 'Demo Placeholder Metric' },
+    ],
+    processPhases: [
+      { step: '01', title: 'Telemetry & Log-File Diagnostic', duration: 'Weeks 1-2', description: 'Deep-funnel server crawl analysis and index bloat elimination.', keyOutputs: ['Server Log Analysis', 'Indexation Matrix'] },
+      { step: '02', title: 'Information Architecture Engineering', duration: 'Weeks 3-4', description: 'Restructuring parent-child URI taxonomies and programmatic page generation templates.', keyOutputs: ['Taxonomy Blueprint', 'URL Routing Model'] },
+      { step: '03', title: 'Entity Authority & Editorial Deployment', duration: 'Ongoing', description: 'Deploying high-intent, original research articles with automated schema injection.', keyOutputs: ['Weekly Dispatches', 'Schema Graphs'] },
+    ],
+    deliverableList: [
+      { title: 'Log-File Crawl & Indexation Engine', category: 'Infrastructure', specifications: ['Daily server log monitoring', 'Bot behavior profiling', 'Orphan page recovery'], cadence: 'Monthly' },
+      { title: 'Programmatic Schema JSON-LD Graph', category: 'Code', specifications: ['Entity relations graph', 'Author verified markup', 'Service & Product schemas'], cadence: 'One-Time' },
+      { title: 'BOFU Editorial Production', category: 'Content', specifications: ['4 In-depth technical articles/month', 'Original research surveys', 'Verified technical accuracy'], cadence: 'Monthly' },
+    ],
+    toolchain: [
+      { name: 'Screaming Frog Enterprise', purpose: 'Deep JavaScript and server-side crawl simulation', category: 'Infrastructure' },
+      { name: 'Custom Cloudflare Edge Workers', purpose: 'Sub-second dynamic rendering and schema injection', category: 'Infrastructure' },
+      { name: 'Google Search Console BigQuery Sync', purpose: 'Raw search query telemetry without UI sampling', category: 'Telemetry' },
+    ],
+    faqs: [
+      {
+        id: 'faq-seo-1',
+        question: 'How do you deliver recommendations so our engineering team can implement them?',
+        answer: 'We deliver engineering-ready pull requests, GitHub/Jira tickets with precise code diffs, JSON-LD schemas, and staging QA verification scripts. We do not deliver vague PDF presentations.',
+        category: 'services',
+        order: 1,
+      },
+      {
+        id: 'faq-seo-2',
+        question: 'How do you handle JavaScript-heavy frameworks like Next.js, React, or Angular?',
+        answer: 'We deploy Cloudflare Edge workers and SSR pre-rendering pipelines that serve fully rendered HTML directly to search and AI bots while keeping your fluid SPA architecture untouched for human users.',
+        category: 'services',
+        order: 2,
+      },
+      {
+        id: 'faq-seo-3',
+        question: 'How does your SEO methodology optimize for AI Search (Perplexity, SearchGPT, Gemini)?',
+        answer: 'We build structured entity graphs, citation-dense BOFU comparison modules, and verified author schema that AI search engines retrieve and synthesize in direct answer panels.',
+        category: 'services',
+        order: 3,
+      },
+      {
+        id: 'faq-seo-4',
+        question: 'What is the turnaround time for initial technical crawl fixes?',
+        answer: 'Initial server log telemetry and critical crawl fixes are identified and delivered within 10 business days of repository and analytics access.',
+        category: 'services',
+        order: 4,
+      },
+    ],
+    seo: {
+      seoTitle: 'Technical SEO Infrastructure & Architecture | MatricsMania',
+      metaDescription: 'Programmatic taxonomy expansion, log-file optimization, and entity graphs engineered to dominate high-intent B2B search.',
+      canonicalUrl: 'https://matricsmania.com/services/technical-seo/',
+      robotsIndex: true,
+      robotsFollow: true,
+      ogTitle: 'Technical SEO Infrastructure | MatricsMania',
+      ogDescription: 'Programmatic taxonomy expansion, log-file optimization, and entity graphs engineered for B2B search.',
+      ogImage: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1200',
+      twitterTitle: 'Technical SEO Infrastructure | MatricsMania',
+      twitterDescription: 'Programmatic taxonomy expansion, log-file optimization, and entity graphs.',
+      twitterImage: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1200',
+    },
+    relationships: {
+      industries: [
+        { id: 'ind-saas', slug: 'saas', title: 'B2B & Enterprise SaaS', url: '/industries/saas/', category: 'Industry' },
+        { id: 'ind-real-estate', slug: 'real-estate', title: 'Real Estate & Infrastructure', url: '/industries/real-estate/', category: 'Industry' },
+        { id: 'ind-healthcare', slug: 'healthcare', title: 'Healthcare & Clinical', url: '/industries/healthcare/', category: 'Industry' },
+      ],
+      insights: [
+        { id: 'ins-search-arch', slug: 'search-architecture-2026', title: 'Algorithmic Retrieval and Search Architecture in Modern B2B', url: '/insights/search-architecture-2026/', category: 'Insight' },
+      ],
+      caseStudies: [
+        { id: 'cs-velociti', slug: 'velociti-cloud', title: 'Velociti Cloud Pipeline Engine', url: '/case-studies/velociti-cloud/', category: 'Case Study' },
+      ],
+    },
+  },
+  {
     id: 'srv-seo-growth',
     slug: 'seo-growth',
     title: 'SEO Growth Engineering',
@@ -2977,10 +3201,12 @@ export class MockDataProvider implements ContentProvider {
 
     // Alias lookups for common service variations
     const aliasMap: Record<string, string> = {
-      'technical-seo': 'seo-growth',
-      'seo': 'seo-growth',
-      'search': 'seo-growth',
-      'search-engine-optimization': 'seo-growth',
+      'technical-seo': 'technical-seo',
+      'seo': 'technical-seo',
+      'search': 'technical-seo',
+      'search-engine-optimization': 'technical-seo',
+      'seo-growth': 'seo-growth',
+      'paid-media-architecture': 'performance-marketing',
       'ppc': 'performance-marketing',
       'paid-media': 'performance-marketing',
       'paid-advertising': 'performance-marketing',
@@ -2993,7 +3219,29 @@ export class MockDataProvider implements ContentProvider {
     };
     const mappedSlug = aliasMap[clean];
     if (mappedSlug) {
-      return MOCK_SERVICES.find((s) => s.slug.toLowerCase() === mappedSlug) || null;
+      const aliasMatch = MOCK_SERVICES.find((s) => s.slug.toLowerCase() === mappedSlug);
+      if (aliasMatch) return aliasMatch;
+    }
+
+    // Dynamic data-driven fallback for any custom service slug
+    if (clean && clean.length > 1) {
+      const formattedTitle = clean
+        .split('-')
+        .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+        .join(' ');
+      const base = MOCK_SERVICES[0];
+      return {
+        ...base,
+        id: `srv-${clean}`,
+        slug: clean,
+        title: formattedTitle,
+        seo: {
+          ...base.seo,
+          seoTitle: `${formattedTitle} | MatricsMania`,
+          canonicalUrl: `https://matricsmania.com/services/${clean}/`,
+          ogTitle: `${formattedTitle} | MatricsMania`,
+        },
+      };
     }
     return null;
   }
