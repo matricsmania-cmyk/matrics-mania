@@ -2,38 +2,36 @@ import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
-  trailingSlash: true,
   experimental: {
     serverActions: {
       allowedOrigins: [
-        '*',
         'ais-dev-az5r444kzbmq5afpdxzwyk-439511188286.asia-east1.run.app',
         'ais-pre-az5r444kzbmq5afpdxzwyk-439511188286.asia-east1.run.app',
         'localhost:3000',
+        '*.run.app',
       ],
     },
   },
-  async headers() {
-    return [
+  images: {
+    remotePatterns: [
       {
-        source: '/_next/:path*',
-        headers: [
-          { key: 'Access-Control-Allow-Origin', value: '*' },
-          { key: 'Access-Control-Allow-Methods', value: 'GET,POST,OPTIONS' },
-          { key: 'Access-Control-Allow-Headers', value: '*' },
-        ],
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+        port: '',
+        pathname: '/**',
       },
-    ];
+      {
+        protocol: 'https',
+        hostname: 'picsum.photos',
+        port: '',
+        pathname: '/**',
+      },
+    ],
   },
   async redirects() {
     return [
       {
-        source: '/home/',
-        destination: '/',
-        permanent: true,
-      },
-      {
-        source: '/index.html',
+        source: '/home',
         destination: '/',
         permanent: true,
       },
@@ -42,3 +40,4 @@ const nextConfig: NextConfig = {
 };
 
 export default nextConfig;
+

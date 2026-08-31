@@ -1,3 +1,4 @@
+import { parse } from "url";
 import express from "express";
 import next from "next";
 
@@ -14,27 +15,14 @@ async function startServer() {
 
   app.set("trust proxy", true);
 
-  // Allow cross-origin requests for proxy & preview environments
+  // Enable CORS and bypass cross-origin dev resource blocking for proxy environments
   app.use((req, res, next) => {
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, PATCH, DELETE");
     res.setHeader("Access-Control-Allow-Headers", "*");
 
-    // Remove origin header on GET requests for /_next/ resources so Next.js dev server treats them as standard same-origin requests behind proxies
-    if (req.method === "GET" && req.path.startsWith("/_next/")) {
+    if (req.method === "GET" && req.url.startsWith("/_next/")) {
       delete req.headers.origin;
-    } else {
-      const originOrReferer = (req.headers.origin as string) || (req.headers.referer as string);
-      if (originOrReferer) {
-        try {
-          const url = new URL(originOrReferer);
-          req.headers["host"] = url.host;
-          req.headers["x-forwarded-host"] = url.host;
-          req.headers["x-forwarded-proto"] = url.protocol.replace(":", "");
-        } catch {
-          // ignore invalid URL parsing
-        }
-      }
     }
 
     if (req.method === "OPTIONS") {
@@ -49,8 +37,9 @@ async function startServer() {
   });
 
   // Delegate all page routing, 404s, metadata injection, sitemap, and robots to Next.js App Router
-  app.all("*", (req, res) => {
-    return handle(req, res);
+  app.all(/.*/, (req, res) => {
+    const parsedUrl = parse(req.url!, true);
+    return handle(req, res, parsedUrl);
   });
 
   app.listen(PORT, HOST, () => {
@@ -62,3 +51,4 @@ startServer().catch((err) => {
   console.error("Error starting server:", err);
   process.exit(1);
 });
+
