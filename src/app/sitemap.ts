@@ -1,6 +1,6 @@
 import { MetadataRoute } from 'next';
-import { mockDataProvider } from '@/src/providers/MockDataProvider';
-import { PUBLIC_DOMAIN } from '@/src/utils/seo';
+import { mockDataProvider } from '../providers/MockDataProvider';
+import { PUBLIC_DOMAIN } from '../utils/seo';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes = [

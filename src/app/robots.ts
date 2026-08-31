@@ -1,5 +1,5 @@
 import { MetadataRoute } from 'next';
-import { PUBLIC_DOMAIN } from '@/src/utils/seo';
+import { PUBLIC_DOMAIN } from '../utils/seo';
 
 export default function robots(): MetadataRoute.Robots {
   return {
