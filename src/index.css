@@ -3,7 +3,7 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --font-sans: 'Plus Jakarta Sans', 'Outfit', 'Sora', system-ui, -apple-system, sans-serif;
+  --font-sans: 'Plus Jakarta Sans', var(--font-plus-jakarta-sans), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --color-brand-primary: #FFFFFF;
   --color-brand-bg: #070B14;
   --color-brand-card: #0D1424;
@@ -84,21 +84,25 @@
   }
 
   *, ::before, ::after {
-    font-family: 'Satoshi', 'Plus Jakarta Sans', 'Outfit', system-ui, -apple-system, sans-serif !important;
+    font-family: 'Plus Jakarta Sans', var(--font-plus-jakarta-sans), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
     box-sizing: border-box;
   }
 
   body {
     background-color: var(--bg-primary);
     color: var(--text-primary);
-    font-family: 'Satoshi', 'Plus Jakarta Sans', 'Outfit', system-ui, -apple-system, sans-serif !important;
+    font-family: 'Plus Jakarta Sans', var(--font-plus-jakarta-sans), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
     overflow-x: hidden;
     line-height: 1.2;
     transition: background-color 0.3s ease, color 0.3s ease;
   }
 
-  h1, h2, h3, h4, h5, h6, button, input, select, textarea {
-    font-family: 'Satoshi', 'Plus Jakarta Sans', 'Outfit', system-ui, -apple-system, sans-serif !important;
+  h1, h2, h3, h4, h5, h6, button, input, select, textarea, span, p, a, div, label {
+    font-family: 'Plus Jakarta Sans', var(--font-plus-jakarta-sans), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  }
+
+  header:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > a:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > span:nth-of-type(1) {
+    font-family: 'Plus Jakarta Sans', var(--font-plus-jakarta-sans), system-ui, -apple-system, sans-serif !important;
   }
 
   h2 {
