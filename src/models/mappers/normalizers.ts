@@ -434,9 +434,15 @@ export function normalizeWpLocation(raw: RawWpLocationPost): Location {
   const embeddedMedia = raw._embedded?.['wp:featuredmedia']?.[0];
   const featuredImage = normalizeWpMedia(embeddedMedia);
 
-  const services = (acf.related_services || []).map((s) => normalizeEntityRef(s, 'Service'));
-  const industries = (acf.related_industries || []).map((i) => normalizeEntityRef(i, 'Industry'));
-  const insights = (acf.related_insights || []).map((i) => normalizeEntityRef(i, 'Insight'));
+  const services = Array.isArray(acf.related_services)
+    ? acf.related_services.map((s) => normalizeEntityRef(s, 'Service'))
+    : [];
+  const industries = Array.isArray(acf.related_industries)
+    ? acf.related_industries.map((i) => normalizeEntityRef(i, 'Industry'))
+    : [];
+  const insights = Array.isArray(acf.related_insights)
+    ? acf.related_insights.map((i) => normalizeEntityRef(i, 'Insight'))
+    : [];
 
   const relationships: LocationRelationships = {
     services,
@@ -444,15 +450,16 @@ export function normalizeWpLocation(raw: RawWpLocationPost): Location {
     insights,
   };
 
-  const city = acf.city || sanitizePlainText(raw.title?.rendered);
+  const city = acf.city || sanitizePlainText(raw.title?.rendered) || 'Bangalore';
   const country = acf.country || 'India';
-  const nodeCode = acf.node_code || `NODE-${city.toUpperCase().slice(0, 3)}`;
+  const stateOrRegion = acf.stateorregion || acf.state_or_region || '';
+  const nodeCode = acf.node_code || `NODE-${city.toUpperCase().replace(/[^A-Z]/g, '').slice(0, 3) || 'BLR'}`;
 
   return {
     id: raw.id,
     slug: raw.slug,
     title: sanitizePlainText(raw.title?.rendered),
-    excerpt: sanitizePlainText(raw.excerpt?.rendered) || acf.local_market_summary || '',
+    excerpt: sanitizePlainText(raw.excerpt?.rendered) || acf.localmarketsummary || acf.local_market_summary || '',
     content: raw.content?.rendered || '',
     featuredImage,
     publishedAt: raw.date,
@@ -463,7 +470,7 @@ export function normalizeWpLocation(raw: RawWpLocationPost): Location {
 
     locationCode: acf.location_code || nodeCode,
     city,
-    stateOrRegion: acf.state_or_region || '',
+    stateOrRegion,
     country,
     countryCode: acf.country_code || 'IN',
     hubType: (acf.hub_type as any) || 'Regional Growth Hub',
@@ -471,14 +478,14 @@ export function normalizeWpLocation(raw: RawWpLocationPost): Location {
       id: `node-${raw.id}`,
       nodeCode,
       city,
-      region: acf.state_or_region || '',
+      region: stateOrRegion,
       country,
       role: (acf.hub_type as any) || 'Regional Growth Hub',
       address: {
-        line1: acf.address_line1 || 'Executive Growth Node',
+        line1: acf.officenode || acf.address_line1 || 'Executive Growth Node',
         line2: acf.address_line2,
         city,
-        state: acf.state_or_region || '',
+        state: stateOrRegion,
         postalCode: acf.postal_code || '',
         country,
       },
@@ -491,20 +498,24 @@ export function normalizeWpLocation(raw: RawWpLocationPost): Location {
       businessHours: acf.business_hours || 'Mon-Fri 09:00 - 18:30 IST',
       isHeadquarters: city.toLowerCase() === 'bangalore',
     },
-    localMarketSummary: acf.local_market_summary || sanitizePlainText(raw.excerpt?.rendered),
-    marketDrivers: (acf.market_drivers || []).map((d) => ({
-      title: d.title,
-      metric: d.metric,
-      description: d.description,
-    })),
-    regionalClients: (acf.regional_clients || []).map((rc) => ({
-      clientName: rc.client_name,
-      industry: rc.industry,
-      resultMetric: rc.result_metric,
-      locationArea: rc.location_area,
-    })),
-    targetSectors: acf.target_sectors || [],
-    supportedLanguages: acf.supported_languages || ['English'],
+    localMarketSummary: acf.localmarketsummary || acf.local_market_summary || sanitizePlainText(raw.excerpt?.rendered) || '',
+    marketDrivers: Array.isArray(acf.market_drivers)
+      ? acf.market_drivers.map((d) => ({
+          title: d.title,
+          metric: d.metric,
+          description: d.description,
+        }))
+      : [],
+    regionalClients: Array.isArray(acf.regional_clients)
+      ? acf.regional_clients.map((rc) => ({
+          clientName: rc.client_name,
+          industry: rc.industry,
+          resultMetric: rc.result_metric,
+          locationArea: rc.location_area,
+        }))
+      : [],
+    targetSectors: Array.isArray(acf.target_sectors) ? acf.target_sectors : [],
+    supportedLanguages: Array.isArray(acf.supported_languages) ? acf.supported_languages : ['English'],
     localTimeZone: acf.timezone || 'Asia/Kolkata',
   };
 }
@@ -519,10 +530,18 @@ export function normalizeWpInsight(raw: RawWpInsightPost): Insight {
   const embeddedAuthor = raw._embedded?.author?.[0];
   const author = normalizeWpAuthor(embeddedAuthor);
 
-  const services = (acf.related_services || []).map((s) => normalizeEntityRef(s, 'Service'));
-  const industries = (acf.related_industries || []).map((i) => normalizeEntityRef(i, 'Industry'));
-  const locations = (acf.related_locations || []).map((l) => normalizeEntityRef(l, 'Location'));
-  const caseStudies = (acf.related_case_studies || []).map((c) => normalizeEntityRef(c, 'Case Study'));
+  const services = Array.isArray(acf.related_services)
+    ? acf.related_services.map((s) => normalizeEntityRef(s, 'Service'))
+    : [];
+  const industries = Array.isArray(acf.related_industries)
+    ? acf.related_industries.map((i) => normalizeEntityRef(i, 'Industry'))
+    : [];
+  const locations = Array.isArray(acf.related_locations)
+    ? acf.related_locations.map((l) => normalizeEntityRef(l, 'Location'))
+    : [];
+  const caseStudies = Array.isArray(acf.related_case_studies)
+    ? acf.related_case_studies.map((c) => normalizeEntityRef(c, 'Case Study'))
+    : [];
 
   const relationships: InsightRelationships = {
     services,
@@ -530,6 +549,8 @@ export function normalizeWpInsight(raw: RawWpInsightPost): Insight {
     locations,
     caseStudies,
   };
+
+  const category = acf.category || 'Industry Intelligence';
 
   return {
     id: raw.id,
@@ -545,9 +566,9 @@ export function normalizeWpInsight(raw: RawWpInsightPost): Insight {
     relationships,
 
     standfirst: acf.standfirst,
-    category: acf.category || 'Industry Intelligence',
-    categorySlug: acf.category ? acf.category.toLowerCase().replace(/\s+/g, '-') : 'industry-intelligence',
-    contentType: (acf.content_type as any) || 'Research',
+    category,
+    categorySlug: category.toLowerCase().replace(/\s+/g, '-'),
+    contentType: (acf.contenttype as any) || (acf.content_type as any) || 'Research',
     author,
     reviewer: acf.reviewer_name
       ? {
@@ -557,18 +578,20 @@ export function normalizeWpInsight(raw: RawWpInsightPost): Insight {
       : undefined,
     readingTimeMinutes: acf.reading_time_minutes || 6,
     wordCount: acf.word_count || 1800,
-    tags: (raw._embedded?.['wp:term']?.[1] || []).map((t) => t.name),
-    keyTakeaways: acf.key_takeaways || [],
-    sections: (acf.sections || []).map((sec, idx) => ({
-      id: sec.id || `section-${idx}`,
-      title: sec.title,
-      subtitle: sec.subtitle,
-      content: sec.content,
-      keyPoints: sec.key_points,
-      quote: sec.quote,
-      codeSnippet: sec.code_snippet,
-      codeLanguage: sec.code_language,
-    })),
+    tags: Array.isArray(raw._embedded?.['wp:term']?.[1]) ? raw._embedded['wp:term'][1].map((t) => t.name) : [],
+    keyTakeaways: Array.isArray(acf.key_takeaways) ? acf.key_takeaways : [],
+    sections: Array.isArray(acf.sections)
+      ? acf.sections.map((sec, idx) => ({
+          id: sec.id || `section-${idx}`,
+          title: sec.title,
+          subtitle: sec.subtitle,
+          content: sec.content,
+          keyPoints: sec.key_points,
+          quote: sec.quote,
+          codeSnippet: sec.code_snippet,
+          codeLanguage: sec.code_language,
+        }))
+      : [],
     originalStudyData: acf.original_study_data
       ? {
           sampleSize: acf.original_study_data.sample_size,
@@ -588,9 +611,15 @@ export function normalizeWpCaseStudy(raw: RawWpCaseStudyPost): CaseStudy {
   const embeddedMedia = raw._embedded?.['wp:featuredmedia']?.[0];
   const featuredImage = normalizeWpMedia(embeddedMedia);
 
-  const services = (acf.related_services || []).map((s) => normalizeEntityRef(s, 'Service'));
-  const industries = (acf.related_industries || []).map((i) => normalizeEntityRef(i, 'Industry'));
-  const insights = (acf.related_insights || []).map((i) => normalizeEntityRef(i, 'Insight'));
+  const services = Array.isArray(acf.related_services)
+    ? acf.related_services.map((s) => normalizeEntityRef(s, 'Service'))
+    : [];
+  const industries = Array.isArray(acf.related_industries)
+    ? acf.related_industries.map((i) => normalizeEntityRef(i, 'Industry'))
+    : [];
+  const insights = Array.isArray(acf.related_insights)
+    ? acf.related_insights.map((i) => normalizeEntityRef(i, 'Insight'))
+    : [];
 
   const relationships: CaseStudyRelationships = {
     services,
@@ -598,11 +627,14 @@ export function normalizeWpCaseStudy(raw: RawWpCaseStudyPost): CaseStudy {
     insights,
   };
 
+  const clientName = acf.clientname || acf.client_name || sanitizePlainText(raw.title?.rendered);
+  const clientIndustry = acf.clientindustry || acf.client_industry || 'Enterprise SaaS';
+
   return {
     id: raw.id,
     slug: raw.slug,
     title: sanitizePlainText(raw.title?.rendered),
-    excerpt: sanitizePlainText(raw.excerpt?.rendered) || acf.challenge_summary || '',
+    excerpt: sanitizePlainText(raw.excerpt?.rendered) || acf.challengesummary || acf.challenge_summary || '',
     content: raw.content?.rendered || '',
     featuredImage,
     publishedAt: raw.date,
@@ -611,29 +643,33 @@ export function normalizeWpCaseStudy(raw: RawWpCaseStudyPost): CaseStudy {
     seo: normalizeWpSeo(raw, `https://matricsmania.com/case-studies/${raw.slug}/`),
     relationships,
 
-    caseStudyCode: acf.case_study_code || `CS-${raw.slug.toUpperCase().slice(0, 4)}`,
-    clientName: acf.client_name || sanitizePlainText(raw.title?.rendered),
-    clientIndustry: acf.client_industry || 'Enterprise SaaS',
-    clientIndustrySlug: acf.client_industry_slug || 'enterprise-saas',
+    caseStudyCode: acf.case_study_code || `CS-${raw.slug ? raw.slug.toUpperCase().slice(0, 4) : 'PROJ'}`,
+    clientName,
+    clientIndustry,
+    clientIndustrySlug: acf.client_industry_slug || clientIndustry.toLowerCase().replace(/\s+/g, '-'),
     clientLogo: acf.client_author_avatar || '/placeholder.svg',
-    heroHeadline: acf.hero_headline || sanitizePlainText(raw.title?.rendered),
-    challengeSummary: acf.challenge_summary || '',
+    heroHeadline: acf.heroheadline || acf.hero_headline || sanitizePlainText(raw.title?.rendered),
+    challengeSummary: acf.challengesummary || acf.challenge_summary || '',
     solutionArchitecture: acf.solution_architecture || '',
-    executiveSummary: acf.executive_summary || sanitizePlainText(raw.excerpt?.rendered),
-    results: (acf.results || []).map((r) => ({
-      metric: r.metric,
-      label: r.label,
-      baseline: r.baseline,
-      achieved: r.achieved,
-      timeframe: r.timeframe,
-    })),
-    beforeAfterComparison: (acf.before_after_comparison || []).map((ba) => ({
-      aspect: ba.aspect,
-      before: ba.before,
-      after: ba.after,
-      delta: ba.delta,
-    })),
-    techStackDeployed: acf.tech_stack_deployed || [],
+    executiveSummary: acf.executive_summary || sanitizePlainText(raw.excerpt?.rendered) || '',
+    results: Array.isArray(acf.results)
+      ? acf.results.map((r) => ({
+          metric: r.metric,
+          label: r.label,
+          baseline: r.baseline,
+          achieved: r.achieved,
+          timeframe: r.timeframe,
+        }))
+      : [],
+    beforeAfterComparison: Array.isArray(acf.before_after_comparison)
+      ? acf.before_after_comparison.map((ba) => ({
+          aspect: ba.aspect,
+          before: ba.before,
+          after: ba.after,
+          delta: ba.delta,
+        }))
+      : [],
+    techStackDeployed: Array.isArray(acf.tech_stack_deployed) ? acf.tech_stack_deployed : [],
     testimonialQuote: acf.testimonial_quote || '',
     clientAuthor: {
       name: acf.client_author_name || 'Chief Marketing Officer',

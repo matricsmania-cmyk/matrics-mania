@@ -245,10 +245,24 @@ export interface RawWpIndustryPost extends RawWpBasePost {
 export interface RawWpLocationPost extends RawWpBasePost {
   type: 'locations';
   acf?: {
-    location_code?: string;
+    // Live ACF REST field names used by WordPress Location payload
     city?: string;
-    state_or_region?: string;
     country?: string;
+    officenode?: string;
+    stateorregion?: string;
+    localmarketsummary?: string;
+    metatitle?: string;
+    metadescription?: string;
+    canonicalurl?: string;
+    ogtitle?: string;
+    ogdescription?: string;
+    ogimage?: string;
+    robotsindex?: boolean | string;
+    robotsfollow?: boolean | string;
+
+    // Backward-compatible fallback fields
+    location_code?: string;
+    state_or_region?: string;
     country_code?: string;
     hub_type?: string;
     node_code?: string;
@@ -279,8 +293,20 @@ export interface RawWpLocationPost extends RawWpBasePost {
 export interface RawWpInsightPost extends RawWpBasePost {
   type: 'insights' | 'post';
   acf?: {
+    // Live ACF REST field names used by WordPress Insight payload
     standfirst?: string;
     category?: string;
+    contenttype?: string;
+    metatitle?: string;
+    metadescription?: string;
+    canonicalurl?: string;
+    ogtitle?: string;
+    ogdescription?: string;
+    ogimage?: string;
+    robotsindex?: boolean | string;
+    robotsfollow?: boolean | string;
+
+    // Backward-compatible fallback fields
     content_type?: string;
     reading_time_minutes?: number;
     word_count?: number;
@@ -312,11 +338,26 @@ export interface RawWpInsightPost extends RawWpBasePost {
 }
 
 /**
- * Raw Case Study CPT (wp/v2/case-studies)
+ * Raw Case Study CPT (wp/v2/case-studies or wp/v2/case_studies)
  */
 export interface RawWpCaseStudyPost extends RawWpBasePost {
-  type: 'case-studies';
+  type: 'case-studies' | 'case_studies';
   acf?: {
+    // Live ACF REST field names used by WordPress Case Study payload
+    clientname?: string;
+    clientindustry?: string;
+    heroheadline?: string;
+    challengesummary?: string;
+    metatitle?: string;
+    metadescription?: string;
+    canonicalurl?: string;
+    ogtitle?: string;
+    ogdescription?: string;
+    ogimage?: string;
+    robotsindex?: boolean | string;
+    robotsfollow?: boolean | string;
+
+    // Backward-compatible fallback fields
     case_study_code?: string;
     client_name?: string;
     client_industry?: string;
