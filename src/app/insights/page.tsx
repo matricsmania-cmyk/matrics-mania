@@ -1,12 +1,15 @@
 import React from 'react';
 import { InsightIndexTemplate } from '@/src/templates/InsightIndexTemplate';
-import { mockDataProvider } from '@/src/providers/MockDataProvider';
+import { wordPressProvider } from '@/src/providers/WordPressProvider';
 import { getStaticRouteSeo } from '@/src/utils/seo';
 import { toNextMetadata } from '@/src/utils/nextMetadata';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export const metadata = toNextMetadata(getStaticRouteSeo('insights-index'));
 
-export default function InsightsPage() {
-  const insights = mockDataProvider.getAllInsights();
+export default async function InsightsPage() {
+  const insights = (await wordPressProvider.asyncGetAllInsights()) || wordPressProvider.getAllInsights();
   return <InsightIndexTemplate insights={insights} />;
 }

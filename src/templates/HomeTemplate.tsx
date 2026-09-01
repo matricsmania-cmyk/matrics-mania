@@ -18,10 +18,14 @@ import {
   ConversionCTASection,
 } from '../components/sections';
 import { useRouter } from 'next/navigation';
-import { Page } from '../models';
+import { Page, Service, Industry, CaseStudy, Insight } from '../models';
 
 export interface HomeTemplateProps {
   page?: Page;
+  services?: Service[];
+  industries?: Industry[];
+  caseStudies?: CaseStudy[];
+  insights?: Insight[];
   onNavigate?: (path: string) => void;
   onOpenBooking?: (prefillInfo?: any) => void;
   onNavigateToBlogSlug?: (slug: string) => void;
@@ -31,6 +35,10 @@ export interface HomeTemplateProps {
 
 export const HomeTemplate: React.FC<HomeTemplateProps> = ({
   page: propPage,
+  services: propServices,
+  industries: propIndustries,
+  caseStudies: propCaseStudies,
+  insights: propInsights,
   onNavigate: propNavigate,
   onOpenBooking: propBooking,
   onNavigateToBlogSlug,
@@ -42,10 +50,10 @@ export const HomeTemplate: React.FC<HomeTemplateProps> = ({
   const provider = useContentProvider();
   const page = propPage || provider.getPageBySlug('home');
 
-  const services = provider.getAllServices();
-  const industries = provider.getAllIndustries();
-  const caseStudies = provider.getAllCaseStudies();
-  const insights = provider.getAllInsights();
+  const services = propServices && propServices.length > 0 ? propServices : provider.getAllServices();
+  const industries = propIndustries && propIndustries.length > 0 ? propIndustries : provider.getAllIndustries();
+  const caseStudies = propCaseStudies && propCaseStudies.length > 0 ? propCaseStudies : provider.getAllCaseStudies();
+  const insights = propInsights && propInsights.length > 0 ? propInsights : provider.getAllInsights();
   const faqs = provider.getAllFaqs('general');
 
   const canonicalUrl = page?.seo?.canonicalUrl || 'https://matricsmania.com/';

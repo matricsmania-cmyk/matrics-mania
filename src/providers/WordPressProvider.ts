@@ -142,6 +142,52 @@ export class WordPressProvider implements ContentProvider {
     insights.forEach((ins) => this.insightMap.set(ins.slug, ins));
   }
 
+  /**
+   * Clears all in-memory caches to allow instant real-time reflection of CMS changes
+   */
+  public clearCache(): void {
+    this.servicesCache = null;
+    this.serviceMap.clear();
+    this.industriesCache = null;
+    this.industryMap.clear();
+    this.locationsCache = null;
+    this.locationMap.clear();
+    this.caseStudiesCache = null;
+    this.caseStudyMap.clear();
+    this.insightsCache = null;
+    this.insightMap.clear();
+    this.pagesCache = null;
+    this.pageMap.clear();
+  }
+
+  /**
+   * Refreshes all caches concurrently from live WordPress REST API
+   */
+  public async refreshAll(): Promise<{
+    servicesCount: number;
+    industriesCount: number;
+    locationsCount: number;
+    caseStudiesCount: number;
+    insightsCount: number;
+  }> {
+    this.clearCache();
+    const [services, industries, locations, caseStudies, insights] = await Promise.all([
+      this.asyncGetAllServices(),
+      this.asyncGetAllIndustries(),
+      this.asyncGetAllLocations(),
+      this.asyncGetAllCaseStudies(),
+      this.asyncGetAllInsights(),
+    ]);
+
+    return {
+      servicesCount: services.length,
+      industriesCount: industries.length,
+      locationsCount: locations.length,
+      caseStudiesCount: caseStudies.length,
+      insightsCount: insights.length,
+    };
+  }
+
   // --- PAGES ---
   getPageBySlug(slug: string): Page | null {
     if (this.pageMap.has(slug)) {
@@ -359,7 +405,7 @@ export class WordPressProvider implements ContentProvider {
       try {
         const res = await fetch(targetUrl, {
           headers,
-          next: { revalidate: 300 },
+          cache: 'no-store',
         });
 
         const text = await res.text();

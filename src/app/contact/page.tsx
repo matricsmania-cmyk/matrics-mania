@@ -1,12 +1,15 @@
 import React from 'react';
 import { ContactTemplate } from '@/src/templates/ContactTemplate';
-import { mockDataProvider } from '@/src/providers/MockDataProvider';
+import { wordPressProvider } from '@/src/providers/WordPressProvider';
 import { getStaticRouteSeo } from '@/src/utils/seo';
 import { toNextMetadata } from '@/src/utils/nextMetadata';
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export const metadata = toNextMetadata(getStaticRouteSeo('contact'));
 
 export default function ContactPage() {
-  const contactInfo = mockDataProvider.getContactInfo();
+  const contactInfo = wordPressProvider.getContactInfo();
   return <ContactTemplate contactInfo={contactInfo} />;
 }

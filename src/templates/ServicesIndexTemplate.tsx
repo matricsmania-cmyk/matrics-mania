@@ -23,11 +23,13 @@ import {
 import { useRouter } from 'next/navigation';
 
 export interface ServicesIndexTemplateProps {
+  services?: Service[];
   onNavigate?: (path: string) => void;
   onOpenBooking?: (prefillInfo?: any) => void;
 }
 
 export const ServicesIndexTemplate: React.FC<ServicesIndexTemplateProps> = ({
+  services: propServices,
   onNavigate: propNavigate,
   onOpenBooking: propBooking,
 }) => {
@@ -35,7 +37,7 @@ export const ServicesIndexTemplate: React.FC<ServicesIndexTemplateProps> = ({
   const onNavigate = propNavigate;
   const onOpenBooking = propBooking;
   const provider = useContentProvider();
-  const allServices = provider.getAllServices();
+  const allServices = propServices && propServices.length > 0 ? propServices : provider.getAllServices();
 
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
