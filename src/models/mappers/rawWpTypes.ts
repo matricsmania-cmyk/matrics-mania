@@ -193,6 +193,12 @@ export interface RawWpServicePost extends RawWpBasePost {
     deliverable_list?: { title: string; category: string; specifications: string[]; cadence: string }[];
     toolchain?: { name: string; purpose: string; category: string }[];
     price_starting_monthly?: string;
+    positioning_statement?: string;
+    positioningstatement?: string;
+    why_traditional_fails?: string;
+    whytraditionalfails?: string;
+    ideal_client_profile?: string;
+    idealclientprofile?: string;
     recommended_for?: string[];
     sla_commitment?: string;
     // Relationships in ACF Post Objects

@@ -14,7 +14,7 @@ export const dynamicParams = true;
 export const revalidate = 0;
 
 export async function generateStaticParams() {
-  const industries = wordPressProvider.getAllIndustries();
+  const industries = (await wordPressProvider.asyncGetAllIndustries()) || wordPressProvider.getAllIndustries();
   const slugSet = new Set(industries.map((i) => i.slug));
   const knownSlugs = ['healthcare', 'saas', 'real-estate', 'luxury-d2c'];
   knownSlugs.forEach((s) => slugSet.add(s));

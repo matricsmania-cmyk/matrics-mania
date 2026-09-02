@@ -337,6 +337,9 @@ export function normalizeWpService(raw: RawWpServicePost): Service {
       category: (t.category as any) || 'Infrastructure',
     })),
     priceStartingMonthly: acf.price_starting_monthly,
+    positioningStatement: acf.positioning_statement || acf.positioningstatement,
+    whyTraditionalFails: acf.why_traditional_fails || acf.whytraditionalfails,
+    idealClientProfile: acf.ideal_client_profile || acf.idealclientprofile,
     recommendedFor: acf.recommended_for || [],
     slaCommitment: acf.sla_commitment,
     faqs: (acf.faqs || []).map((f, idx) => ({

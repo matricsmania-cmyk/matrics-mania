@@ -79,81 +79,15 @@ export const ServiceTemplate: React.FC<ServiceTemplateProps> = ({
   const serviceTitle = service.title;
   const metaDescription = service.seo?.metaDescription || service.shortDescription || service.excerpt;
 
-  // Derive dynamic 4 Pillars if not explicitly provided
+  // Four Pillars if explicitly provided in CMS / ACF data
   const fourPillars: ServicePillar[] = useMemo(() => {
-    if (service.fourPillars && service.fourPillars.length > 0) {
-      return service.fourPillars;
-    }
-    // Dynamic fallback generation based on service processPhases or deliverableList
-    const phases = service.processPhases || [];
-    const deliverables = service.deliverableList || [];
+    return service.fourPillars || [];
+  }, [service.fourPillars]);
 
-    const defaultPillars: ServicePillar[] = [
-      {
-        pillarNumber: '01',
-        title: phases[0]?.title || 'Telemetry & Diagnostics Engine',
-        subtitle: 'Baseline system telemetry and bottleneck identification',
-        description: phases[0]?.description || `Comprehensive initial audit of ${service.title} telemetry and performance baselines.`,
-        capabilities: phases[0]?.keyOutputs || ['Telemetry baseline logging', 'Bottleneck root-cause mapping', 'Performance profiling'],
-        outcome: 'Validated baseline dataset and telemetry infrastructure.',
-      },
-      {
-        pillarNumber: '02',
-        title: phases[1]?.title || 'Architecture & System Design',
-        subtitle: 'Modular engineering specifications',
-        description: phases[1]?.description || `Architecting modular ${service.title} systems and automated pipeline routing.`,
-        capabilities: deliverables[0]?.specifications || ['Modular technical architecture', 'Automated data routing', 'Schema validation'],
-        outcome: 'Engineering blueprint and automated data models.',
-      },
-      {
-        pillarNumber: '03',
-        title: phases[2]?.title || deliverables[1]?.title || 'Deployment & Production Integration',
-        subtitle: 'Production code PRs and edge rollout',
-        description: phases[2]?.description || `Deploying high-velocity ${service.title} capabilities directly to staging and production environments.`,
-        capabilities: deliverables[1]?.specifications || ['Production code pull requests', 'CI/CD pipeline integration', 'Edge optimization'],
-        outcome: 'Continuous production integration with zero downtime.',
-      },
-      {
-        pillarNumber: '04',
-        title: 'Scaling, Automation & Telemetry Governance',
-        subtitle: 'Autonomous growth velocity and SLA monitoring',
-        description: `Ongoing algorithmic calibration, anomaly detection, and continuous optimization of ${service.title} economics.`,
-        capabilities: ['Real-time anomaly alerting', 'Continuous split testing & calibration', 'Weekly telemetry sync logs'],
-        outcome: 'Sustained, compounding growth velocity.',
-      },
-    ];
-    return defaultPillars;
-  }, [service]);
-
-  // Derive dynamic Diagnosis Symptoms if not provided
+  // Diagnosis Symptoms if explicitly provided in CMS / ACF data
   const diagnosisSymptoms: ServiceDiagnosisSymptom[] = useMemo(() => {
-    if (service.diagnosis?.symptoms && service.diagnosis.symptoms.length > 0) {
-      return service.diagnosis.symptoms;
-    }
-    return [
-      {
-        code: 'SYM-01',
-        title: 'Attribution & Telemetry Blind Spots',
-        description: 'Fragmented data streams and cookie degradation prevent leadership from measuring true channel return.',
-        impact: 'Misallocated marketing capital',
-        remediation: 'Deploy first-party server-side event pipelines and centralized data warehousing.',
-      },
-      {
-        code: 'SYM-02',
-        title: 'Execution Latency & PDF Deck Stagnation',
-        description: 'Traditional agencies deliver lengthy audit decks that internal engineering teams lack capacity to implement.',
-        impact: 'Months of lost pipeline velocity',
-        remediation: 'Direct delivery of production code pull requests, schemas, and API scripts.',
-      },
-      {
-        code: 'SYM-03',
-        title: 'Unqualified Top-of-Funnel Leakage',
-        description: 'Acquisition funnels optimize for low-intent vanity leads that sales teams reject.',
-        impact: 'High effective CAC & wasted sales cycles',
-        remediation: 'Downstream conversion value optimization trained on closed CRM revenue milestones.',
-      },
-    ];
-  }, [service]);
+    return service.diagnosis?.symptoms || [];
+  }, [service.diagnosis]);
 
   // Unique tool categories
   const toolCategories = useMemo(() => {
@@ -300,158 +234,189 @@ export const ServiceTemplate: React.FC<ServiceTemplateProps> = ({
       </section>
 
       {/* =========================================================================
-          3. SERVICE POSITIONING
+          2. EDITORIAL CONTENT (Live WordPress Payload)
          ========================================================================= */}
-      <section className="py-16 md:py-20 border-b border-[#1E293B] bg-[#050811]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-          <ScrollReveal className="max-w-3xl space-y-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[#0D1424] border border-[#1E293B] text-[11px] font-mono font-semibold text-[#60A5FA] uppercase tracking-wider">
-              <ShieldCheck className="w-3.5 h-3.5 text-[#3B82F6]" />
-              Strategic Positioning &amp; Engineering Paradigm
-            </div>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white">
-              Why Deterministic Engineering Replaces Agency Retainers
-            </h2>
-          </ScrollReveal>
-
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            {/* Left: Core Positioning Statement & Traditional vs Ours */}
-            <div className="lg:col-span-7 space-y-6">
-              <div className="p-6 sm:p-8 rounded-2xl bg-[#0D1424] border border-[#1E293B] space-y-4">
-                <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                  <Terminal className="w-4 h-4 text-[#3B82F6]" />
-                  The Architectural Paradigm
-                </h3>
-                <p className="text-sm sm:text-base text-[#CBD5E1] leading-relaxed">
-                  {service.positioningStatement ||
-                    `${serviceTitle} is executed as an infrastructure discipline rather than a subjective marketing task. We build deterministic data pipelines, code-level optimizations, and telemetry guardrails that compound enterprise value.`}
-                </p>
+      {service.content && service.content.trim().length > 0 && (
+        <section className="py-12 md:py-16 border-b border-[#1E293B] bg-[#070B14]">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+            <ScrollReveal className="max-w-3xl space-y-3">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[#0D1424] border border-[#1E293B] text-[11px] font-mono font-semibold text-[#60A5FA] uppercase tracking-wider">
+                <BookOpen className="w-3.5 h-3.5 text-[#3B82F6]" />
+                Editorial Overview
               </div>
-
-              {/* Contrast Card */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="p-5 rounded-2xl bg-[#0A0F1D] border border-rose-900/30 space-y-2">
-                  <div className="text-xs font-mono font-bold text-rose-400 uppercase">
-                    Why Traditional Execution Fails
-                  </div>
-                  <p className="text-xs text-[#94A3B8] leading-relaxed">
-                    {service.whyTraditionalFails ||
-                      'Agencies deliver 60-page PDF audit decks and subjective recommendations that gather dust because internal engineering teams lack capacity to implement them.'}
-                  </p>
-                </div>
-
-                <div className="p-5 rounded-2xl bg-[#0A0F1D] border border-emerald-900/30 space-y-2">
-                  <div className="text-xs font-mono font-bold text-emerald-400 uppercase">
-                    How MatricsMania Operates
-                  </div>
-                  <p className="text-xs text-[#94A3B8] leading-relaxed">
-                    We ship production code pull requests, JSON-LD schemas, edge worker routing, and server-side tracking pipelines directly to your repositories.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Right: Recommended For & SLA Governance */}
-            <div className="lg:col-span-5 space-y-4">
-              <div className="p-6 rounded-2xl bg-[#0D1424] border border-[#1E293B] space-y-4">
-                <div className="text-xs font-mono font-bold text-[#60A5FA] uppercase tracking-wider">
-                  Ideal Client Profile (ICP)
-                </div>
-                <p className="text-xs text-[#CBD5E1] leading-relaxed">
-                  {service.idealClientProfile ||
-                    'Engineered specifically for mid-market and enterprise platforms requiring verifiable performance attribution and production code delivery.'}
-                </p>
-
-                {service.recommendedFor && service.recommendedFor.length > 0 && (
-                  <div className="space-y-2 pt-2 border-t border-[#1E293B]">
-                    <div className="text-[11px] font-mono text-[#64748B] uppercase">Recommended For:</div>
-                    <ul className="space-y-1.5">
-                      {service.recommendedFor.map((item, idx) => (
-                        <li key={idx} className="flex items-center gap-2 text-xs text-[#E2E8F0]">
-                          <CheckCircle2 className="w-3.5 h-3.5 text-[#3B82F6] shrink-0" />
-                          <span>{item}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </div>
-
-              <div className="p-6 rounded-2xl bg-[#0D1424] border border-[#1E293B] space-y-2">
-                <div className="text-xs font-mono font-bold text-[#64748B] uppercase tracking-wider">
-                  SLA &amp; Governance Commitment
-                </div>
-                <p className="text-xs text-[#94A3B8] leading-relaxed">
-                  {service.slaCommitment ||
-                    'Weekly code pull requests, 48-hour response SLA, raw telemetry exports in BigQuery, and complete intellectual property ownership.'}
-                </p>
-              </div>
-            </div>
+              <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
+                {serviceTitle} Overview
+              </h2>
+            </ScrollReveal>
+            <div
+              className="prose prose-invert max-w-4xl text-[#CBD5E1] text-sm sm:text-base leading-relaxed space-y-4"
+              dangerouslySetInnerHTML={{ __html: service.content }}
+            />
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* =========================================================================
-          4. DIAGNOSIS / PROBLEM DEFINITION
+          3. SERVICE POSITIONING
          ========================================================================= */}
-      <section className="py-16 md:py-20 border-b border-[#1E293B] bg-[#070B14]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-          <ScrollReveal className="max-w-3xl space-y-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[#0D1424] border border-[#1E293B] text-[11px] font-mono font-semibold text-amber-400 uppercase tracking-wider">
-              <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
-              Diagnostics &amp; System Failure Modes
-            </div>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white">
-              {service.diagnosis?.headline || 'Underlying Failure Modes We Diagnose &amp; Remediate'}
-            </h2>
-            <p className="text-sm sm:text-base text-[#94A3B8]">
-              {service.diagnosis?.summary ||
-                'Most enterprise platforms suffer from severe technical and attribution friction that degrades growth velocity before traffic ever converts.'}
-            </p>
-          </ScrollReveal>
+      {(service.positioningStatement ||
+        service.whyTraditionalFails ||
+        service.idealClientProfile ||
+        service.slaCommitment ||
+        (service.recommendedFor && service.recommendedFor.length > 0)) && (
+        <section className="py-16 md:py-20 border-b border-[#1E293B] bg-[#050811]">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+            <ScrollReveal className="max-w-3xl space-y-3">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[#0D1424] border border-[#1E293B] text-[11px] font-mono font-semibold text-[#60A5FA] uppercase tracking-wider">
+                <ShieldCheck className="w-3.5 h-3.5 text-[#3B82F6]" />
+                Strategic Positioning &amp; Engineering Paradigm
+              </div>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white">
+                Strategic Service Positioning
+              </h2>
+            </ScrollReveal>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {diagnosisSymptoms.map((symptom, idx) => (
-              <div
-                key={idx}
-                className="p-6 sm:p-7 rounded-2xl bg-[#0D1424] border border-[#1E293B] space-y-4 hover:border-amber-500/30 transition-all flex flex-col justify-between"
-              >
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-mono font-bold text-amber-400 bg-amber-400/10 px-2 py-0.5 rounded border border-amber-400/20">
-                      {symptom.code || `BOTTLENECK 0${idx + 1}`}
-                    </span>
-                    {symptom.impact && (
-                      <span className="text-[11px] font-mono text-rose-400">
-                        {symptom.impact}
-                      </span>
-                    )}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+              {/* Left Column */}
+              <div className="lg:col-span-7 space-y-6">
+                {service.positioningStatement && (
+                  <div className="p-6 sm:p-8 rounded-2xl bg-[#0D1424] border border-[#1E293B] space-y-4">
+                    <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                      <Terminal className="w-4 h-4 text-[#3B82F6]" />
+                      The Architectural Paradigm
+                    </h3>
+                    <p className="text-sm sm:text-base text-[#CBD5E1] leading-relaxed">
+                      {service.positioningStatement}
+                    </p>
                   </div>
+                )}
 
-                  <h3 className="text-lg font-bold text-white">
-                    {symptom.title}
-                  </h3>
-
-                  <p className="text-xs sm:text-sm text-[#94A3B8] leading-relaxed">
-                    {symptom.description}
-                  </p>
-                </div>
-
-                {symptom.remediation && (
-                  <div className="pt-3 border-t border-[#1E293B] space-y-1">
-                    <div className="text-[10px] font-mono text-[#60A5FA] uppercase tracking-wider">
-                      Architectural Remediation
+                {/* Why Traditional Execution Fails */}
+                {service.whyTraditionalFails && (
+                  <div className="p-5 rounded-2xl bg-[#0A0F1D] border border-rose-900/30 space-y-2">
+                    <div className="text-xs font-mono font-bold text-rose-400 uppercase">
+                      Why Traditional Execution Fails
                     </div>
-                    <p className="text-xs text-[#CBD5E1] font-mono">
-                      {symptom.remediation}
+                    <p className="text-xs text-[#94A3B8] leading-relaxed">
+                      {service.whyTraditionalFails}
                     </p>
                   </div>
                 )}
               </div>
-            ))}
+
+              {/* Right Column */}
+              <div className="lg:col-span-5 space-y-4">
+                {(service.idealClientProfile || (service.recommendedFor && service.recommendedFor.length > 0)) && (
+                  <div className="p-6 rounded-2xl bg-[#0D1424] border border-[#1E293B] space-y-4">
+                    <div className="text-xs font-mono font-bold text-[#60A5FA] uppercase tracking-wider">
+                      Ideal Client Profile (ICP)
+                    </div>
+                    {service.idealClientProfile && (
+                      <p className="text-xs text-[#CBD5E1] leading-relaxed">
+                        {service.idealClientProfile}
+                      </p>
+                    )}
+
+                    {service.recommendedFor && service.recommendedFor.length > 0 && (
+                      <div className="space-y-2 pt-2 border-t border-[#1E293B]">
+                        <div className="text-[11px] font-mono text-[#64748B] uppercase">Recommended For:</div>
+                        <ul className="space-y-1.5">
+                          {service.recommendedFor.map((item, idx) => (
+                            <li key={idx} className="flex items-center gap-2 text-xs text-[#E2E8F0]">
+                              <CheckCircle2 className="w-3.5 h-3.5 text-[#3B82F6] shrink-0" />
+                              <span>{item}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {service.slaCommitment && (
+                  <div className="p-6 rounded-2xl bg-[#0D1424] border border-[#1E293B] space-y-2">
+                    <div className="text-xs font-mono font-bold text-[#64748B] uppercase tracking-wider">
+                      SLA &amp; Governance Commitment
+                    </div>
+                    <p className="text-xs text-[#94A3B8] leading-relaxed">
+                      {service.slaCommitment}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
+
+      {/* =========================================================================
+          4. DIAGNOSIS / PROBLEM DEFINITION
+         ========================================================================= */}
+      {service.diagnosis && (diagnosisSymptoms.length > 0 || service.diagnosis.headline || service.diagnosis.summary) && (
+        <section className="py-16 md:py-20 border-b border-[#1E293B] bg-[#070B14]">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+            <ScrollReveal className="max-w-3xl space-y-3">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[#0D1424] border border-[#1E293B] text-[11px] font-mono font-semibold text-amber-400 uppercase tracking-wider">
+                <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
+                Diagnostics &amp; System Failure Modes
+              </div>
+              {service.diagnosis.headline && (
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white">
+                  {service.diagnosis.headline}
+                </h2>
+              )}
+              {service.diagnosis.summary && (
+                <p className="text-sm sm:text-base text-[#94A3B8]">
+                  {service.diagnosis.summary}
+                </p>
+              )}
+            </ScrollReveal>
+
+            {diagnosisSymptoms.length > 0 && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {diagnosisSymptoms.map((symptom, idx) => (
+                  <div
+                    key={idx}
+                    className="p-6 sm:p-7 rounded-2xl bg-[#0D1424] border border-[#1E293B] space-y-4 hover:border-amber-500/30 transition-all flex flex-col justify-between"
+                  >
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-mono font-bold text-amber-400 bg-amber-400/10 px-2 py-0.5 rounded border border-amber-400/20">
+                          {symptom.code || `BOTTLENECK 0${idx + 1}`}
+                        </span>
+                        {symptom.impact && (
+                          <span className="text-[11px] font-mono text-rose-400">
+                            {symptom.impact}
+                          </span>
+                        )}
+                      </div>
+
+                      <h3 className="text-lg font-bold text-white">
+                        {symptom.title}
+                      </h3>
+
+                      <p className="text-xs sm:text-sm text-[#94A3B8] leading-relaxed">
+                        {symptom.description}
+                      </p>
+                    </div>
+
+                    {symptom.remediation && (
+                      <div className="pt-3 border-t border-[#1E293B] space-y-1">
+                        <div className="text-[10px] font-mono text-[#60A5FA] uppercase tracking-wider">
+                          Architectural Remediation
+                        </div>
+                        <p className="text-xs text-[#CBD5E1] font-mono">
+                          {symptom.remediation}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
+      )}
 
       {/* =========================================================================
           5. METHODOLOGY
@@ -522,235 +487,249 @@ export const ServiceTemplate: React.FC<ServiceTemplateProps> = ({
       {/* =========================================================================
           6. FOUR-PILLAR FRAMEWORK
          ========================================================================= */}
-      <section className="py-16 md:py-24 border-b border-[#1E293B] bg-[#070B14]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-          <ScrollReveal className="max-w-3xl space-y-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[#0D1424] border border-[#1E293B] text-[11px] font-mono font-semibold text-[#60A5FA] uppercase tracking-wider">
-              <Layers className="w-3.5 h-3.5 text-[#3B82F6]" />
-              Four-Pillar Framework
-            </div>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white">
-              The Four Architectural Pillars of {serviceTitle}
-            </h2>
-            <p className="text-sm sm:text-base text-[#94A3B8]">
-              Each capability module is engineered to operate in synchrony, eliminating single points of failure across your acquisition stack.
-            </p>
-          </ScrollReveal>
+      {fourPillars.length > 0 && (
+        <section className="py-16 md:py-24 border-b border-[#1E293B] bg-[#070B14]">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+            <ScrollReveal className="max-w-3xl space-y-3">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[#0D1424] border border-[#1E293B] text-[11px] font-mono font-semibold text-[#60A5FA] uppercase tracking-wider">
+                <Layers className="w-3.5 h-3.5 text-[#3B82F6]" />
+                Four-Pillar Framework
+              </div>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white">
+                The Four Architectural Pillars of {serviceTitle}
+              </h2>
+              <p className="text-sm sm:text-base text-[#94A3B8]">
+                Each capability module is engineered to operate in synchrony, eliminating single points of failure across your acquisition stack.
+              </p>
+            </ScrollReveal>
 
-          {/* Interactive 4-Pillar Tabs */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            {fourPillars.map((pillar, idx) => (
-              <button
-                key={idx}
-                onClick={() => setActivePillarTab(idx)}
-                className={`p-4 rounded-xl border text-left transition-all cursor-pointer space-y-1.5 ${
-                  activePillarTab === idx
-                    ? 'bg-[#0D1424] border-[#2563EB] shadow-lg shadow-[#2563EB]/15'
-                    : 'bg-[#0A0F1D] border-[#1E293B] text-[#94A3B8] hover:border-[#334155]'
-                }`}
-              >
-                <div className="text-xs font-mono font-bold text-[#60A5FA]">
-                  PILLAR {pillar.pillarNumber || `0${idx + 1}`}
-                </div>
-                <div className="text-sm font-bold text-white truncate">
-                  {pillar.title}
-                </div>
-              </button>
-            ))}
-          </div>
-
-          {/* Active Pillar Deep Dive Card */}
-          {fourPillars[activePillarTab] && (
-            <div className="rounded-2xl bg-[#0D1424] border border-[#1E293B] p-6 sm:p-10 space-y-6">
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#1E293B] pb-6">
-                <div>
-                  <div className="text-xs font-mono text-[#60A5FA] font-bold">
-                    ARCHITECTURE MODULE {fourPillars[activePillarTab].pillarNumber}
+            {/* Interactive 4-Pillar Tabs */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              {fourPillars.map((pillar, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setActivePillarTab(idx)}
+                  className={`p-4 rounded-xl border text-left transition-all cursor-pointer space-y-1.5 ${
+                    activePillarTab === idx
+                      ? 'bg-[#0D1424] border-[#2563EB] shadow-lg shadow-[#2563EB]/15'
+                      : 'bg-[#0A0F1D] border-[#1E293B] text-[#94A3B8] hover:border-[#334155]'
+                  }`}
+                >
+                  <div className="text-xs font-mono font-bold text-[#60A5FA]">
+                    PILLAR {pillar.pillarNumber || `0${idx + 1}`}
                   </div>
-                  <h3 className="text-2xl sm:text-3xl font-bold text-white mt-1">
-                    {fourPillars[activePillarTab].title}
-                  </h3>
-                  {fourPillars[activePillarTab].subtitle && (
-                    <p className="text-xs font-mono text-[#94A3B8] mt-1">
-                      {fourPillars[activePillarTab].subtitle}
-                    </p>
+                  <div className="text-sm font-bold text-white truncate">
+                    {pillar.title}
+                  </div>
+                </button>
+              ))}
+            </div>
+
+            {/* Active Pillar Deep Dive Card */}
+            {fourPillars[activePillarTab] && (
+              <div className="rounded-2xl bg-[#0D1424] border border-[#1E293B] p-6 sm:p-10 space-y-6">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#1E293B] pb-6">
+                  <div>
+                    <div className="text-xs font-mono text-[#60A5FA] font-bold">
+                      ARCHITECTURE MODULE {fourPillars[activePillarTab].pillarNumber}
+                    </div>
+                    <h3 className="text-2xl sm:text-3xl font-bold text-white mt-1">
+                      {fourPillars[activePillarTab].title}
+                    </h3>
+                    {fourPillars[activePillarTab].subtitle && (
+                      <p className="text-xs font-mono text-[#94A3B8] mt-1">
+                        {fourPillars[activePillarTab].subtitle}
+                      </p>
+                    )}
+                  </div>
+
+                  {fourPillars[activePillarTab].outcome && (
+                    <div className="p-3 rounded-xl bg-[#070B14] border border-[#1E293B] max-w-sm">
+                      <div className="text-[10px] font-mono text-emerald-400 uppercase tracking-wider">
+                        Target Outcome
+                      </div>
+                      <div className="text-xs text-[#CBD5E1] mt-0.5">
+                        {fourPillars[activePillarTab].outcome}
+                      </div>
+                    </div>
                   )}
                 </div>
 
-                {fourPillars[activePillarTab].outcome && (
-                  <div className="p-3 rounded-xl bg-[#070B14] border border-[#1E293B] max-w-sm">
-                    <div className="text-[10px] font-mono text-emerald-400 uppercase tracking-wider">
-                      Target Outcome
+                <p className="text-sm sm:text-base text-[#CBD5E1] leading-relaxed">
+                  {fourPillars[activePillarTab].description}
+                </p>
+
+                {fourPillars[activePillarTab].capabilities && (
+                  <div className="space-y-3 pt-4 border-t border-[#1E293B]">
+                    <div className="text-xs font-mono text-[#64748B] uppercase tracking-wider">
+                      Core Technical Capabilities
                     </div>
-                    <div className="text-xs text-[#CBD5E1] mt-0.5">
-                      {fourPillars[activePillarTab].outcome}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {fourPillars[activePillarTab].capabilities.map((cap, cIdx) => (
+                        <div
+                          key={cIdx}
+                          className="p-3.5 rounded-xl bg-[#070B14] border border-[#1E293B] flex items-center gap-3 text-xs text-[#E2E8F0]"
+                        >
+                          <Sparkles className="w-3.5 h-3.5 text-[#3B82F6] shrink-0" />
+                          <span>{cap}</span>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 )}
               </div>
-
-              <p className="text-sm sm:text-base text-[#CBD5E1] leading-relaxed">
-                {fourPillars[activePillarTab].description}
-              </p>
-
-              {fourPillars[activePillarTab].capabilities && (
-                <div className="space-y-3 pt-4 border-t border-[#1E293B]">
-                  <div className="text-xs font-mono text-[#64748B] uppercase tracking-wider">
-                    Core Technical Capabilities
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {fourPillars[activePillarTab].capabilities.map((cap, cIdx) => (
-                      <div
-                        key={cIdx}
-                        className="p-3.5 rounded-xl bg-[#070B14] border border-[#1E293B] flex items-center gap-3 text-xs text-[#E2E8F0]"
-                      >
-                        <Sparkles className="w-3.5 h-3.5 text-[#3B82F6] shrink-0" />
-                        <span>{cap}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-      </section>
+            )}
+          </div>
+        </section>
+      )}
 
       {/* =========================================================================
           7. DELIVERABLES
          ========================================================================= */}
-      <section id="deliverables-section" className="py-16 md:py-20 border-b border-[#1E293B] bg-[#050811]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-          <ScrollReveal className="max-w-3xl space-y-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[#0D1424] border border-[#1E293B] text-[11px] font-mono font-semibold text-[#60A5FA] uppercase tracking-wider">
-              <FileCheck className="w-3.5 h-3.5 text-[#3B82F6]" />
-              Verifiable Deliverables &amp; Code Specifications
-            </div>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white">
-              Tangible Scope Checklist
-            </h2>
-            <p className="text-sm sm:text-base text-[#94A3B8]">
-              Every deliverable is verified with production code pull requests, live data pipelines, and telemetry dashboards.
-            </p>
-          </ScrollReveal>
+      {((service.deliverableList && service.deliverableList.length > 0) ||
+        (service.deliverablesSummary && service.deliverablesSummary.length > 0)) && (
+        <section id="deliverables-section" className="py-16 md:py-20 border-b border-[#1E293B] bg-[#050811]">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+            <ScrollReveal className="max-w-3xl space-y-3">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[#0D1424] border border-[#1E293B] text-[11px] font-mono font-semibold text-[#60A5FA] uppercase tracking-wider">
+                <FileCheck className="w-3.5 h-3.5 text-[#3B82F6]" />
+                Verifiable Deliverables &amp; Code Specifications
+              </div>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white">
+                Tangible Scope Checklist
+              </h2>
+              <p className="text-sm sm:text-base text-[#94A3B8]">
+                Every deliverable is verified with production code pull requests, live data pipelines, and telemetry dashboards.
+              </p>
+            </ScrollReveal>
 
-          {service.deliverableList && service.deliverableList.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {service.deliverableList.map((del, idx) => (
-                <div
-                  key={idx}
-                  className="p-6 sm:p-7 rounded-2xl bg-[#0D1424] border border-[#1E293B] space-y-4 hover:border-[#2563EB]/40 transition-all flex flex-col justify-between"
-                >
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-mono font-bold text-[#60A5FA] bg-[#2563EB]/10 px-2 py-0.5 rounded border border-[#2563EB]/20 uppercase">
-                        {del.category}
-                      </span>
-                      <span className="text-[11px] font-mono text-[#64748B]">
-                        {del.cadence}
-                      </span>
-                    </div>
-
-                    <h3 className="text-base sm:text-lg font-bold text-white">
-                      {del.title}
-                    </h3>
-                  </div>
-
-                  {del.specifications && del.specifications.length > 0 && (
-                    <div className="pt-3 border-t border-[#1E293B] space-y-2">
-                      <div className="text-[10px] font-mono text-[#64748B] uppercase">
-                        Technical Specifications:
+            {service.deliverableList && service.deliverableList.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {service.deliverableList.map((del, idx) => (
+                  <div
+                    key={idx}
+                    className="p-6 sm:p-7 rounded-2xl bg-[#0D1424] border border-[#1E293B] space-y-4 hover:border-[#2563EB]/40 transition-all flex flex-col justify-between"
+                  >
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] font-mono font-bold text-[#60A5FA] bg-[#2563EB]/10 px-2 py-0.5 rounded border border-[#2563EB]/20 uppercase">
+                          {del.category}
+                        </span>
+                        <span className="text-[11px] font-mono text-[#64748B]">
+                          {del.cadence}
+                        </span>
                       </div>
-                      <ul className="space-y-1.5">
-                        {del.specifications.map((spec, sIdx) => (
-                          <li key={sIdx} className="flex items-center gap-2 text-xs text-[#CBD5E1]">
-                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                            <span>{spec}</span>
-                          </li>
-                        ))}
-                      </ul>
+
+                      <h3 className="text-base sm:text-lg font-bold text-white">
+                        {del.title}
+                      </h3>
                     </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="p-8 rounded-2xl bg-[#0D1424] border border-[#1E293B]">
-              <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {service.deliverablesSummary.map((sum, idx) => (
-                  <li key={idx} className="flex items-center gap-2 text-xs sm:text-sm text-[#CBD5E1]">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                    <span>{sum}</span>
-                  </li>
+
+                    {del.specifications && del.specifications.length > 0 && (
+                      <div className="pt-3 border-t border-[#1E293B] space-y-2">
+                        <div className="text-[10px] font-mono text-[#64748B] uppercase">
+                          Technical Specifications:
+                        </div>
+                        <ul className="space-y-1.5">
+                          {del.specifications.map((spec, sIdx) => (
+                            <li key={sIdx} className="flex items-center gap-2 text-xs text-[#CBD5E1]">
+                              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                              <span>{spec}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
                 ))}
-              </ul>
-            </div>
-          )}
-        </div>
-      </section>
+              </div>
+            ) : (
+              <div className="p-8 rounded-2xl bg-[#0D1424] border border-[#1E293B]">
+                <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {service.deliverablesSummary.map((sum, idx) => (
+                    <li key={idx} className="flex items-center gap-2 text-xs sm:text-sm text-[#CBD5E1]">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                      <span>{sum}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        </section>
+      )}
 
       {/* =========================================================================
           8. MEASUREMENT / ECONOMICS
          ========================================================================= */}
-      <section className="py-16 md:py-20 border-b border-[#1E293B] bg-[#070B14]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-          <ScrollReveal className="max-w-3xl space-y-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[#0D1424] border border-[#1E293B] text-[11px] font-mono font-semibold text-emerald-400 uppercase tracking-wider">
-              <TrendingUp className="w-3.5 h-3.5 text-emerald-400" />
-              Unit Economics &amp; Measurement Governance
-            </div>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white">
-              {service.economics?.modelTitle || `${serviceTitle} Economic &amp; CAC Impact Model`}
-            </h2>
-            <p className="text-sm sm:text-base text-[#94A3B8]">
-              {service.economics?.description ||
-                'Growth engineering shifts digital acquisition from variable expense into a compounding, capital-efficient enterprise asset.'}
-            </p>
-          </ScrollReveal>
+      {service.economics &&
+        (service.economics.modelTitle ||
+          service.economics.description ||
+          (service.economics.benchmarkMetrics && service.economics.benchmarkMetrics.length > 0) ||
+          (service.economics.formulas && service.economics.formulas.length > 0)) && (
+          <section className="py-16 md:py-20 border-b border-[#1E293B] bg-[#070B14]">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+              <ScrollReveal className="max-w-3xl space-y-3">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[#0D1424] border border-[#1E293B] text-[11px] font-mono font-semibold text-emerald-400 uppercase tracking-wider">
+                  <TrendingUp className="w-3.5 h-3.5 text-emerald-400" />
+                  Unit Economics &amp; Measurement Governance
+                </div>
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white">
+                  {service.economics?.modelTitle || `${serviceTitle} Economic &amp; CAC Impact Model`}
+                </h2>
+                <p className="text-sm sm:text-base text-[#94A3B8]">
+                  {service.economics?.description ||
+                    'Growth engineering shifts digital acquisition from variable expense into a compounding, capital-efficient enterprise asset.'}
+                </p>
+              </ScrollReveal>
 
-          {/* Benchmark Metrics Strip */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {(service.economics?.benchmarkMetrics || service.metrics || []).slice(0, 3).map((m, idx) => (
-              <div key={idx} className="p-6 rounded-2xl bg-[#0D1424] border border-[#1E293B] space-y-2">
-                <div className="text-xs font-mono text-[#64748B] flex items-center justify-between">
-                  <span>METRIC 0{idx + 1}</span>
-                  {m.timeframe && <span className="text-xs text-[#60A5FA] font-mono">{m.timeframe}</span>}
+              {/* Benchmark Metrics Strip */}
+              {((service.economics?.benchmarkMetrics && service.economics.benchmarkMetrics.length > 0) ||
+                (service.metrics && service.metrics.length > 0)) && (
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  {(service.economics?.benchmarkMetrics || service.metrics || []).slice(0, 3).map((m, idx) => (
+                    <div key={idx} className="p-6 rounded-2xl bg-[#0D1424] border border-[#1E293B] space-y-2">
+                      <div className="text-xs font-mono text-[#64748B] flex items-center justify-between">
+                        <span>METRIC 0{idx + 1}</span>
+                        {m.timeframe && <span className="text-xs text-[#60A5FA] font-mono">{m.timeframe}</span>}
+                      </div>
+                      <div className="text-2xl sm:text-3xl font-bold font-mono text-white">
+                        {m.value}
+                      </div>
+                      <div className="text-xs text-[#94A3B8]">
+                        {m.label}
+                      </div>
+                      {m.sourceBenchmark && (
+                        <div className="text-[10px] font-mono text-[#64748B] pt-1">
+                          Source: {m.sourceBenchmark}
+                        </div>
+                      )}
+                    </div>
+                  ))}
                 </div>
-                <div className="text-2xl sm:text-3xl font-bold font-mono text-white">
-                  {m.value}
-                </div>
-                <div className="text-xs text-[#94A3B8]">
-                  {m.label}
-                </div>
-                {m.sourceBenchmark && (
-                  <div className="text-[10px] font-mono text-[#64748B] pt-1">
-                    Source: {m.sourceBenchmark}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
+              )}
 
-          {/* Economic Formulas */}
-          {service.economics?.formulas && service.economics.formulas.length > 0 && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {service.economics.formulas.map((form, idx) => (
-                <div key={idx} className="p-6 rounded-2xl bg-[#0D1424] border border-[#1E293B] space-y-3">
-                  <div className="text-xs font-mono font-bold text-[#60A5FA] uppercase">
-                    {form.name}
-                  </div>
-                  <div className="p-3.5 rounded-xl bg-[#070B14] border border-[#1E293B] font-mono text-xs text-emerald-400 overflow-x-auto">
-                    <code>{form.formula}</code>
-                  </div>
-                  <p className="text-xs text-[#94A3B8] leading-relaxed">
-                    {form.explanation}
-                  </p>
+              {/* Economic Formulas */}
+              {service.economics?.formulas && service.economics.formulas.length > 0 && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {service.economics.formulas.map((form, idx) => (
+                    <div key={idx} className="p-6 rounded-2xl bg-[#0D1424] border border-[#1E293B] space-y-3">
+                      <div className="text-xs font-mono font-bold text-[#60A5FA] uppercase">
+                        {form.name}
+                      </div>
+                      <div className="p-3.5 rounded-xl bg-[#070B14] border border-[#1E293B] font-mono text-xs text-emerald-400 overflow-x-auto">
+                        <code>{form.formula}</code>
+                      </div>
+                      <p className="text-xs text-[#94A3B8] leading-relaxed">
+                        {form.explanation}
+                      </p>
+                    </div>
+                  ))}
                 </div>
-              ))}
+              )}
             </div>
-          )}
-        </div>
-      </section>
+          </section>
+        )}
 
       {/* =========================================================================
           9. TOOLING

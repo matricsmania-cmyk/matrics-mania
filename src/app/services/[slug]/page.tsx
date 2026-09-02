@@ -14,7 +14,7 @@ export const dynamicParams = true;
 export const revalidate = 0;
 
 export async function generateStaticParams() {
-  const services = wordPressProvider.getAllServices();
+  const services = (await wordPressProvider.asyncGetAllServices()) || wordPressProvider.getAllServices();
   const slugSet = new Set(services.map((s) => s.slug));
   const knownSlugs = [
     'technical-seo',
