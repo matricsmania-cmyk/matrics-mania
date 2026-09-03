@@ -174,7 +174,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onNavigate,
   onOpenBooking,
 }) => {
-  const { services, industries, locations, insights, isSyncing } = useContent();
+  const { services, industries, locations, insights } = useContent();
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileSectionOpen, setMobileSectionOpen] = useState<string | null>(null);
@@ -317,40 +317,6 @@ export const Navbar: React.FC<NavbarProps> = ({
       className="fixed top-0 left-0 right-0 z-50 bg-[#070B14]/95 backdrop-blur-md border-b border-[#1E293B]"
       role="banner"
     >
-      {/* Top Telemetry Strip */}
-      <div className="hidden lg:block border-b border-[#1E293B]/60 bg-[#05080F] text-[11px] font-mono text-[#64748B] py-1">
-        <Container maxWidth="xl">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <span className="flex items-center gap-1.5 text-[#10B981]">
-                <span className={`w-1.5 h-1.5 rounded-full ${isSyncing ? 'bg-[#38BDF8] animate-ping' : 'bg-[#10B981] animate-pulse'}`} />
-                {isSyncing ? 'CMS: SYNCING...' : 'CMS: LIVE (WP REST)'}
-              </span>
-              <span className="text-[#334155]">|</span>
-              <span>INDEX LATENCY: 42ms</span>
-              <span className="text-[#334155]">|</span>
-              <span>NODE: IN-BLR-01 (HQ)</span>
-            </div>
-            <div className="flex items-center gap-4">
-              <a
-                href="/case-studies/"
-                onClick={(e) => handleLinkClick(e, '/case-studies/')}
-                className="hover:text-[#60A5FA] transition-colors"
-              >
-                Q3 2025 Growth Attribution Benchmark Report →
-              </a>
-              <span className="text-[#334155]">|</span>
-              <a
-                href="mailto:growth@matricsmania.com"
-                className="hover:text-white transition-colors"
-              >
-                growth@matricsmania.com
-              </a>
-            </div>
-          </div>
-        </Container>
-      </div>
-
       {/* Main Navigation Bar */}
       <Container maxWidth="xl">
         <div className="h-16 flex items-center justify-between gap-4">
