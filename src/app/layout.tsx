@@ -5,6 +5,8 @@ import { ClientShell } from '../components/ClientShell';
 import { getStaticRouteSeo } from '../utils/seo';
 import { toNextMetadata } from '../utils/nextMetadata';
 
+import type { Metadata } from 'next';
+
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ['latin'],
   weight: ['300', '400', '500', '600', '700', '800'],
@@ -12,7 +14,19 @@ const plusJakartaSans = Plus_Jakarta_Sans({
   display: 'swap',
 });
 
-export const metadata = toNextMetadata(getStaticRouteSeo('home'));
+export const metadata: Metadata = {
+  metadataBase: new URL('https://matricsmania.com'),
+  title: {
+    default: "MatricsMania - India's #1 Performance Digital Marketing Agency | SEO, PPC & Growth",
+    template: '%s',
+  },
+  description:
+    "MatricsMania is India's leading performance digital marketing agency specializing in 100% On-Page SEO, high-ROAS PPC advertising, CRO web development, and real-time revenue attribution engines.",
+  robots: {
+    index: true,
+    follow: true,
+  },
+};
 
 export default function RootLayout({
   children,

@@ -157,12 +157,16 @@ export const ServiceTemplate: React.FC<ServiceTemplateProps> = ({
           <ScrollReveal className="max-w-4xl space-y-5">
             {/* Top Badges */}
             <div className="flex flex-wrap items-center gap-3">
-              <span className="px-2.5 py-1 rounded-md bg-[#0D1424] border border-[#1E293B] text-[11px] font-mono font-bold text-[#60A5FA] tracking-wider uppercase">
-                {service.serviceCode || 'SRV-ARCH'}
-              </span>
-              <span className="px-2.5 py-1 rounded-md bg-[#0D1424] border border-[#1E293B] text-[11px] font-mono text-[#94A3B8]">
-                // {service.category}
-              </span>
+              {service.serviceCode && (
+                <span className="px-2.5 py-1 rounded-md bg-[#0D1424] border border-[#1E293B] text-[11px] font-mono font-bold text-[#60A5FA] tracking-wider uppercase">
+                  {service.serviceCode}
+                </span>
+              )}
+              {service.category && (
+                <span className="px-2.5 py-1 rounded-md bg-[#0D1424] border border-[#1E293B] text-[11px] font-mono text-[#94A3B8]">
+                  // {service.category}
+                </span>
+              )}
               {service.priceStartingMonthly && (
                 <span className="px-2.5 py-1 rounded-md bg-[#0D1424] border border-[#1E293B] text-[11px] font-mono text-[#CBD5E1]">
                   Starting at {service.priceStartingMonthly}
@@ -432,9 +436,6 @@ export const ServiceTemplate: React.FC<ServiceTemplateProps> = ({
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white">
                 Engineered Deployment Cadence
               </h2>
-              <p className="text-sm sm:text-base text-[#94A3B8]">
-                How we transition your architecture from initial telemetry audit into autonomous growth velocity.
-              </p>
             </ScrollReveal>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -498,9 +499,6 @@ export const ServiceTemplate: React.FC<ServiceTemplateProps> = ({
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white">
                 The Four Architectural Pillars of {serviceTitle}
               </h2>
-              <p className="text-sm sm:text-base text-[#94A3B8]">
-                Each capability module is engineered to operate in synchrony, eliminating single points of failure across your acquisition stack.
-              </p>
             </ScrollReveal>
 
             {/* Interactive 4-Pillar Tabs */}
@@ -598,9 +596,6 @@ export const ServiceTemplate: React.FC<ServiceTemplateProps> = ({
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white">
                 Tangible Scope Checklist
               </h2>
-              <p className="text-sm sm:text-base text-[#94A3B8]">
-                Every deliverable is verified with production code pull requests, live data pipelines, and telemetry dashboards.
-              </p>
             </ScrollReveal>
 
             {service.deliverableList && service.deliverableList.length > 0 ? (
@@ -677,10 +672,11 @@ export const ServiceTemplate: React.FC<ServiceTemplateProps> = ({
                 <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white">
                   {service.economics?.modelTitle || `${serviceTitle} Economic &amp; CAC Impact Model`}
                 </h2>
-                <p className="text-sm sm:text-base text-[#94A3B8]">
-                  {service.economics?.description ||
-                    'Growth engineering shifts digital acquisition from variable expense into a compounding, capital-efficient enterprise asset.'}
-                </p>
+                {service.economics?.description && (
+                  <p className="text-sm sm:text-base text-[#94A3B8]">
+                    {service.economics.description}
+                  </p>
+                )}
               </ScrollReveal>
 
               {/* Benchmark Metrics Strip */}
@@ -746,9 +742,6 @@ export const ServiceTemplate: React.FC<ServiceTemplateProps> = ({
                 <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white">
                   Integrated Software Toolchain
                 </h2>
-                <p className="text-sm text-[#94A3B8]">
-                  Enterprise-grade instrumentation suites deployed to eliminate attribution ambiguity and latency.
-                </p>
               </ScrollReveal>
 
               {/* Category Pills */}
@@ -828,7 +821,7 @@ export const ServiceTemplate: React.FC<ServiceTemplateProps> = ({
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <GrowthCalculator
             title={`Simulate the Pipeline & Financial Impact of ${serviceTitle}`}
-            subtitle={`Explore how optimizing organic indexation, qualified lead thresholds, and CAC efficiency via ${serviceTitle} shifts your annual pipeline velocity.`}
+            subtitle={`Explore projected revenue scaling, conversion lift, and CAC efficiency models for ${serviceTitle}.`}
             onOpenBooking={onOpenBooking}
           />
         </div>
@@ -845,11 +838,8 @@ export const ServiceTemplate: React.FC<ServiceTemplateProps> = ({
                 Technical FAQ
               </div>
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white">
-                Frequently Asked Technical Questions
+                Frequently Asked Questions
               </h2>
-              <p className="text-sm text-[#94A3B8]">
-                Precise operational guidelines, code ownership, and turnaround parameters for {serviceTitle}.
-              </p>
             </ScrollReveal>
 
             <div className="space-y-3">
@@ -900,16 +890,18 @@ export const ServiceTemplate: React.FC<ServiceTemplateProps> = ({
             <div className="absolute top-0 right-1/4 w-96 h-96 bg-[#2563EB]/10 blur-[120px] pointer-events-none rounded-full" />
 
             <div className="max-w-2xl mx-auto space-y-4 relative z-10">
-              <span className="text-xs font-mono font-bold text-[#60A5FA] bg-[#2563EB]/10 px-3 py-1 rounded border border-[#2563EB]/20 uppercase">
-                {service.serviceCode || 'GROWTH DEPLOYMENT'}
-              </span>
+              {service.serviceCode && (
+                <span className="text-xs font-mono font-bold text-[#60A5FA] bg-[#2563EB]/10 px-3 py-1 rounded border border-[#2563EB]/20 uppercase">
+                  {service.serviceCode}
+                </span>
+              )}
 
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-white">
                 Deploy {serviceTitle} for Your Organization
               </h2>
 
               <p className="text-sm sm:text-base text-[#94A3B8] leading-relaxed">
-                Schedule a diagnostic audit with our principal growth engineers. We will inspect your current telemetry, identify crawl bottlenecks, and formulate a verifiable phased execution roadmap.
+                {service.shortDescription || service.excerpt || `Schedule a diagnostic consultation to analyze your technical infrastructure and formulate an execution roadmap for ${serviceTitle}.`}
               </p>
             </div>
 

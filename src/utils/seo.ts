@@ -339,7 +339,7 @@ export function resolveSeoMetadata(input: SEOMetadataInput = {}): SEOResolved {
     (entity.name ? `${entity.name} | MatricsMania` : '') ||
     DEFAULT_TITLE;
 
-  const title = rawTitle.includes('MatricsMania') || rawTitle.includes('Matricsmania')
+  const title = /matrics\s*mania/i.test(rawTitle)
     ? rawTitle
     : `${rawTitle} | MatricsMania`;
 
