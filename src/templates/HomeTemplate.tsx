@@ -7,9 +7,14 @@ import {
   HomeHeroSection,
   PositioningPromiseSection,
   CredibilityEvidenceSection,
+  FivePillarsSection,
+  CoreServicesSection,
+  IndustriesSection,
   MethodologySection,
   CaseStudyEvidenceSection,
+  GrowthIntelligenceSection,
   InsightsSection,
+  FAQAccordionSection,
   ConversionCTASection,
 } from '../components/sections';
 import { useRouter } from 'next/navigation';
@@ -140,6 +145,23 @@ export const HomeTemplate: React.FC<HomeTemplateProps> = ({
       {/* 3. EVIDENCE / CREDIBILITY: Verified Technical Standards & Disclosures */}
       <CredibilityEvidenceSection />
 
+      {/* 4. FIVE-PILLAR GROWTH SYSTEM: Search, Content, Paid, CRO, Telemetry */}
+      <FivePillarsSection
+        onNavigate={onNavigate}
+      />
+
+      {/* 5. CORE SERVICES: Modular Grid of 5 Active Disciplines */}
+      <CoreServicesSection
+        services={services}
+        onNavigate={onNavigate}
+      />
+
+      {/* 6. INDUSTRIES SERVED: Domain Specialization & Compliance */}
+      <IndustriesSection
+        industries={industries}
+        onNavigate={onNavigate}
+      />
+
       {/* 7. METHODOLOGY: The 5-Phase Growth Execution Protocol */}
       <MethodologySection
         onNavigate={onNavigate}
@@ -151,11 +173,24 @@ export const HomeTemplate: React.FC<HomeTemplateProps> = ({
         onNavigate={onNavigate}
       />
 
+      {/* 9. GROWTH INTELLIGENCE / MEASUREMENT: Audit Simulator & ROI Estimator */}
+      <GrowthIntelligenceSection
+        onOpenBooking={onOpenBooking}
+        onShowToast={onShowToast}
+      />
+
       {/* 10. INSIGHTS / THOUGHT LEADERSHIP: Research Papers & Protocols */}
       <InsightsSection
         insights={insights}
         onNavigate={onNavigate}
         onNavigateToBlogSlug={onNavigateToBlogSlug}
+      />
+
+      {/* 11. FAQ: Technical Qualification & SLAs */}
+      <FAQAccordionSection
+        title="Technical Specifications & Qualification FAQs"
+        subtitle="Transparent answers on implementation SLAs, code ownership, tech stack integration, and pricing models."
+        faqs={homepageFaqs}
       />
 
       {/* 12. HIGH-INTENT CTA: Advisory Diagnostic Booking */}

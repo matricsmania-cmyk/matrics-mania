@@ -16,7 +16,9 @@ import {
 /**
  * MatricsMania Content Provider Contract
  * 
- * Abstract interface implemented by WordPressProvider (headless CMS hydration via wp/v2 REST endpoints).
+ * Abstract interface implemented by both:
+ * 1. MockDataProvider (local simulation with clearly marked placeholder data)
+ * 2. WordPressRestApiProvider (future headless CMS hydration via wp/v2 REST endpoints)
  * 
  * Page components and layout shells strictly query this contract.
  */

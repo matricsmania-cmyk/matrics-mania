@@ -9,8 +9,7 @@ export const revalidate = 0;
 
 export const metadata = toNextMetadata(getStaticRouteSeo('work'));
 
-export default async function WorkPage() {
-  await wordPressProvider.asyncGetAllCaseStudies();
+export default function WorkPage() {
   const projects = wordPressProvider.getAllWorkProjects();
   return <WorkTemplate projects={projects} />;
 }

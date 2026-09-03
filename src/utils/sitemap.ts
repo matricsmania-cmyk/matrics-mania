@@ -1,5 +1,5 @@
 import { ContentProvider } from '../providers/ContentProvider';
-import { wordPressProvider } from '../providers/WordPressProvider';
+import { mockDataProvider } from '../providers/MockDataProvider';
 import { PUBLIC_DOMAIN } from './seo';
 
 export interface SitemapUrlEntry {
@@ -87,10 +87,12 @@ export function sanitizeSitemapUrl(rawUrl: string, host: string = PUBLIC_DOMAIN)
 /**
  * Generates the complete list of indexable, canonical sitemap entries.
  * 
- * Works seamlessly with WordPressProvider headless CMS.
+ * Works seamlessly with:
+ * 1. MockDataProvider (current static/local environment)
+ * 2. WordPressRestApiProvider / headless CMS (future production environment)
  */
 export async function getSitemapEntries(
-  provider: ContentProvider = wordPressProvider,
+  provider: ContentProvider = mockDataProvider,
   host: string = PUBLIC_DOMAIN
 ): Promise<SitemapUrlEntry[]> {
   const entriesMap = new Map<string, SitemapUrlEntry>();
@@ -271,7 +273,7 @@ export async function getSitemapEntries(
  * Builds the canonical sitemap.xml string according to the Sitemap Protocol 0.9.
  */
 export async function generateSitemapXml(
-  provider: ContentProvider = wordPressProvider,
+  provider: ContentProvider = mockDataProvider,
   host: string = PUBLIC_DOMAIN
 ): Promise<string> {
   const entries = await getSitemapEntries(provider, host);

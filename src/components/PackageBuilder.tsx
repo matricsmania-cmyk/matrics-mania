@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { useContent } from '../providers/ContentContext';
+import { SERVICES_DATA } from '../data/mockData';
 import { Check, ShieldCheck, Zap, ArrowRight } from 'lucide-react';
 
 interface PackageBuilderProps {
@@ -13,29 +13,28 @@ interface PackageBuilderProps {
 }
 
 export const PackageBuilder: React.FC<PackageBuilderProps> = ({ onOpenBookingWithQuote }) => {
-  const { services } = useContent();
-  const [selectedServices, setSelectedServices] = useState<string[]>([]);
+  const [selectedServices, setSelectedServices] = useState<string[]>(['seo-growth', 'ppc-advertising']);
   const [budgetRange, setBudgetRange] = useState<string>('₹2,50,000 - ₹10,00,000/mo');
 
-  // Initialize selectedServices with first 2 services if available and empty
-  React.useEffect(() => {
-    if (services.length > 0 && selectedServices.length === 0) {
-      setSelectedServices(services.slice(0, 2).map((s) => s.slug));
-    }
-  }, [services, selectedServices.length]);
-
-  const toggleService = (slug: string) => {
+  const toggleService = (id: string) => {
     setSelectedServices((prev) =>
-      prev.includes(slug) ? prev.filter((item) => item !== slug) : [...prev, slug]
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
     );
   };
 
   const totals = useMemo(() => {
+    // Base estimation logic in INR
     let monthlyBase = 0;
-    selectedServices.forEach(() => {
-      monthlyBase += 49999;
+    selectedServices.forEach((id) => {
+      if (id === 'seo-growth') monthlyBase += 49999;
+      if (id === 'ppc-advertising') monthlyBase += 75000;
+      if (id === 'social-media-growth') monthlyBase += 39999;
+      if (id === 'content-marketing') monthlyBase += 49999;
+      if (id === 'cro-web-engineering') monthlyBase += 35000;
+      if (id === 'analytics-marketing-ai') monthlyBase += 39999;
     });
 
+    // Multi-service bundle discount
     let discount = 0;
     if (selectedServices.length >= 3) discount = 0.15; // 15% bundle discount
     if (selectedServices.length >= 5) discount = 0.25; // 25% bundle discount
@@ -64,14 +63,14 @@ export const PackageBuilder: React.FC<PackageBuilderProps> = ({ onOpenBookingWit
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* Service Checklist from Live CMS */}
+        {/* Service Checklist */}
         <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {services.map((service) => {
-            const isSelected = selectedServices.includes(service.slug);
+          {SERVICES_DATA.map((service) => {
+            const isSelected = selectedServices.includes(service.id);
             return (
               <div
-                key={service.slug}
-                onClick={() => toggleService(service.slug)}
+                key={service.id}
+                onClick={() => toggleService(service.id)}
                 className={`p-4 rounded-2xl border cursor-pointer transition-all flex flex-col justify-between ${
                   isSelected
                     ? 'bg-[#F4EFE6] dark:bg-[#2F2B22] border-[#B39A6B] shadow-md shadow-[#B39A6B]/10'
@@ -80,9 +79,7 @@ export const PackageBuilder: React.FC<PackageBuilderProps> = ({ onOpenBookingWit
               >
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-bold text-[#8C7343] dark:text-[#C7B082]">
-                      {service.serviceCode || 'SERVICE'}
-                    </span>
+                    <span className="text-xs font-bold text-[#8C7343] dark:text-[#C7B082]">{service.category}</span>
                     <div
                       className={`w-5 h-5 rounded-md flex items-center justify-center border transition-all ${
                         isSelected
@@ -94,13 +91,11 @@ export const PackageBuilder: React.FC<PackageBuilderProps> = ({ onOpenBookingWit
                     </div>
                   </div>
                   <h4 className="font-bold text-sm text-[#171717] dark:text-[#F7F5F0]">{service.title}</h4>
-                  <p className="text-xs text-[#5A564E] dark:text-[#BDB7AA] line-clamp-2 mt-1">
-                    {service.shortDescription || service.tagline}
-                  </p>
+                  <p className="text-xs text-[#5A564E] dark:text-[#BDB7AA] line-clamp-2 mt-1">{service.shortDesc}</p>
                 </div>
                 <div className="mt-4 pt-2 border-t border-[#DCD6C9] dark:border-[#38352F] flex items-center justify-between text-xs">
                   <span className="text-[#5A564E] dark:text-[#8C877C]">Starts at</span>
-                  <span className="font-bold text-[#8C7343] dark:text-[#C7B082]">₹49,999/mo</span>
+                  <span className="font-bold text-[#8C7343] dark:text-[#C7B082]">{service.priceStarting}</span>
                 </div>
               </div>
             );
@@ -133,9 +128,7 @@ export const PackageBuilder: React.FC<PackageBuilderProps> = ({ onOpenBookingWit
           <div className="space-y-3">
             <div className="flex justify-between text-xs text-[#5A564E] dark:text-[#BDB7AA]">
               <span>Selected Modules:</span>
-              <span className="font-bold text-[#171717] dark:text-[#F7F5F0]">
-                {selectedServices.length} Services
-              </span>
+              <span className="font-bold text-[#171717] dark:text-[#F7F5F0]">{selectedServices.length} Services</span>
             </div>
 
             {totals.discountPercent > 0 && (
@@ -168,7 +161,7 @@ export const PackageBuilder: React.FC<PackageBuilderProps> = ({ onOpenBookingWit
             </div>
             <div className="flex items-center gap-2">
               <ShieldCheck className="w-4 h-4 text-[#2E7D32] dark:text-[#4ADE80] shrink-0" />
-              <span>Live Analytics Dashboard Access</span>
+              <span>Live Looker Analytics Dashboard Access</span>
             </div>
             <div className="flex items-center gap-2">
               <ShieldCheck className="w-4 h-4 text-[#2E7D32] dark:text-[#4ADE80] shrink-0" />
@@ -181,7 +174,7 @@ export const PackageBuilder: React.FC<PackageBuilderProps> = ({ onOpenBookingWit
             onClick={() =>
               onOpenBookingWithQuote({
                 services: selectedServices.map(
-                  (slug) => services.find((s) => s.slug === slug)?.title || slug
+                  (id) => SERVICES_DATA.find((s) => s.id === id)?.title || id
                 ),
                 monthlyBudget: budgetRange,
                 totalMonthlyEstimate: `₹${totals.discountedTotal.toLocaleString('en-IN')}/mo`,

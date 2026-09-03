@@ -11,7 +11,6 @@ import {
   Navigation,
   ContactInformation,
   WorkProject,
-  OfficeNode,
 } from '../models';
 import {
   normalizeWpService,
@@ -31,6 +30,7 @@ import {
   RawWpBasePost,
 } from '../models/mappers/rawWpTypes';
 import { ContentProvider } from './ContentProvider';
+import { mockDataProvider } from './MockDataProvider';
 
 /**
  * ============================================================================
@@ -50,7 +50,7 @@ import { ContentProvider } from './ContentProvider';
  * Resilience Features:
  * 1. Automatic ByetHost/InfinityFree bot-protection challenge solver (__test cookie)
  * 2. Self-signed and incomplete TLS chain handling
- * 3. Graceful fallback to empty collections when WordPress content is unavailable
+ * 3. Resilient fallback to mockDataProvider if WordPress is unavailable
  * 4. Dual async (server/ISR) & synchronous cached access
  */
 
@@ -70,6 +70,7 @@ function sanitizeBaseUrl(raw?: string): string {
 
 export class WordPressProvider implements ContentProvider {
   private baseUrl: string;
+  private fallbackProvider: ContentProvider;
   private sessionCookie: string | null = null;
   private aesScriptCache: string | null = null;
 
@@ -92,13 +93,6 @@ export class WordPressProvider implements ContentProvider {
   private pagesCache: Page[] | null = null;
   private pageMap: Map<string, Page> = new Map();
 
-  private authorsCache: Author[] | null = null;
-  private authorMap: Map<string, Author> = new Map();
-
-  // Serialization queue & handshake lock to protect free host from concurrent connection drop
-  private requestQueue: Promise<unknown> = Promise.resolve();
-  private handshakePromise: Promise<string | null> | null = null;
-
   constructor(baseUrl?: string) {
     // Disable TLS unauthorized error on Node.js server side if host certificate is missing intermediate chain
     if (typeof process !== 'undefined' && process.env) {
@@ -111,6 +105,7 @@ export class WordPressProvider implements ContentProvider {
         : undefined;
 
     this.baseUrl = sanitizeBaseUrl(baseUrl || envUrl);
+    this.fallbackProvider = mockDataProvider;
   }
 
   public getBaseUrl(): string {
@@ -220,305 +215,140 @@ export class WordPressProvider implements ContentProvider {
 
   // --- PAGES ---
   getPageBySlug(slug: string): Page | null {
-    return this.pageMap.get(slug) || null;
+    if (this.pageMap.has(slug)) {
+      return this.pageMap.get(slug)!;
+    }
+    return this.fallbackProvider.getPageBySlug(slug);
   }
 
   getAllPages(): Page[] {
-    return this.pagesCache || [];
+    if (this.pagesCache && this.pagesCache.length > 0) {
+      return this.pagesCache;
+    }
+    return this.fallbackProvider.getAllPages();
   }
 
   // --- SERVICES ---
   getServiceBySlug(slug: string): Service | null {
-    return this.serviceMap.get(slug) || null;
+    if (this.serviceMap.has(slug)) {
+      return this.serviceMap.get(slug)!;
+    }
+    return this.fallbackProvider.getServiceBySlug(slug);
   }
 
   getAllServices(): Service[] {
-    return this.servicesCache || [];
+    if (this.servicesCache && this.servicesCache.length > 0) {
+      return this.servicesCache;
+    }
+    return this.fallbackProvider.getAllServices();
   }
 
   // --- INDUSTRIES ---
   getIndustryBySlug(slug: string): Industry | null {
-    return this.industryMap.get(slug) || null;
+    if (this.industryMap.has(slug)) {
+      return this.industryMap.get(slug)!;
+    }
+    return this.fallbackProvider.getIndustryBySlug(slug);
   }
 
   getAllIndustries(): Industry[] {
-    return this.industriesCache || [];
+    if (this.industriesCache && this.industriesCache.length > 0) {
+      return this.industriesCache;
+    }
+    return this.fallbackProvider.getAllIndustries();
   }
 
   // --- LOCATIONS ---
   getLocationBySlug(slug: string): Location | null {
-    return this.locationMap.get(slug) || null;
+    if (this.locationMap.has(slug)) {
+      return this.locationMap.get(slug)!;
+    }
+    return this.fallbackProvider.getLocationBySlug(slug);
   }
 
   getAllLocations(): Location[] {
-    return this.locationsCache || [];
+    if (this.locationsCache && this.locationsCache.length > 0) {
+      return this.locationsCache;
+    }
+    return this.fallbackProvider.getAllLocations();
   }
 
   // --- CASE STUDIES ---
   getCaseStudyBySlug(slug: string): CaseStudy | null {
-    return this.caseStudyMap.get(slug) || null;
+    if (this.caseStudyMap.has(slug)) {
+      return this.caseStudyMap.get(slug)!;
+    }
+    return this.fallbackProvider.getCaseStudyBySlug(slug);
   }
 
   getAllCaseStudies(): CaseStudy[] {
-    return this.caseStudiesCache || [];
+    if (this.caseStudiesCache && this.caseStudiesCache.length > 0) {
+      return this.caseStudiesCache;
+    }
+    return this.fallbackProvider.getAllCaseStudies();
   }
 
   // --- INSIGHTS ---
   getInsightBySlug(slug: string): Insight | null {
-    return this.insightMap.get(slug) || null;
+    if (this.insightMap.has(slug)) {
+      return this.insightMap.get(slug)!;
+    }
+    return this.fallbackProvider.getInsightBySlug(slug);
   }
 
   getAllInsights(): Insight[] {
-    return this.insightsCache || [];
+    if (this.insightsCache && this.insightsCache.length > 0) {
+      return this.insightsCache;
+    }
+    return this.fallbackProvider.getAllInsights();
   }
 
   getInsightsByCategory(categorySlug: string): Insight[] {
     const all = this.getAllInsights();
-    return all.filter((i) => i.categorySlug === categorySlug || (i.category && i.category.toLowerCase().replace(/[^a-z0-9]+/g, '-') === categorySlug));
+    const filtered = all.filter((i) => i.categorySlug === categorySlug);
+    if (filtered.length > 0) return filtered;
+    return this.fallbackProvider.getInsightsByCategory(categorySlug);
   }
 
   // --- AUTHORS ---
   getAuthorBySlug(slug: string): Author | null {
-    return this.authorMap.get(slug) || null;
+    return this.fallbackProvider.getAuthorBySlug(slug);
   }
 
   getAllAuthors(): Author[] {
-    return this.authorsCache || [];
+    return this.fallbackProvider.getAllAuthors();
   }
 
-  // --- PRIMITIVES & SUPPORTING ENTITIES (Derived from WordPress CMS) ---
+  // --- PRIMITIVES & SUPPORTING ENTITIES ---
   getAllFaqs(category?: string): FAQ[] {
-    // Extract FAQs strictly from WordPress CMS services and deduplicate
-    const services = this.getAllServices();
-    const faqs: FAQ[] = [];
-    const seen = new Set<string>();
-
-    for (const service of services) {
-      if (service.faqs && Array.isArray(service.faqs)) {
-        for (const faq of service.faqs) {
-          if (!seen.has(faq.question)) {
-            seen.add(faq.question);
-            faqs.push(faq);
-          }
-        }
-      }
-    }
-
-    if (category && category !== 'All') {
-      const lowerCat = category.toLowerCase();
-      return faqs.filter((f) => f.category?.toLowerCase() === lowerCat);
-    }
-    return faqs;
+    return this.fallbackProvider.getAllFaqs(category);
   }
 
   getAllFAQs(category?: string): FAQ[] {
-    return this.getAllFaqs(category);
+    return this.fallbackProvider.getAllFAQs(category);
   }
 
   getAllTestimonials(): Testimonial[] {
-    // Derived from WordPress Case Studies
-    const caseStudies = this.getAllCaseStudies();
-    const testimonials: Testimonial[] = [];
-
-    for (const cs of caseStudies) {
-      if (cs.clientName) {
-        testimonials.push({
-          id: `testimonial-${cs.slug}`,
-          authorName: typeof cs.clientAuthor === 'string' ? cs.clientAuthor : (cs.clientAuthor?.name || cs.clientName),
-          authorRole: typeof cs.clientAuthor === 'object' ? cs.clientAuthor?.role : 'Executive Leadership',
-          companyName: cs.clientName,
-          quote: cs.testimonialQuote || cs.executiveSummary || `Partnering with MatricsMania transformed our organic pipeline and engineering architecture.`,
-          metricHighlight: cs.results?.[0]?.metric ? `${cs.results[0].metric} ${cs.results[0].label}` : undefined,
-          relatedServiceSlug: cs.relationships?.services?.[0]?.slug,
-          relatedIndustrySlug: cs.clientIndustrySlug,
-          relatedCaseStudySlug: cs.slug,
-        });
-      }
-    }
-
-    return testimonials;
+    return this.fallbackProvider.getAllTestimonials();
   }
 
   getAllWorkProjects(): WorkProject[] {
-    // Portfolio derived strictly from WordPress CMS Case Studies
-    const caseStudies = this.getAllCaseStudies();
-    return caseStudies.map((cs) => ({
-      id: cs.slug,
-      title: cs.title,
-      client: cs.clientName,
-      category: (cs.clientIndustry?.toLowerCase().includes('saas') ? 'SEO & Content Systems' : 'Web & CRO'),
-      industry: cs.clientIndustry,
-      thumbnail: cs.featuredImage,
-      summary: cs.executiveSummary || cs.heroHeadline || '',
-      scope: [cs.challengeSummary || 'Funnel Optimization', cs.solutionArchitecture || 'System Design'],
-      tools: cs.techStackDeployed || ['BigQuery', 'Search Console API', 'Edge Workers'],
-      keyMetric: cs.results?.[0]
-        ? { value: cs.results[0].metric, label: cs.results[0].label }
-        : { value: '+340%', label: 'Growth' },
-      caseStudyId: cs.slug,
-      deliverables: cs.techStackDeployed,
-      liveUrl: `/case-studies/${cs.slug}/`,
-    }));
+    return this.fallbackProvider.getAllWorkProjects();
   }
 
   getNavigation(): Navigation {
-    const services = this.getAllServices();
-    const industries = this.getAllIndustries();
-    const locations = this.getAllLocations();
-    const insights = this.getAllInsights();
-
-    return {
-      headerMenu: [
-        {
-          id: 'menu-services',
-          label: 'Services',
-          url: '/services/',
-          children: services.map((s) => ({
-            id: s.slug,
-            label: s.title,
-            url: `/services/${s.slug}/`,
-            description: s.shortDescription,
-          })),
-        },
-        {
-          id: 'menu-industries',
-          label: 'Industries',
-          url: '/industries/',
-          children: industries.map((i) => ({
-            id: i.slug,
-            label: i.title,
-            url: `/industries/${i.slug}/`,
-          })),
-        },
-        {
-          id: 'menu-case-studies',
-          label: 'Case Studies',
-          url: '/case-studies/',
-        },
-        {
-          id: 'menu-insights',
-          label: 'Insights',
-          url: '/insights/',
-          children: insights.slice(0, 5).map((ins) => ({
-            id: ins.slug,
-            label: ins.title,
-            url: `/insights/${ins.slug}/`,
-          })),
-        },
-        {
-          id: 'menu-about',
-          label: 'About',
-          url: '/about/',
-        },
-        {
-          id: 'menu-contact',
-          label: 'Contact',
-          url: '/contact/',
-        },
-      ],
-      footerMenu: {
-        solutions: {
-          id: 'footer-solutions',
-          title: 'Growth Systems',
-          items: services.map((s) => ({ id: s.slug, label: s.title, url: `/services/${s.slug}/` })),
-        },
-        industries: {
-          id: 'footer-industries',
-          title: 'Industry Practices',
-          items: industries.map((i) => ({ id: i.slug, label: i.title, url: `/industries/${i.slug}/` })),
-        },
-        locations: {
-          id: 'footer-locations',
-          title: 'Global Hubs',
-          items: locations.map((l) => ({ id: l.slug, label: l.title, url: `/locations/${l.slug}/` })),
-        },
-        research: {
-          id: 'footer-research',
-          title: 'Engineering Research',
-          items: [
-            { id: 'insights', label: 'All Insights', url: '/insights/' },
-            { id: 'case-studies', label: 'Case Studies', url: '/case-studies/' },
-            { id: 'work', label: 'Engineered Portfolio', url: '/work/' },
-          ],
-        },
-        company: {
-          id: 'footer-company',
-          title: 'Company',
-          items: [
-            { id: 'about', label: 'About MatricsMania', url: '/about/' },
-            { id: 'process', label: 'Engineering Protocol', url: '/process/' },
-            { id: 'careers', label: 'Careers', url: '/careers/' },
-            { id: 'faq', label: 'FAQs & Specifications', url: '/faq/' },
-            { id: 'contact', label: 'Contact Growth Engineers', url: '/contact/' },
-          ],
-        },
-        legal: {
-          id: 'footer-legal',
-          title: 'Governance',
-          items: [
-            { id: 'privacy', label: 'Privacy Policy', url: '/privacy/' },
-            { id: 'terms', label: 'Terms of Service', url: '/terms/' },
-          ],
-        },
-      },
-      ctaItem: {
-        label: 'Schedule Architecture Call',
-        action: 'openBooking',
-      },
-    };
+    return this.fallbackProvider.getNavigation();
   }
 
   getContactInfo(): ContactInformation {
-    const loc = this.locationsCache?.[0];
-    const defaultAddress = {
-      line1: 'Koramangala 4th Block',
-      city: 'Bengaluru',
-      state: 'Karnataka',
-      postalCode: '560034',
-      country: 'India',
-    };
-
-    const hqNode: OfficeNode = loc?.officeNode || {
-      id: 'node-blr',
-      nodeCode: 'BLR-HQ',
-      city: loc?.city || 'Bengaluru',
-      region: loc?.stateOrRegion || 'Karnataka',
-      country: loc?.country || 'India',
-      role: 'Global Headquarters & Core Lab',
-      address: defaultAddress,
-      coordinates: { latitude: 12.9352, longitude: 77.6245 },
-      phone: '+91 (80) 4122-8900',
-      email: 'growth@matricsmania.com',
-      businessHours: 'Mon - Fri: 09:00 - 19:00 IST',
-      isHeadquarters: true,
-    };
-
-    return {
-      companyName: 'MatricsMania',
-      legalEntityName: 'MatricsMania Growth Engineering Private Limited',
-      taxRegistrationNumber: '29AABCM9124K1Z5',
-      corporateEmail: 'growth@matricsmania.com',
-      admissionsEmail: 'careers@matricsmania.com',
-      securityEmail: 'security@matricsmania.com',
-      pressEmail: 'media@matricsmania.com',
-      primaryPhone: '+91 (80) 4122-8900',
-      headquarters: hqNode,
-      regionalNodes: (this.locationsCache || []).map((l) => l.officeNode).filter(Boolean),
-      socials: {
-        linkedin: 'https://linkedin.com/company/matricsmania',
-        twitter: 'https://twitter.com/matricsmania',
-        github: 'https://github.com/matricsmania',
-      },
-      globalCoverageSummary: 'Engineered Growth Architectures across Asia-Pacific, North America, and EMEA',
-      responseSLAHours: 4,
-    };
+    return this.fallbackProvider.getContactInfo();
   }
 
   getContactInformation(): ContactInformation {
-    return this.getContactInfo();
+    return this.fallbackProvider.getContactInformation();
   }
 
-  // --- SEARCH (Strictly WordPress CMS content) ---
+  // --- SEARCH ---
   searchContent(query: string) {
     const q = query.toLowerCase();
     const activeServices = this.getAllServices().filter(
@@ -546,11 +376,12 @@ export class WordPressProvider implements ContentProvider {
         ins.category?.toLowerCase().includes(q)
     );
 
+    const mockResults = this.fallbackProvider.searchContent(query);
     return {
-      services: activeServices,
-      industries: activeIndustries,
-      insights: activeInsights,
-      caseStudies: activeCaseStudies,
+      services: activeServices.length > 0 ? activeServices : mockResults.services,
+      industries: activeIndustries.length > 0 ? activeIndustries : mockResults.industries,
+      insights: activeInsights.length > 0 ? activeInsights : mockResults.insights,
+      caseStudies: activeCaseStudies.length > 0 ? activeCaseStudies : mockResults.caseStudies,
     };
   }
 
@@ -576,30 +407,12 @@ export class WordPressProvider implements ContentProvider {
   }
 
   /**
-   * Proactively solves ByetHost anti-bot challenge once so subsequent requests have a valid session cookie.
+   * Core resilient HTTP fetcher for WordPress REST API.
+   * Solves ByetHost / InfinityFree anti-bot JavaScript challenges seamlessly.
    */
-  private async ensureSession(): Promise<string | null> {
-    if (this.sessionCookie) return this.sessionCookie;
-    if (this.handshakePromise) return this.handshakePromise;
+  async fetchFromWordPress<T>(endpoint: string): Promise<T | null> {
+    if (!this.isConfigured()) return null;
 
-    this.handshakePromise = (async () => {
-      try {
-        await this.performFetchInternal('services?per_page=1');
-        return this.sessionCookie;
-      } catch {
-        return null;
-      } finally {
-        this.handshakePromise = null;
-      }
-    })();
-
-    return this.handshakePromise;
-  }
-
-  /**
-   * Internal HTTP fetcher that solves ByetHost / InfinityFree JavaScript challenges in a VM context.
-   */
-  private async performFetchInternal<T>(endpoint: string): Promise<T | null> {
     const userAgent =
       'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
     const cleanEndpoint = endpoint.replace(/^\//, '');
@@ -625,18 +438,7 @@ export class WordPressProvider implements ContentProvider {
         // 1. Direct JSON response
         if (text.startsWith('[') || text.startsWith('{')) {
           try {
-            const parsed = JSON.parse(text);
-            // Ignore WordPress REST API error objects (e.g. 404 rest_no_route)
-            if (
-              parsed &&
-              typeof parsed === 'object' &&
-              !Array.isArray(parsed) &&
-              'code' in parsed &&
-              typeof (parsed as any).code === 'string'
-            ) {
-              return null;
-            }
-            return parsed as T;
+            return JSON.parse(text) as T;
           } catch {
             // continue checking
           }
@@ -693,31 +495,6 @@ export class WordPressProvider implements ContentProvider {
     return null;
   }
 
-  /**
-   * Core resilient HTTP fetcher for WordPress REST API.
-   * Queues requests sequentially to prevent free-host TCP drops and solve challenges reliably.
-   */
-  async fetchFromWordPress<T>(endpoint: string): Promise<T | null> {
-    if (!this.isConfigured()) return null;
-
-    if (!this.sessionCookie && typeof window === 'undefined') {
-      await this.ensureSession();
-    }
-
-    const execute = new Promise<T | null>((resolve) => {
-      this.requestQueue = this.requestQueue.then(async () => {
-        try {
-          const res = await this.performFetchInternal<T>(endpoint);
-          resolve(res);
-        } catch {
-          resolve(null);
-        }
-      });
-    });
-
-    return execute;
-  }
-
   // --- ASYNC SERVICES ---
   async asyncGetServiceBySlug(slug: string): Promise<Service | null> {
     if (!slug) return null;
@@ -729,13 +506,20 @@ export class WordPressProvider implements ContentProvider {
         const raw = await this.fetchFromWordPress<RawWpServicePost[]>(
           `services?slug=${encodeURIComponent(slug)}&_embed=true`
         );
-        if (raw && Array.isArray(raw) && raw.length > 0 && raw[0]) {
-          const service = normalizeWpService(raw[0]);
-          this.serviceMap.set(service.slug, service);
-          return service;
+        if (raw && Array.isArray(raw)) {
+          if (raw.length > 0 && raw[0]) {
+            const service = normalizeWpService(raw[0]);
+            this.serviceMap.set(service.slug, service);
+            return service;
+          }
+          // WordPress returned 200 OK with [] -> Authoritative CMS record not found
+          return null;
         }
-      } catch {
-        // Graceful fallback
+        console.error(`[WordPressProvider] WordPress request failed for service slug: ${slug}`);
+        return null;
+      } catch (err) {
+        console.error(`[WordPressProvider] Network error fetching service "${slug}":`, err);
+        return null;
       }
     }
     return this.getServiceBySlug(slug);
@@ -745,20 +529,19 @@ export class WordPressProvider implements ContentProvider {
     if (this.isConfigured()) {
       try {
         const raw = await this.fetchFromWordPress<RawWpServicePost[]>('services?_embed=true&per_page=100');
-        if (raw && Array.isArray(raw) && raw.length > 0) {
+        if (raw && Array.isArray(raw)) {
           const services = raw.map((post) => normalizeWpService(post));
           this.servicesCache = services;
           this.serviceMap.clear();
           services.forEach((s) => this.serviceMap.set(s.slug, s));
           return services;
         }
-      } catch {
-        // Graceful fallback
+        console.error('[WordPressProvider] WordPress services query failed or returned invalid data');
+        return this.servicesCache || [];
+      } catch (err) {
+        console.error('[WordPressProvider] Network error fetching services:', err);
+        return this.servicesCache || [];
       }
-      if (this.servicesCache && this.servicesCache.length > 0) {
-        return this.servicesCache;
-      }
-      return this.getAllServices();
     }
     return this.getAllServices();
   }
@@ -774,13 +557,20 @@ export class WordPressProvider implements ContentProvider {
         const raw = await this.fetchFromWordPress<RawWpIndustryPost[]>(
           `industries?slug=${encodeURIComponent(slug)}&_embed=true`
         );
-        if (raw && Array.isArray(raw) && raw.length > 0 && raw[0]) {
-          const industry = normalizeWpIndustry(raw[0]);
-          this.industryMap.set(industry.slug, industry);
-          return industry;
+        if (raw && Array.isArray(raw)) {
+          if (raw.length > 0 && raw[0]) {
+            const industry = normalizeWpIndustry(raw[0]);
+            this.industryMap.set(industry.slug, industry);
+            return industry;
+          }
+          // WordPress returned 200 OK with [] -> Authoritative CMS record not found
+          return null;
         }
-      } catch {
-        // Graceful fallback
+        console.error(`[WordPressProvider] WordPress request failed for industry slug: ${slug}`);
+        return null;
+      } catch (err) {
+        console.error(`[WordPressProvider] Network error fetching industry "${slug}":`, err);
+        return null;
       }
     }
     return this.getIndustryBySlug(slug);
@@ -790,20 +580,19 @@ export class WordPressProvider implements ContentProvider {
     if (this.isConfigured()) {
       try {
         const raw = await this.fetchFromWordPress<RawWpIndustryPost[]>('industries?_embed=true&per_page=100');
-        if (raw && Array.isArray(raw) && raw.length > 0) {
+        if (raw && Array.isArray(raw)) {
           const industries = raw.map((post) => normalizeWpIndustry(post));
           this.industriesCache = industries;
           this.industryMap.clear();
           industries.forEach((i) => this.industryMap.set(i.slug, i));
           return industries;
         }
-      } catch {
-        // Graceful fallback
+        console.error('[WordPressProvider] WordPress industries query failed or returned invalid data');
+        return this.industriesCache || [];
+      } catch (err) {
+        console.error('[WordPressProvider] Network error fetching industries:', err);
+        return this.industriesCache || [];
       }
-      if (this.industriesCache && this.industriesCache.length > 0) {
-        return this.industriesCache;
-      }
-      return this.getAllIndustries();
     }
     return this.getAllIndustries();
   }
@@ -819,13 +608,20 @@ export class WordPressProvider implements ContentProvider {
         const raw = await this.fetchFromWordPress<RawWpLocationPost[]>(
           `locations?slug=${encodeURIComponent(slug)}&_embed=true`
         );
-        if (raw && Array.isArray(raw) && raw.length > 0 && raw[0]) {
-          const location = normalizeWpLocation(raw[0]);
-          this.locationMap.set(location.slug, location);
-          return location;
+        if (raw && Array.isArray(raw)) {
+          if (raw.length > 0 && raw[0]) {
+            const location = normalizeWpLocation(raw[0]);
+            this.locationMap.set(location.slug, location);
+            return location;
+          }
+          // Authoritative CMS record not found
+          return null;
         }
-      } catch {
-        // Graceful fallback
+        console.error(`[WordPressProvider] WordPress request failed for location slug: ${slug}`);
+        return null;
+      } catch (err) {
+        console.error(`[WordPressProvider] Network error fetching location "${slug}":`, err);
+        return null;
       }
     }
     return this.getLocationBySlug(slug);
@@ -835,20 +631,19 @@ export class WordPressProvider implements ContentProvider {
     if (this.isConfigured()) {
       try {
         const raw = await this.fetchFromWordPress<RawWpLocationPost[]>('locations?_embed=true&per_page=100');
-        if (raw && Array.isArray(raw) && raw.length > 0) {
+        if (raw && Array.isArray(raw)) {
           const locations = raw.map((post) => normalizeWpLocation(post));
           this.locationsCache = locations;
           this.locationMap.clear();
           locations.forEach((l) => this.locationMap.set(l.slug, l));
           return locations;
         }
-      } catch {
-        // Graceful fallback
+        console.error('[WordPressProvider] WordPress locations query failed or returned invalid data');
+        return this.locationsCache || [];
+      } catch (err) {
+        console.error('[WordPressProvider] Network error fetching locations:', err);
+        return this.locationsCache || [];
       }
-      if (this.locationsCache && this.locationsCache.length > 0) {
-        return this.locationsCache;
-      }
-      return this.getAllLocations();
     }
     return this.getAllLocations();
   }
@@ -864,18 +659,25 @@ export class WordPressProvider implements ContentProvider {
         let raw = await this.fetchFromWordPress<RawWpCaseStudyPost[]>(
           `case_studies?slug=${encodeURIComponent(slug)}&_embed=true`
         );
-        if (!raw || !Array.isArray(raw)) {
+        if (!Array.isArray(raw)) {
           raw = await this.fetchFromWordPress<RawWpCaseStudyPost[]>(
             `case-studies?slug=${encodeURIComponent(slug)}&_embed=true`
           );
         }
-        if (raw && Array.isArray(raw) && raw.length > 0 && raw[0]) {
-          const caseStudy = normalizeWpCaseStudy(raw[0]);
-          this.caseStudyMap.set(caseStudy.slug, caseStudy);
-          return caseStudy;
+        if (raw && Array.isArray(raw)) {
+          if (raw.length > 0 && raw[0]) {
+            const caseStudy = normalizeWpCaseStudy(raw[0]);
+            this.caseStudyMap.set(caseStudy.slug, caseStudy);
+            return caseStudy;
+          }
+          // Authoritative CMS record not found
+          return null;
         }
-      } catch {
-        // Graceful fallback
+        console.error(`[WordPressProvider] WordPress request failed for case study slug: ${slug}`);
+        return null;
+      } catch (err) {
+        console.error(`[WordPressProvider] Network error fetching case study "${slug}":`, err);
+        return null;
       }
     }
     return this.getCaseStudyBySlug(slug);
@@ -885,23 +687,22 @@ export class WordPressProvider implements ContentProvider {
     if (this.isConfigured()) {
       try {
         let raw = await this.fetchFromWordPress<RawWpCaseStudyPost[]>('case_studies?_embed=true&per_page=100');
-        if (!raw || !Array.isArray(raw)) {
+        if (!Array.isArray(raw)) {
           raw = await this.fetchFromWordPress<RawWpCaseStudyPost[]>('case-studies?_embed=true&per_page=100');
         }
-        if (raw && Array.isArray(raw) && raw.length > 0) {
+        if (raw && Array.isArray(raw)) {
           const caseStudies = raw.map((post) => normalizeWpCaseStudy(post));
           this.caseStudiesCache = caseStudies;
           this.caseStudyMap.clear();
           caseStudies.forEach((c) => this.caseStudyMap.set(c.slug, c));
           return caseStudies;
         }
-      } catch {
-        // Graceful fallback
+        console.error('[WordPressProvider] WordPress case studies query failed or returned invalid data');
+        return this.caseStudiesCache || [];
+      } catch (err) {
+        console.error('[WordPressProvider] Network error fetching case studies:', err);
+        return this.caseStudiesCache || [];
       }
-      if (this.caseStudiesCache && this.caseStudiesCache.length > 0) {
-        return this.caseStudiesCache;
-      }
-      return this.getAllCaseStudies();
     }
     return this.getAllCaseStudies();
   }
@@ -914,24 +715,23 @@ export class WordPressProvider implements ContentProvider {
     }
     if (this.isConfigured()) {
       try {
-        let raw = await this.fetchFromWordPress<RawWpInsightPost[]>(
+        const raw = await this.fetchFromWordPress<RawWpInsightPost[]>(
           `posts?slug=${encodeURIComponent(slug)}&_embed=true`
         );
-        if (!raw || !Array.isArray(raw) || raw.length === 0) {
-          const customInsights = await this.fetchFromWordPress<RawWpInsightPost[]>(
-            `insights?slug=${encodeURIComponent(slug)}&_embed=true`
-          );
-          if (customInsights && Array.isArray(customInsights) && customInsights.length > 0) {
-            raw = customInsights;
+        if (raw && Array.isArray(raw)) {
+          if (raw.length > 0 && raw[0]) {
+            const insight = normalizeWpInsight(raw[0]);
+            this.insightMap.set(insight.slug, insight);
+            return insight;
           }
+          // Authoritative CMS record not found
+          return null;
         }
-        if (raw && Array.isArray(raw) && raw.length > 0 && raw[0]) {
-          const insight = normalizeWpInsight(raw[0]);
-          this.insightMap.set(insight.slug, insight);
-          return insight;
-        }
-      } catch {
-        // Graceful fallback
+        console.error(`[WordPressProvider] WordPress request failed for insight slug: ${slug}`);
+        return null;
+      } catch (err) {
+        console.error(`[WordPressProvider] Network error fetching insight "${slug}":`, err);
+        return null;
       }
     }
     return this.getInsightBySlug(slug);
@@ -940,27 +740,20 @@ export class WordPressProvider implements ContentProvider {
   async asyncGetAllInsights(): Promise<Insight[]> {
     if (this.isConfigured()) {
       try {
-        let raw = await this.fetchFromWordPress<RawWpInsightPost[]>('posts?_embed=true&per_page=100');
-        if (!raw || !Array.isArray(raw) || raw.length === 0) {
-          const customInsights = await this.fetchFromWordPress<RawWpInsightPost[]>('insights?_embed=true&per_page=100');
-          if (customInsights && Array.isArray(customInsights) && customInsights.length > 0) {
-            raw = customInsights;
-          }
-        }
-        if (raw && Array.isArray(raw) && raw.length > 0) {
+        const raw = await this.fetchFromWordPress<RawWpInsightPost[]>('posts?_embed=true&per_page=100');
+        if (raw && Array.isArray(raw)) {
           const insights = raw.map((post) => normalizeWpInsight(post));
           this.insightsCache = insights;
           this.insightMap.clear();
           insights.forEach((ins) => this.insightMap.set(ins.slug, ins));
           return insights;
         }
-      } catch {
-        // Graceful fallback
+        console.error('[WordPressProvider] WordPress insights query failed or returned invalid data');
+        return this.insightsCache || [];
+      } catch (err) {
+        console.error('[WordPressProvider] Network error fetching insights:', err);
+        return this.insightsCache || [];
       }
-      if (this.insightsCache && this.insightsCache.length > 0) {
-        return this.insightsCache;
-      }
-      return this.getAllInsights();
     }
     return this.getAllInsights();
   }
@@ -976,13 +769,20 @@ export class WordPressProvider implements ContentProvider {
         const raw = await this.fetchFromWordPress<RawWpBasePost[]>(
           `pages?slug=${encodeURIComponent(slug)}&_embed=true`
         );
-        if (raw && Array.isArray(raw) && raw.length > 0 && raw[0]) {
-          const page = normalizeWpPage(raw[0]);
-          this.pageMap.set(page.slug, page);
-          return page;
+        if (raw && Array.isArray(raw)) {
+          if (raw.length > 0 && raw[0]) {
+            const page = normalizeWpPage(raw[0]);
+            this.pageMap.set(page.slug, page);
+            return page;
+          }
+          // Authoritative CMS record not found
+          return null;
         }
-      } catch {
-        // Graceful fallback
+        console.error(`[WordPressProvider] WordPress request failed for page slug: ${slug}`);
+        return null;
+      } catch (err) {
+        console.error(`[WordPressProvider] Network error fetching page "${slug}":`, err);
+        return null;
       }
     }
     return this.getPageBySlug(slug);
@@ -992,20 +792,19 @@ export class WordPressProvider implements ContentProvider {
     if (this.isConfigured()) {
       try {
         const raw = await this.fetchFromWordPress<RawWpBasePost[]>('pages?_embed=true&per_page=100');
-        if (raw && Array.isArray(raw) && raw.length > 0) {
+        if (raw && Array.isArray(raw)) {
           const pages = raw.map((post) => normalizeWpPage(post));
           this.pagesCache = pages;
           this.pageMap.clear();
           pages.forEach((p) => this.pageMap.set(p.slug, p));
           return pages;
         }
-      } catch {
-        // Graceful fallback
+        console.error('[WordPressProvider] WordPress pages query failed or returned invalid data');
+        return this.pagesCache || [];
+      } catch (err) {
+        console.error('[WordPressProvider] Network error fetching pages:', err);
+        return this.pagesCache || [];
       }
-      if (this.pagesCache && this.pagesCache.length > 0) {
-        return this.pagesCache;
-      }
-      return this.getAllPages();
     }
     return this.getAllPages();
   }

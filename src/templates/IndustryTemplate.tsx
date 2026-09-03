@@ -16,7 +16,6 @@ import { InternalLinkingGraph } from '../components/InternalLinkingGraph';
 import { getIndustryContextualLinks } from '../utils/internalLinking';
 import { Industry } from '../models';
 import { NotFoundState } from '../components/ErrorStates';
-import { IndustriesIndexTemplate } from './IndustriesIndexTemplate';
 import {
   Building2,
   CheckCircle2,
@@ -63,14 +62,6 @@ export const IndustryTemplate: React.FC<IndustryTemplateProps> = ({
   const allIndustries = provider.getAllIndustries();
 
   if (!industry) {
-    if (!slug) {
-      return (
-        <IndustriesIndexTemplate
-          onNavigate={onNavigate}
-          onOpenBooking={onOpenBooking}
-        />
-      );
-    }
     return (
       <NotFoundState
         attemptedPath={slug ? `/industries/${slug}/` : '/industries/'}

@@ -1,15 +1,20 @@
 'use client';
 
-import React, { ErrorInfo, ReactNode } from 'react';
+import React, { ErrorInfo, ReactNode, useState } from 'react';
 import {
   AlertTriangle,
   ArrowLeft,
   RefreshCw,
   Terminal,
+  Search,
+  Home,
+  Layers,
+  FileText,
+  Briefcase,
+  MapPin,
   HelpCircle,
   PhoneCall,
   Compass,
-  Home,
 } from 'lucide-react';
 import { Container } from '../design-system/primitives/Container';
 import { Card } from '../design-system/primitives/Card';
@@ -34,6 +39,14 @@ export const NotFoundState: React.FC<NotFoundStateProps> = ({
       propNavigate(path);
     } else if (typeof window !== 'undefined') {
       window.location.href = path;
+    }
+  };
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      handleNav(`/insights/?q=${encodeURIComponent(searchQuery.trim())}`);
     }
   };
 
@@ -76,6 +89,103 @@ export const NotFoundState: React.FC<NotFoundStateProps> = ({
               <p className="text-sm sm:text-base text-[#94A3B8] leading-relaxed">
                 The path <code className="px-2 py-0.5 rounded bg-[#131D33] text-[#60A5FA] font-mono text-xs sm:text-sm font-semibold">{attemptedPath}</code> does not match any active service specification, industry playbook, location node, or published research whitepaper.
               </p>
+            </div>
+
+            {/* Search Recovery Form */}
+            <form onSubmit={handleSearchSubmit} className="relative">
+              <div className="flex items-center rounded-lg bg-[#070B14] border border-[#1E293B] focus-within:border-[#2563EB] transition-colors p-1.5">
+                <Search className="w-4 h-4 text-[#64748B] ml-3 mr-2 shrink-0" />
+                <input
+                  type="text"
+                  placeholder="Search technical insights, case studies, or growth systems..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full bg-transparent text-sm text-white placeholder-[#64748B] focus:outline-none px-2"
+                />
+                <Button type="submit" variant="primary" size="sm">
+                  Search
+                </Button>
+              </div>
+            </form>
+
+            {/* Verified Primary Hubs */}
+            <div className="p-5 rounded-lg bg-[#070B14] border border-[#1E293B] space-y-4">
+              <span className="font-mono text-[11px] text-[#64748B] uppercase tracking-wider block">
+                Primary Canonical Directories:
+              </span>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5 text-xs font-mono">
+                <button
+                  type="button"
+                  onClick={() => handleNav('/')}
+                  className="flex items-center gap-2.5 p-2.5 rounded-lg bg-[#0D1424] hover:bg-[#131D33] text-[#CBD5E1] hover:text-white border border-[#1E293B]/60 transition-all text-left group"
+                >
+                  <Home className="w-4 h-4 text-[#60A5FA] group-hover:scale-110 transition-transform" />
+                  <div>
+                    <span className="font-bold block text-white">/</span>
+                    <span className="text-[10px] text-[#64748B]">Home Gateway</span>
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleNav('/services/')}
+                  className="flex items-center gap-2.5 p-2.5 rounded-lg bg-[#0D1424] hover:bg-[#131D33] text-[#CBD5E1] hover:text-white border border-[#1E293B]/60 transition-all text-left group"
+                >
+                  <Layers className="w-4 h-4 text-[#60A5FA] group-hover:scale-110 transition-transform" />
+                  <div>
+                    <span className="font-bold block text-white">/services/</span>
+                    <span className="text-[10px] text-[#64748B]">Growth Engineering</span>
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleNav('/industries/')}
+                  className="flex items-center gap-2.5 p-2.5 rounded-lg bg-[#0D1424] hover:bg-[#131D33] text-[#CBD5E1] hover:text-white border border-[#1E293B]/60 transition-all text-left group"
+                >
+                  <Briefcase className="w-4 h-4 text-[#60A5FA] group-hover:scale-110 transition-transform" />
+                  <div>
+                    <span className="font-bold block text-white">/industries/</span>
+                    <span className="text-[10px] text-[#64748B]">Industry Playbooks</span>
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleNav('/case-studies/')}
+                  className="flex items-center gap-2.5 p-2.5 rounded-lg bg-[#0D1424] hover:bg-[#131D33] text-[#CBD5E1] hover:text-white border border-[#1E293B]/60 transition-all text-left group"
+                >
+                  <FileText className="w-4 h-4 text-[#60A5FA] group-hover:scale-110 transition-transform" />
+                  <div>
+                    <span className="font-bold block text-white">/case-studies/</span>
+                    <span className="text-[10px] text-[#64748B]">Client Revenue Cases</span>
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleNav('/insights/')}
+                  className="flex items-center gap-2.5 p-2.5 rounded-lg bg-[#0D1424] hover:bg-[#131D33] text-[#CBD5E1] hover:text-white border border-[#1E293B]/60 transition-all text-left group"
+                >
+                  <Terminal className="w-4 h-4 text-[#60A5FA] group-hover:scale-110 transition-transform" />
+                  <div>
+                    <span className="font-bold block text-white">/insights/</span>
+                    <span className="text-[10px] text-[#64748B]">Research Papers</span>
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleNav('/locations/')}
+                  className="flex items-center gap-2.5 p-2.5 rounded-lg bg-[#0D1424] hover:bg-[#131D33] text-[#CBD5E1] hover:text-white border border-[#1E293B]/60 transition-all text-left group"
+                >
+                  <MapPin className="w-4 h-4 text-[#60A5FA] group-hover:scale-110 transition-transform" />
+                  <div>
+                    <span className="font-bold block text-white">/locations/</span>
+                    <span className="text-[10px] text-[#64748B]">Physical Hubs</span>
+                  </div>
+                </button>
+              </div>
             </div>
 
             {/* Action Buttons */}

@@ -24,11 +24,6 @@ export const IndustriesSection: React.FC<IndustriesSectionProps> = ({
     if (onNavigate) onNavigate(path);
     else router.push(path);
   };
-
-  if (!industries || industries.length === 0) {
-    return null;
-  }
-
   return (
     <section id="industries-served-section" className="py-20 sm:py-28 bg-[#050811] border-b border-[#1E293B]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
