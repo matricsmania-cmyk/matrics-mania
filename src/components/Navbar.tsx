@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   Menu,
@@ -24,6 +24,142 @@ import { Container } from '../design-system/primitives/Container';
 import { Button } from '../design-system/primitives/Button';
 import { Badge } from '../design-system/primitives/Badge';
 import { Eyebrow } from '../design-system/primitives/Eyebrow';
+import { useContent } from '../providers/ContentContext';
+import { Service } from '../models';
+
+export interface DynamicNavGroup {
+  id: string;
+  title: string;
+  description?: string;
+  items: Array<{
+    id: string;
+    label: string;
+    href: string;
+    description?: string;
+    badge?: string;
+  }>;
+}
+
+function groupServicesForNavigation(services: Service[]): DynamicNavGroup[] {
+  if (!services || services.length === 0) return [];
+
+  const buckets: {
+    id: string;
+    title: string;
+    description: string;
+    matches: (s: Service) => boolean;
+    items: DynamicNavGroup['items'];
+  }[] = [
+    {
+      id: 'search-systems',
+      title: 'Search & LLM Discovery',
+      description: 'Algorithmic organic indexing and AI answer engine dominance',
+      matches: (s) => {
+        const cat = (s.category || '').toLowerCase();
+        const slug = (s.slug || '').toLowerCase();
+        const code = (s.serviceCode || '').toLowerCase();
+        return (
+          cat.includes('search') ||
+          cat.includes('seo') ||
+          cat.includes('organic') ||
+          cat.includes('llm') ||
+          cat.includes('discovery') ||
+          cat.includes('aeo') ||
+          cat.includes('geo') ||
+          slug.includes('seo') ||
+          slug.includes('search') ||
+          code.includes('seo')
+        );
+      },
+      items: [],
+    },
+    {
+      id: 'paid-media',
+      title: 'Paid Acquisition & Media',
+      description: 'High-intent programmatic bidding and multi-platform media systems',
+      matches: (s) => {
+        const cat = (s.category || '').toLowerCase();
+        const slug = (s.slug || '').toLowerCase();
+        const code = (s.serviceCode || '').toLowerCase();
+        return (
+          cat.includes('paid') ||
+          cat.includes('media') ||
+          cat.includes('ppc') ||
+          cat.includes('ad') ||
+          cat.includes('acquisition') ||
+          cat.includes('social') ||
+          slug.includes('paid') ||
+          slug.includes('ppc') ||
+          slug.includes('ads') ||
+          code.includes('paid') ||
+          code.includes('ppc')
+        );
+      },
+      items: [],
+    },
+    {
+      id: 'conversion-systems',
+      title: 'Engineering & Conversion Systems',
+      description: 'Revenue infrastructure, CRO experimentation, and attribution models',
+      matches: (s) => {
+        const cat = (s.category || '').toLowerCase();
+        const slug = (s.slug || '').toLowerCase();
+        const code = (s.serviceCode || '').toLowerCase();
+        return (
+          cat.includes('engineering') ||
+          cat.includes('conversion') ||
+          cat.includes('cro') ||
+          cat.includes('attribution') ||
+          cat.includes('audit') ||
+          cat.includes('platform') ||
+          slug.includes('cro') ||
+          slug.includes('attribution') ||
+          slug.includes('experimentation') ||
+          code.includes('cro') ||
+          code.includes('eng')
+        );
+      },
+      items: [],
+    },
+  ];
+
+  const otherGroupsMap = new Map<string, DynamicNavGroup>();
+
+  for (const s of services) {
+    const item = {
+      id: s.slug,
+      label: s.title,
+      href: `/services/${s.slug}/`,
+      description: s.shortDescription || s.tagline || undefined,
+      badge: s.serviceCode || undefined,
+    };
+
+    let matched = false;
+    for (const b of buckets) {
+      if (b.matches(s)) {
+        b.items.push(item);
+        matched = true;
+        break;
+      }
+    }
+
+    if (!matched) {
+      const catName = s.category || 'Specialized Growth Systems';
+      const catId = `group-${s.categorySlug || catName.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
+      if (!otherGroupsMap.has(catId)) {
+        otherGroupsMap.set(catId, {
+          id: catId,
+          title: catName.toUpperCase(),
+          items: [],
+        });
+      }
+      otherGroupsMap.get(catId)!.items.push(item);
+    }
+  }
+
+  const activeBuckets = buckets.filter((b) => b.items.length > 0);
+  return [...activeBuckets, ...Array.from(otherGroupsMap.values())];
+}
 
 export interface NavbarProps {
   currentPath?: string;
@@ -38,11 +174,76 @@ export const Navbar: React.FC<NavbarProps> = ({
   onNavigate,
   onOpenBooking,
 }) => {
+  const { services, industries, locations, insights, isSyncing } = useContent();
+
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileSectionOpen, setMobileSectionOpen] = useState<string | null>(null);
   const [activeDropdown, setActiveDropdown] = useState<DesktopDropdown>(null);
   const dropdownTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const navRef = useRef<HTMLElement | null>(null);
+
+  // Group live services from CMS dynamically
+  const serviceGroups = useMemo(() => groupServicesForNavigation(services), [services]);
+
+  // Featured callout service from live CMS
+  const featuredService = useMemo(() => {
+    if (!services || services.length === 0) return null;
+    const feat = services.find((s: any) => s.featured) || services[0];
+    return {
+      title: feat.title,
+      description: feat.shortDescription || feat.tagline || 'Pioneering organic and algorithmic search architectures.',
+      href: `/services/${feat.slug}/`,
+      badge: feat.serviceCode || 'CMS VERIFIED',
+    };
+  }, [services]);
+
+  // Live industries from CMS
+  const liveIndustryItems = useMemo(() => {
+    if (!industries || industries.length === 0) return [];
+    return industries.map((ind) => ({
+      id: ind.slug,
+      label: ind.title,
+      href: `/industries/${ind.slug}/`,
+      description: ind.tagline || ind.industryCode || 'Growth Playbook',
+      badge: ind.industryCode || undefined,
+    }));
+  }, [industries]);
+
+  // Featured industry from live CMS
+  const featuredIndustry = useMemo(() => {
+    if (!industries || industries.length === 0) return null;
+    const feat = industries[0];
+    return {
+      badge: feat.industryCode || 'CMS PLAYBOOK',
+      title: feat.title,
+      description: feat.tagline || feat.marketSummary || 'Enterprise growth architecture and performance marketing.',
+      href: `/industries/${feat.slug}/`,
+    };
+  }, [industries]);
+
+  // Live insights from CMS
+  const liveInsightItems = useMemo(() => {
+    if (!insights || insights.length === 0) return [];
+    return insights.slice(0, 6).map((ins) => ({
+      id: ins.slug,
+      label: ins.title,
+      href: `/insights/${ins.slug}/`,
+      badge: ins.category || 'Research',
+    }));
+  }, [insights]);
+
+  // Featured insight from live CMS
+  const featuredInsight = useMemo(() => {
+    if (!insights || insights.length === 0) return null;
+    const feat = insights[0];
+    return {
+      category: feat.category || 'Research',
+      readTime: feat.readingTimeMinutes ? `${feat.readingTimeMinutes} min read` : '5 min read',
+      title: feat.title,
+      description: feat.excerpt || 'Algorithmic growth systems and attribution research.',
+      href: `/insights/${feat.slug}/`,
+    };
+  }, [insights]);
 
   // Close dropdown on outside click or escape
   useEffect(() => {
@@ -122,8 +323,8 @@ export const Navbar: React.FC<NavbarProps> = ({
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <span className="flex items-center gap-1.5 text-[#10B981]">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#10B981] animate-pulse" />
-                SYSTEM STATUS: OPERATIONAL
+                <span className={`w-1.5 h-1.5 rounded-full ${isSyncing ? 'bg-[#38BDF8] animate-ping' : 'bg-[#10B981] animate-pulse'}`} />
+                {isSyncing ? 'CMS: SYNCING...' : 'CMS: LIVE (WP REST)'}
               </span>
               <span className="text-[#334155]">|</span>
               <span>INDEX LATENCY: 42ms</span>
@@ -203,13 +404,16 @@ export const Navbar: React.FC<NavbarProps> = ({
                     className="absolute top-full left-0 w-[840px] mt-1 bg-[#0D1424] border border-[#1E293B] rounded-xl shadow-xl shadow-black/60 p-6 grid grid-cols-12 gap-6 z-50"
                   >
                     {/* Left Columns: Service Groups */}
-                    <div className="col-span-8 grid grid-cols-2 gap-6">
-                      {NAVIGATION_CONFIG.services.groups.map((group) => (
+                    <div className={`col-span-8 ${serviceGroups.length > 1 ? 'grid grid-cols-2 gap-6' : 'space-y-6'}`}>
+                      {serviceGroups.map((group) => (
                         <div key={group.id} className="space-y-3">
-                          <div className="border-b border-[#1E293B] pb-1.5">
+                          <div className="border-b border-[#1E293B] pb-1.5 flex items-center justify-between">
                             <h4 className="text-[11px] font-mono font-bold text-[#60A5FA] uppercase tracking-wider">
                               {group.title}
                             </h4>
+                            <span className="text-[10px] font-mono text-[#64748B]">
+                              {group.items.length} {group.items.length === 1 ? 'service' : 'services'}
+                            </span>
                           </div>
                           <ul className="space-y-2">
                             {group.items.map((item) => (
@@ -240,34 +444,63 @@ export const Navbar: React.FC<NavbarProps> = ({
                           </ul>
                         </div>
                       ))}
+                      {serviceGroups.length === 0 && (
+                        <div className="py-8 text-center text-xs text-[#94A3B8]">
+                          No services published in CMS yet.
+                        </div>
+                      )}
                     </div>
 
                     {/* Right Column: Featured Callout */}
-                    <div className="col-span-4 bg-[#131D33] border border-[#1E293B] rounded-lg p-4 flex flex-col justify-between">
-                      <div className="space-y-3">
-                        <Eyebrow variant="mono" dot dotColor="blue">
-                          {NAVIGATION_CONFIG.services.featured?.badge}
-                        </Eyebrow>
-                        <h4 className="text-sm font-bold text-white leading-snug">
-                          {NAVIGATION_CONFIG.services.featured?.title}
-                        </h4>
-                        <p className="text-xs text-[#94A3B8] leading-relaxed">
-                          {NAVIGATION_CONFIG.services.featured?.description}
-                        </p>
+                    {featuredService ? (
+                      <div className="col-span-4 bg-[#131D33] border border-[#1E293B] rounded-lg p-4 flex flex-col justify-between">
+                        <div className="space-y-3">
+                          <Eyebrow variant="mono" dot dotColor="blue">
+                            {featuredService.badge}
+                          </Eyebrow>
+                          <h4 className="text-sm font-bold text-white leading-snug">
+                            {featuredService.title}
+                          </h4>
+                          <p className="text-xs text-[#94A3B8] leading-relaxed line-clamp-4">
+                            {featuredService.description}
+                          </p>
+                        </div>
+                        <div className="pt-4 mt-4 border-t border-[#1E293B]">
+                          <a
+                            href={featuredService.href}
+                            onClick={(e) => handleLinkClick(e, featuredService.href)}
+                            className="text-xs font-mono font-bold text-[#60A5FA] hover:text-white flex items-center gap-1.5 group"
+                          >
+                            Explore {featuredService.title}{' '}
+                            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                          </a>
+                        </div>
                       </div>
-                      <div className="pt-4 mt-4 border-t border-[#1E293B]">
-                        <a
-                          href={NAVIGATION_CONFIG.services.featured?.href}
-                          onClick={(e) =>
-                            handleLinkClick(e, NAVIGATION_CONFIG.services.featured?.href || '/services/')
-                          }
-                          className="text-xs font-mono font-bold text-[#60A5FA] hover:text-white flex items-center gap-1.5 group"
-                        >
-                          Explore GEO Architecture{' '}
-                          <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-                        </a>
+                    ) : (
+                      <div className="col-span-4 bg-[#131D33] border border-[#1E293B] rounded-lg p-4 flex flex-col justify-between">
+                        <div className="space-y-3">
+                          <Eyebrow variant="mono" dot dotColor="blue">
+                            CMS VERIFIED
+                          </Eyebrow>
+                          <h4 className="text-sm font-bold text-white leading-snug">
+                            Custom Growth Engineering
+                          </h4>
+                          <p className="text-xs text-[#94A3B8] leading-relaxed">
+                            Algorithmic search and revenue attribution architectures.
+                          </p>
+                        </div>
+                        <div className="pt-4 mt-4 border-t border-[#1E293B]">
+                          <a
+                            href="/services/"
+                            onClick={(e) => handleLinkClick(e, '/services/')}
+                            className="text-xs font-mono font-bold text-[#60A5FA] hover:text-white flex items-center gap-1.5 group"
+                          >
+                            All Services Overview{' '}
+                            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                          </a>
+                        </div>
                       </div>
-                    </div>
+                    )}
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -318,11 +551,11 @@ export const Navbar: React.FC<NavbarProps> = ({
                           onClick={(e) => handleLinkClick(e, '/industries/')}
                           className="text-[11px] font-mono text-[#94A3B8] hover:text-white"
                         >
-                          View All Industries →
+                          View All Industries ({liveIndustryItems.length}) →
                         </a>
                       </div>
                       <div className="grid grid-cols-2 gap-2">
-                        {NAVIGATION_CONFIG.industries.groups.flatMap((g) => g.items).map((item) => (
+                        {liveIndustryItems.map((item) => (
                           <a
                             key={item.id}
                             href={item.href}
@@ -344,36 +577,61 @@ export const Navbar: React.FC<NavbarProps> = ({
                             )}
                           </a>
                         ))}
+                        {liveIndustryItems.length === 0 && (
+                          <div className="col-span-2 py-4 text-xs text-[#94A3B8]">
+                            No industries published in CMS yet.
+                          </div>
+                        )}
                       </div>
                     </div>
 
-                    <div className="col-span-4 bg-[#131D33] border border-[#1E293B] rounded-lg p-4 flex flex-col justify-between">
-                      <div className="space-y-3">
-                        <Eyebrow variant="mono" dot dotColor="green">
-                          {NAVIGATION_CONFIG.industries.featured?.badge}
-                        </Eyebrow>
-                        <h4 className="text-xs font-bold text-white">
-                          {NAVIGATION_CONFIG.industries.featured?.title}
-                        </h4>
-                        <p className="text-[11px] text-[#94A3B8] leading-relaxed">
-                          {NAVIGATION_CONFIG.industries.featured?.description}
-                        </p>
+                    {featuredIndustry ? (
+                      <div className="col-span-4 bg-[#131D33] border border-[#1E293B] rounded-lg p-4 flex flex-col justify-between">
+                        <div className="space-y-3">
+                          <Eyebrow variant="mono" dot dotColor="green">
+                            {featuredIndustry.badge}
+                          </Eyebrow>
+                          <h4 className="text-xs font-bold text-white">
+                            {featuredIndustry.title}
+                          </h4>
+                          <p className="text-[11px] text-[#94A3B8] leading-relaxed line-clamp-4">
+                            {featuredIndustry.description}
+                          </p>
+                        </div>
+                        <div className="pt-3 border-t border-[#1E293B]">
+                          <a
+                            href={featuredIndustry.href}
+                            onClick={(e) => handleLinkClick(e, featuredIndustry.href)}
+                            className="text-xs font-mono font-bold text-[#60A5FA] hover:text-white flex items-center gap-1 group"
+                          >
+                            View {featuredIndustry.title} Playbook →
+                          </a>
+                        </div>
                       </div>
-                      <div className="pt-3 border-t border-[#1E293B]">
-                        <a
-                          href={NAVIGATION_CONFIG.industries.featured?.href}
-                          onClick={(e) =>
-                            handleLinkClick(
-                              e,
-                              NAVIGATION_CONFIG.industries.featured?.href || '/industries/'
-                            )
-                          }
-                          className="text-xs font-mono font-bold text-[#60A5FA] hover:text-white flex items-center gap-1 group"
-                        >
-                          View SaaS Teardown →
-                        </a>
+                    ) : (
+                      <div className="col-span-4 bg-[#131D33] border border-[#1E293B] rounded-lg p-4 flex flex-col justify-between">
+                        <div className="space-y-3">
+                          <Eyebrow variant="mono" dot dotColor="green">
+                            CMS SYNC
+                          </Eyebrow>
+                          <h4 className="text-xs font-bold text-white">
+                            Vertical Playbooks
+                          </h4>
+                          <p className="text-[11px] text-[#94A3B8] leading-relaxed">
+                            Tailored organic and paid strategies engineered for specific regulatory and margin structures.
+                          </p>
+                        </div>
+                        <div className="pt-3 border-t border-[#1E293B]">
+                          <a
+                            href="/industries/"
+                            onClick={(e) => handleLinkClick(e, '/industries/')}
+                            className="text-xs font-mono font-bold text-[#60A5FA] hover:text-white flex items-center gap-1 group"
+                          >
+                            All Industry Playbooks →
+                          </a>
+                        </div>
                       </div>
-                    </div>
+                    )}
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -431,20 +689,27 @@ export const Navbar: React.FC<NavbarProps> = ({
                     className="absolute top-full left-0 w-[640px] mt-1 bg-[#0D1424] border border-[#1E293B] rounded-xl shadow-xl shadow-black/60 p-6 grid grid-cols-12 gap-6 z-50"
                   >
                     <div className="col-span-6 space-y-3">
-                      <div className="border-b border-[#1E293B] pb-2">
+                      <div className="border-b border-[#1E293B] pb-2 flex items-center justify-between">
                         <span className="text-[11px] font-mono font-bold text-[#60A5FA] uppercase tracking-wider">
                           Research & Publications
                         </span>
+                        <a
+                          href="/insights/"
+                          onClick={(e) => handleLinkClick(e, '/insights/')}
+                          className="text-[10px] font-mono text-[#60A5FA] hover:underline"
+                        >
+                          All Articles →
+                        </a>
                       </div>
                       <ul className="space-y-2">
-                        {NAVIGATION_CONFIG.insights.categories.map((cat) => (
+                        {liveInsightItems.map((cat) => (
                           <li key={cat.id}>
                             <a
                               href={cat.href}
                               onClick={(e) => handleLinkClick(e, cat.href)}
                               className="group flex items-center justify-between p-2 rounded hover:bg-[#131D33] text-xs font-semibold text-[#CBD5E1] hover:text-white transition-colors"
                             >
-                              <span>{cat.label}</span>
+                              <span className="line-clamp-1">{cat.label}</span>
                               {cat.badge && (
                                 <Badge variant="accent" size="sm">
                                   {cat.badge}
@@ -453,34 +718,61 @@ export const Navbar: React.FC<NavbarProps> = ({
                             </a>
                           </li>
                         ))}
+                        {liveInsightItems.length === 0 && (
+                          <li className="p-3 text-xs text-[#94A3B8]">
+                            No research papers published yet.
+                          </li>
+                        )}
                       </ul>
                     </div>
 
-                    <div className="col-span-6 bg-[#131D33] border border-[#1E293B] rounded-lg p-4 flex flex-col justify-between">
-                      <div className="space-y-2">
-                        <span className="font-mono text-[10px] uppercase text-[#10B981] font-bold">
-                          {NAVIGATION_CONFIG.insights.featured.category} •{' '}
-                          {NAVIGATION_CONFIG.insights.featured.readTime}
-                        </span>
-                        <h4 className="text-xs font-bold text-white leading-snug">
-                          {NAVIGATION_CONFIG.insights.featured.title}
-                        </h4>
-                        <p className="text-[11px] text-[#94A3B8] leading-relaxed line-clamp-3">
-                          {NAVIGATION_CONFIG.insights.featured.description}
-                        </p>
+                    {featuredInsight ? (
+                      <div className="col-span-6 bg-[#131D33] border border-[#1E293B] rounded-lg p-4 flex flex-col justify-between">
+                        <div className="space-y-2">
+                          <span className="font-mono text-[10px] uppercase text-[#10B981] font-bold">
+                            {featuredInsight.category} • {featuredInsight.readTime}
+                          </span>
+                          <h4 className="text-xs font-bold text-white leading-snug">
+                            {featuredInsight.title}
+                          </h4>
+                          <p className="text-[11px] text-[#94A3B8] leading-relaxed line-clamp-3">
+                            {featuredInsight.description}
+                          </p>
+                        </div>
+                        <div className="pt-3 border-t border-[#1E293B]">
+                          <a
+                            href={featuredInsight.href}
+                            onClick={(e) => handleLinkClick(e, featuredInsight.href)}
+                            className="text-xs font-mono font-bold text-[#60A5FA] hover:text-white flex items-center gap-1 group"
+                          >
+                            Read Paper →
+                          </a>
+                        </div>
                       </div>
-                      <div className="pt-3 border-t border-[#1E293B]">
-                        <a
-                          href={NAVIGATION_CONFIG.insights.featured.href}
-                          onClick={(e) =>
-                            handleLinkClick(e, NAVIGATION_CONFIG.insights.featured.href)
-                          }
-                          className="text-xs font-mono font-bold text-[#60A5FA] hover:text-white flex items-center gap-1 group"
-                        >
-                          Read Whitepaper →
-                        </a>
+                    ) : (
+                      <div className="col-span-6 bg-[#131D33] border border-[#1E293B] rounded-lg p-4 flex flex-col justify-between">
+                        <div className="space-y-2">
+                          <span className="font-mono text-[10px] uppercase text-[#10B981] font-bold">
+                            EDITORIAL ARCHIVE
+                          </span>
+                          <h4 className="text-xs font-bold text-white leading-snug">
+                            Growth Intelligence & Lab Notes
+                          </h4>
+                          <p className="text-[11px] text-[#94A3B8] leading-relaxed">
+                            Explore deep dives on LLM citations, attribution modeling, and search ranking updates.
+                          </p>
+                        </div>
+                        <div className="pt-3 border-t border-[#1E293B]">
+                          <a
+                            href="/insights/"
+                            onClick={(e) => handleLinkClick(e, '/insights/')}
+                            className="text-xs font-mono font-bold text-[#60A5FA] hover:text-white flex items-center gap-1 group"
+                          >
+                            Explore Insights Archive →
+                          </a>
+                        </div>
                       </div>
-                    </div>
+                    )}
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -630,7 +922,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     }
                     className="w-full p-4 flex items-center justify-between text-sm font-bold text-white uppercase tracking-wider"
                   >
-                    <span>Services</span>
+                    <span>Services ({services.length})</span>
                     <ChevronDown
                       className={`w-4 h-4 transition-transform duration-200 ${
                         mobileSectionOpen === 'services' ? 'rotate-180 text-[#60A5FA]' : ''
@@ -640,16 +932,19 @@ export const Navbar: React.FC<NavbarProps> = ({
 
                   {mobileSectionOpen === 'services' && (
                     <div className="px-4 pb-4 space-y-2 border-t border-[#1E293B] pt-3">
-                      {NAVIGATION_CONFIG.services.groups.flatMap((g) => g.items).map((item) => (
+                      {services.map((s) => (
                         <a
-                          key={item.id}
-                          href={item.href}
-                          onClick={(e) => handleLinkClick(e, item.href)}
+                          key={s.slug}
+                          href={`/services/${s.slug}/`}
+                          onClick={(e) => handleLinkClick(e, `/services/${s.slug}/`)}
                           className="block p-2 text-xs font-medium text-[#CBD5E1] hover:text-white rounded hover:bg-[#131D33]"
                         >
-                          {item.label}
+                          {s.title}
                         </a>
                       ))}
+                      {services.length === 0 && (
+                        <p className="text-xs text-[#94A3B8] p-2">No services published in CMS yet.</p>
+                      )}
                       <div className="pt-2 border-t border-[#1E293B]">
                         <a
                           href="/services/"
@@ -672,7 +967,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     }
                     className="w-full p-4 flex items-center justify-between text-sm font-bold text-white uppercase tracking-wider"
                   >
-                    <span>Industries</span>
+                    <span>Industries ({industries.length})</span>
                     <ChevronDown
                       className={`w-4 h-4 transition-transform duration-200 ${
                         mobileSectionOpen === 'industries' ? 'rotate-180 text-[#60A5FA]' : ''
@@ -682,16 +977,19 @@ export const Navbar: React.FC<NavbarProps> = ({
 
                   {mobileSectionOpen === 'industries' && (
                     <div className="px-4 pb-4 space-y-2 border-t border-[#1E293B] pt-3">
-                      {NAVIGATION_CONFIG.industries.groups.flatMap((g) => g.items).map((item) => (
+                      {industries.map((ind) => (
                         <a
-                          key={item.id}
-                          href={item.href}
-                          onClick={(e) => handleLinkClick(e, item.href)}
+                          key={ind.slug}
+                          href={`/industries/${ind.slug}/`}
+                          onClick={(e) => handleLinkClick(e, `/industries/${ind.slug}/`)}
                           className="block p-2 text-xs font-medium text-[#CBD5E1] hover:text-white rounded hover:bg-[#131D33]"
                         >
-                          {item.label}
+                          {ind.title}
                         </a>
                       ))}
+                      {industries.length === 0 && (
+                        <p className="text-xs text-[#94A3B8] p-2">No industries published in CMS yet.</p>
+                      )}
                       <div className="pt-2 border-t border-[#1E293B]">
                         <a
                           href="/industries/"

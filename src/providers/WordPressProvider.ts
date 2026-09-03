@@ -147,6 +147,26 @@ export class WordPressProvider implements ContentProvider {
     insights.forEach((ins) => this.insightMap.set(ins.slug, ins));
   }
 
+  public getServicesCache(): Service[] | null {
+    return this.servicesCache;
+  }
+
+  public getIndustriesCache(): Industry[] | null {
+    return this.industriesCache;
+  }
+
+  public getLocationsCache(): Location[] | null {
+    return this.locationsCache;
+  }
+
+  public getCaseStudiesCache(): CaseStudy[] | null {
+    return this.caseStudiesCache;
+  }
+
+  public getInsightsCache(): Insight[] | null {
+    return this.insightsCache;
+  }
+
   /**
    * Clears all in-memory caches to allow instant real-time reflection of CMS changes
    */

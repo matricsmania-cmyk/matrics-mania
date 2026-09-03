@@ -4,6 +4,8 @@ import '../index.css';
 import { ClientShell } from '../components/ClientShell';
 import { getStaticRouteSeo } from '../utils/seo';
 import { toNextMetadata } from '../utils/nextMetadata';
+import { wordPressProvider } from '../providers/WordPressProvider';
+import { CmsInitialData } from '../providers/ContentContext';
 
 import type { Metadata } from 'next';
 
@@ -28,15 +30,43 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  let initialData: CmsInitialData = {
+    services: [],
+    industries: [],
+    locations: [],
+    caseStudies: [],
+    insights: [],
+  };
+
+  try {
+    const [services, industries, locations, caseStudies, insights] = await Promise.all([
+      wordPressProvider.asyncGetAllServices(),
+      wordPressProvider.asyncGetAllIndustries(),
+      wordPressProvider.asyncGetAllLocations(),
+      wordPressProvider.asyncGetAllCaseStudies(),
+      wordPressProvider.asyncGetAllInsights(),
+    ]);
+
+    initialData = {
+      services,
+      industries,
+      locations,
+      caseStudies,
+      insights,
+    };
+  } catch (err) {
+    console.error('[RootLayout] Failed pre-fetching CMS data:', err);
+  }
+
   return (
     <html lang="en-IN" className={`dark ${plusJakartaSans.variable}`}>
       <body className={`bg-[#070B14] text-slate-100 font-sans antialiased selection:bg-blue-600 selection:text-white min-h-screen flex flex-col ${plusJakartaSans.className}`}>
-        <ClientShell>{children}</ClientShell>
+        <ClientShell initialData={initialData}>{children}</ClientShell>
       </body>
     </html>
   );
