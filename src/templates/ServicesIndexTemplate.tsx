@@ -97,14 +97,6 @@ export const ServicesIndexTemplate: React.FC<ServicesIndexTemplateProps> = ({
         <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-[#2563EB]/10 blur-[140px] pointer-events-none rounded-full" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-6">
-          <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs font-mono text-[#64748B]">
-            <button onClick={() => onNavigate('/')} className="hover:text-white transition-colors cursor-pointer">
-              Home
-            </button>
-            <span>/</span>
-            <span className="text-[#60A5FA]">Services</span>
-          </nav>
-
           <ScrollReveal className="max-w-3xl space-y-4">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[#0D1424] border border-[#1E293B] text-[11px] font-mono font-semibold text-[#60A5FA] uppercase tracking-wider">
               <Code2 className="w-3.5 h-3.5 text-[#3B82F6]" />
@@ -127,31 +119,34 @@ export const ServicesIndexTemplate: React.FC<ServicesIndexTemplateProps> = ({
                 <span>Request Growth Diagnostic</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
-              <button
-                onClick={() => {
-                  const el = document.getElementById('services-grid');
-                  if (el) el.scrollIntoView({ behavior: 'smooth' });
-                }}
-                className="px-6 py-3 rounded-xl bg-[#0D1424] hover:bg-[#1E293B] border border-[#1E293B] text-xs sm:text-sm font-semibold text-[#94A3B8] hover:text-white transition-all cursor-pointer"
-              >
-                Browse All Disciplines ({allServices.length})
-              </button>
+              {allServices.length > 0 && (
+                <button
+                  onClick={() => {
+                    const el = document.getElementById('services-grid');
+                    if (el) el.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  className="px-6 py-3 rounded-xl bg-[#0D1424] hover:bg-[#1E293B] border border-[#1E293B] text-xs sm:text-sm font-semibold text-[#94A3B8] hover:text-white transition-all cursor-pointer"
+                >
+                  Browse All Disciplines ({allServices.length})
+                </button>
+              )}
             </div>
           </ScrollReveal>
         </div>
       </section>
 
       {/* 2. FILTER & SEARCH CONTROLS */}
-      <section id="services-grid" className="py-8 border-b border-[#1E293B] bg-[#0A0F1D]/80 sticky top-16 z-30 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
-            {/* Category Pills */}
-            <div className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 scrollbar-none">
-              <button
-                onClick={() => setSelectedCategory('all')}
-                className={`px-3.5 py-1.5 rounded-lg text-xs font-mono transition-all shrink-0 cursor-pointer ${
-                  selectedCategory === 'all'
-                    ? 'bg-[#2563EB] text-white font-bold shadow-md shadow-[#2563EB]/30'
+      {allServices.length > 0 && (
+        <section id="services-grid" className="py-8 border-b border-[#1E293B] bg-[#0A0F1D]/80 sticky top-16 z-30 backdrop-blur-md">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
+              {/* Category Pills */}
+              <div className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 scrollbar-none">
+                <button
+                  onClick={() => setSelectedCategory('all')}
+                  className={`px-3.5 py-1.5 rounded-lg text-xs font-mono transition-all shrink-0 cursor-pointer ${
+                    selectedCategory === 'all'
+                      ? 'bg-[#2563EB] text-white font-bold shadow-md shadow-[#2563EB]/30'
                     : 'bg-[#0D1424] text-[#94A3B8] hover:text-white border border-[#1E293B]'
                 }`}
               >
@@ -186,10 +181,12 @@ export const ServicesIndexTemplate: React.FC<ServicesIndexTemplateProps> = ({
           </div>
         </div>
       </section>
+      )}
 
       {/* 3. SERVICES DIRECTORY GRID */}
-      <section className="py-16 md:py-24 bg-[#070B14]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+      {allServices.length > 0 && (
+        <section className="py-16 md:py-24 bg-[#070B14]">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
           {filteredServices.length === 0 ? (
             <div className="p-12 text-center rounded-2xl bg-[#0D1424] border border-[#1E293B] space-y-4">
               <p className="text-[#94A3B8] text-sm">No services matched your query.</p>
@@ -307,6 +304,7 @@ export const ServicesIndexTemplate: React.FC<ServicesIndexTemplateProps> = ({
           )}
         </div>
       </section>
+      )}
 
       {/* 4. SLA & GOVERNANCE COMMITMENTS */}
       <section className="py-16 md:py-20 border-t border-b border-[#1E293B] bg-[#050811]">

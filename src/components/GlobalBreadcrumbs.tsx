@@ -18,9 +18,16 @@ export const GlobalBreadcrumbs: React.FC<GlobalBreadcrumbsProps> = ({
   onNavigate,
   className = '',
 }) => {
-  // If on homepage or about page, don't display breadcrumbs
+  // If on homepage, about page, or index pages (services, industries, locations), don't display breadcrumbs
   const normalizedPath = (currentPath || '').replace(/\/+$/, '') || '/';
-  if ((normalizedPath === '/' || normalizedPath === '/about') && !customItems) {
+  if (
+    (normalizedPath === '/' ||
+      normalizedPath === '/about' ||
+      normalizedPath === '/services' ||
+      normalizedPath === '/industries' ||
+      normalizedPath === '/locations') &&
+    !customItems
+  ) {
     return null;
   }
 

@@ -5,6 +5,7 @@ export * from './StaticPageTemplate';
 export * from './ServicesIndexTemplate';
 export * from './ServiceTemplate';
 export * from './IndustryTemplate';
+export * from './IndustriesIndexTemplate';
 export * from './LocationTemplate';
 export * from './InsightIndexTemplate';
 export * from './InsightTemplate';

@@ -8,19 +8,7 @@ import { PageHeroSection } from '../components/sections/PageHeroSection';
 import { ConversionCTASection } from '../components/sections/ConversionCTASection';
 import { OptimizedImage } from '../components/OptimizedImage';
 import { Page } from '../models';
-import {
-  ShieldCheck,
-  CheckCircle2,
-  Calendar,
-  Building2,
-  MapPin,
-  Mail,
-  Phone,
-  ArrowRight,
-  Sparkles,
-  Layers,
-  Globe2,
-} from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 
 import { useRouter } from 'next/navigation';
 
@@ -100,57 +88,17 @@ export const StaticPageTemplate: React.FC<StaticPageTemplateProps> = ({
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
             {/* Main Rich Text Content */}
-            <div className="lg:col-span-8 space-y-8">
-              {page.content ? (
+            {page.content ? (
+              <div className="lg:col-span-8 space-y-8">
                 <div
                   className="prose prose-invert prose-blue max-w-none text-[#CBD5E1] text-sm sm:text-base leading-relaxed space-y-6"
                   dangerouslySetInnerHTML={{ __html: page.content }}
                 />
-              ) : (
-                <div className="space-y-8 text-[#CBD5E1] text-sm sm:text-base leading-relaxed">
-                  <div className="p-8 rounded-3xl bg-[#0D1424] border border-[#1E293B] space-y-4">
-                    <h2 className="text-xl sm:text-2xl font-bold text-white">
-                      Operational Philosophy &amp; Engineering Principles
-                    </h2>
-                    <p className="text-[#94A3B8] leading-relaxed">
-                      At MatricsMania, we treat modern marketing as a software engineering discipline. Every touchpoint, organic crawl route, search entity vector, and conversion funnel is treated as an interconnected operational subsystem.
-                    </p>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
-                      <div className="p-4 rounded-xl bg-[#070B14] border border-[#1E293B] space-y-2">
-                        <div className="flex items-center gap-2 text-sm font-semibold text-white">
-                          <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                          Zero Speculative Spend
-                        </div>
-                        <p className="text-xs text-[#94A3B8]">
-                          Every capital deployment requires baseline telemetry, statistical control groups, and verified CAC targets.
-                        </p>
-                      </div>
-                      <div className="p-4 rounded-xl bg-[#070B14] border border-[#1E293B] space-y-2">
-                        <div className="flex items-center gap-2 text-sm font-semibold text-white">
-                          <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                          Deterministic SLAs
-                        </div>
-                        <p className="text-xs text-[#94A3B8]">
-                          Engineered code commits, crawl log audits, and real-time dashboard instrumentation.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="p-8 rounded-3xl bg-[#0D1424] border border-[#1E293B] space-y-4">
-                    <h2 className="text-xl sm:text-2xl font-bold text-white">
-                      Transparency &amp; Verifiable Outcomes
-                    </h2>
-                    <p className="text-[#94A3B8] leading-relaxed">
-                      We never lock clients into proprietary black boxes. All tag manager repositories, BigQuery data lakes, and custom Next.js/Vite conversion modules belong 100% to your organization from Day 1.
-                    </p>
-                  </div>
-                </div>
-              )}
-            </div>
+              </div>
+            ) : null}
 
             {/* Sticky Sidebar Navigation & Metadata */}
-            <div className="lg:col-span-4 space-y-6">
+            <div className={`${page.content ? 'lg:col-span-4' : 'lg:col-span-8 lg:col-start-3 max-w-xl mx-auto w-full'} space-y-6`}>
               <div className="sticky top-28 p-6 rounded-2xl bg-[#0D1424] border border-[#1E293B] space-y-6">
                 <div className="space-y-2">
                   <span className="text-[10px] font-mono uppercase text-[#60A5FA] tracking-wider">

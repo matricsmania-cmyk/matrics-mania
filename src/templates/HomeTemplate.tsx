@@ -7,7 +7,6 @@ import {
   HomeHeroSection,
   PositioningPromiseSection,
   CredibilityEvidenceSection,
-  IndustriesSection,
   MethodologySection,
   CaseStudyEvidenceSection,
   InsightsSection,
@@ -140,12 +139,6 @@ export const HomeTemplate: React.FC<HomeTemplateProps> = ({
 
       {/* 3. EVIDENCE / CREDIBILITY: Verified Technical Standards & Disclosures */}
       <CredibilityEvidenceSection />
-
-      {/* 6. INDUSTRIES SERVED: Domain Specialization & Compliance */}
-      <IndustriesSection
-        industries={industries}
-        onNavigate={onNavigate}
-      />
 
       {/* 7. METHODOLOGY: The 5-Phase Growth Execution Protocol */}
       <MethodologySection

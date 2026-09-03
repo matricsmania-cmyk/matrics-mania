@@ -63,6 +63,37 @@ export const LocationTemplate: React.FC<LocationTemplateProps> = ({
   const allLocations = provider.getAllLocations();
 
   if (!location) {
+    if (!slug) {
+      return (
+        <div className="bg-[#070B14] text-white min-h-screen py-24 px-4 flex items-center justify-center">
+          <SEOHead
+            title="Global Delivery Hubs & Regional Engineering Centers | MatricsMania"
+            description="MatricsMania operational delivery hubs and regional growth engineering centers."
+            canonicalUrl="https://matricsmania.com/locations/"
+          />
+          <div className="max-w-3xl mx-auto space-y-6 text-center">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[#0D1424] border border-[#1E293B] text-[11px] font-mono font-semibold text-[#60A5FA] uppercase tracking-wider">
+              Regional Delivery Hubs
+            </div>
+            <h1 className="text-3xl sm:text-5xl font-bold tracking-tight text-white">
+              Global Engineering Hubs
+            </h1>
+            <p className="text-[#94A3B8] max-w-2xl mx-auto text-sm sm:text-base leading-relaxed">
+              Our growth architects and engineering teams operate across key international tech corridors, coordinating synchronous crawl telemetry, paid attribution, and conversion engineering.
+            </p>
+            <div className="pt-4 flex justify-center">
+              <button
+                onClick={() => onOpenBooking?.({ interest: 'Regional Engineering Workshop' })}
+                className="px-6 py-3 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white text-sm font-bold transition-all shadow-lg shadow-[#2563EB]/25 flex items-center gap-2 cursor-pointer"
+              >
+                <span>Schedule Architecture Diagnostic</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    }
     return (
       <NotFoundState
         attemptedPath={slug ? `/locations/${slug}/` : '/locations/'}
