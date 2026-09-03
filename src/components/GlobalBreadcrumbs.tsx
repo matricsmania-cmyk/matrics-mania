@@ -18,8 +18,9 @@ export const GlobalBreadcrumbs: React.FC<GlobalBreadcrumbsProps> = ({
   onNavigate,
   className = '',
 }) => {
-  // If on homepage, don't display breadcrumbs
-  if (currentPath === '/' && !customItems) {
+  // If on homepage or about page, don't display breadcrumbs
+  const normalizedPath = (currentPath || '').replace(/\/+$/, '') || '/';
+  if ((normalizedPath === '/' || normalizedPath === '/about') && !customItems) {
     return null;
   }
 
@@ -81,7 +82,7 @@ export const GlobalBreadcrumbs: React.FC<GlobalBreadcrumbsProps> = ({
       <Container maxWidth="xl">
         <nav aria-label="Breadcrumb">
           <ol
-            className="flex items-center gap-1.5 text-xs font-mono text-[#94A3B8] overflow-x-auto no-scrollbar whitespace-nowrap"
+            className="flex items-center gap-1.5 text-xs font-mono text-[#94A3B8] overflow-x-auto no-scrollbar whitespace-nowrap list-none m-0 p-0"
             itemScope
             itemType="https://schema.org/BreadcrumbList"
           >
@@ -91,7 +92,7 @@ export const GlobalBreadcrumbs: React.FC<GlobalBreadcrumbsProps> = ({
               return (
                 <li
                   key={idx}
-                  className="flex items-center gap-1.5 shrink-0"
+                  className="flex items-center gap-1.5 shrink-0 list-none m-0 p-0"
                   itemProp="itemListElement"
                   itemScope
                   itemType="https://schema.org/ListItem"
@@ -119,7 +120,7 @@ export const GlobalBreadcrumbs: React.FC<GlobalBreadcrumbsProps> = ({
                     </a>
                   )}
 
-                  <span itemProp="position" className="hidden" aria-hidden="true">{idx + 1}</span>
+                  <meta itemProp="position" content={String(idx + 1)} />
 
                   {!isLast && (
                     <ChevronRight

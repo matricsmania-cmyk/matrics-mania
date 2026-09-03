@@ -27,6 +27,7 @@ import { useRouter } from 'next/navigation';
 export interface StaticPageTemplateProps {
   page?: Page;
   slug?: string;
+  hideHero?: boolean;
   onNavigate?: (path: string) => void;
   onOpenBooking?: (prefillInfo?: any) => void;
   children?: React.ReactNode;
@@ -35,6 +36,7 @@ export interface StaticPageTemplateProps {
 export const StaticPageTemplate: React.FC<StaticPageTemplateProps> = ({
   page: propPage,
   slug,
+  hideHero,
   onNavigate: propNavigate,
   onOpenBooking: propBooking,
   children,
@@ -67,6 +69,7 @@ export const StaticPageTemplate: React.FC<StaticPageTemplateProps> = ({
   const canonicalUrl = page.seo?.canonicalUrl || `https://matricsmania.com/${page.slug}/`;
   const metaDescription = page.seo?.metaDescription || page.excerpt || 'MatricsMania Growth Engineering';
   const metaTitle = page.seo?.seoTitle || `${page.title} | MatricsMania`;
+  const shouldHideHero = hideHero ?? (page.slug === 'about' || slug === 'about');
 
   return (
     <div className="bg-[#070B14] text-white selection:bg-[#2563EB]/30 selection:text-white font-sans antialiased min-h-screen">
@@ -76,19 +79,21 @@ export const StaticPageTemplate: React.FC<StaticPageTemplateProps> = ({
         pageType={page.slug === 'about' ? 'about' : page.slug === 'contact' ? 'contact' : 'static'}
       />
 
-      {/* Hero */}
-      <PageHeroSection
-        eyebrow="Enterprise Growth Infrastructure"
-        title={page.heroHeadline || page.title}
-        subtitle={metaDescription}
-        primaryCtaLabel="Schedule Diagnostic Strategy Session"
-        onPrimaryCta={() => onOpenBooking({ page: page.title })}
-        secondaryCtaLabel="View Engineering Services"
-        onSecondaryCta={() => onNavigate('/services/')}
-      />
+      {/* Hero (omitted on about page when shouldHideHero is true) */}
+      {!shouldHideHero && (
+        <PageHeroSection
+          eyebrow="Enterprise Growth Infrastructure"
+          title={page.heroHeadline || page.title}
+          subtitle={metaDescription}
+          primaryCtaLabel="Schedule Diagnostic Strategy Session"
+          onPrimaryCta={() => onOpenBooking({ page: page.title })}
+          secondaryCtaLabel="View Engineering Services"
+          onSecondaryCta={() => onNavigate('/services/')}
+        />
+      )}
 
       {/* Main Content Area */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-20">
+      <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ${shouldHideHero ? 'pt-24 pb-16 md:pt-28 md:pb-20' : 'py-16 md:py-20'}`}>
         {/* If custom children are provided, render them */}
         {children ? (
           children

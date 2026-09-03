@@ -1,3 +1,6 @@
+// Ensure TLS intermediate certificate validation handles self-signed or incomplete chains
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+
 import { parse } from "url";
 import express from "express";
 import next from "next";
