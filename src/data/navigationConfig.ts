@@ -1,10 +1,13 @@
 /**
  * MatricsMania — Centralized Navigation & Information Architecture Config
  * 
- * This file centralizes all navigation structures, taxonomy labels,
- * routing paths, descriptions, and metadata. In the future, this configuration
- * will be dynamically hydrated or mapped from the WordPress REST API endpoints
- * (e.g. wp/v2/menus, wp/v2/services, wp/v2/categories).
+ * Synchronized with WordPress CMS Headless Endpoints:
+ * - Services: /services/[slug]/ (technical-seo, seo-growth, performance-marketing, web-cro-engineering, content-authority, growth-intelligence)
+ * - Industries: /industries/[slug]/ (saas, real-estate, luxury-d2c, healthcare)
+ * - Locations: /locations/[slug]/ (bangalore, mumbai, delhi-ncr)
+ * - Case Studies: /case-studies/[slug]/ (velociti-cloud, aethelgard-luxury)
+ * - Insights: /insights/[slug]/ (search-architecture-2026, paid-demand-science-2026, conversion-engineering-playbook, perplexity-rag-entity-modeling, b2b-pipeline-velocity-framework, programmatic-seo-taxonomy-systems)
+ * - Pages: /about/, /work/, /process/, /careers/, /faq/, /contact/
  */
 
 export interface NavItem {
@@ -80,388 +83,249 @@ export interface NavigationConfig {
 }
 
 export const NAVIGATION_CONFIG: NavigationConfig = {
-  // 1. SERVICES NAVIGATION (Grouped by Growth Disciplines)
+  // 1. SERVICES NAVIGATION (Direct from WordPress CMS)
   services: {
     title: 'Services',
     href: '/services/',
     featured: {
-      title: 'Generative Engine Optimization (GEO)',
-      description: 'Pioneering LLM citation indexing, semantic vector tuning, and Perplexity/ChatGPT brand visibility architectures.',
-      href: '/services/generative-engine-optimization/',
-      badge: '2025 Architecture',
+      title: 'Technical SEO & Search Architecture',
+      description: 'Algorithmic search architecture, programmatic taxonomy expansion, and Core Web Vitals optimization.',
+      href: '/services/technical-seo/',
+      badge: 'SRV-SEO-01',
     },
     groups: [
       {
-        id: 'search-systems',
-        title: 'Search & LLM Discovery',
-        description: 'Algorithmic organic indexing and AI answer engine dominance',
+        id: 'search-organic',
+        title: 'Search & Organic Systems',
+        description: 'Algorithmic organic indexing and search engineering',
         items: [
           {
             id: 'technical-seo',
-            label: 'Technical SEO Infrastructure',
+            label: 'Technical SEO & Search Architecture',
             href: '/services/technical-seo/',
-            description: 'Core Web Vitals, headless crawl graphs, indexation pipelines',
-            badge: 'Core',
+            description: 'Algorithmic search architecture and Core Web Vitals.',
+            badge: 'SRV-SEO-01',
           },
           {
-            id: 'aeo-geo',
-            label: 'AEO & Generative Engine Optimization',
-            href: '/services/generative-engine-optimization/',
-            description: 'Optimization for Perplexity, ChatGPT Search, and Google SGE',
-            badge: 'New',
+            id: 'seo-growth',
+            label: 'SEO Growth Engineering',
+            href: '/services/seo-growth/',
+            description: 'Programmatic taxonomy expansion and search acquisition.',
+            badge: 'SRV-SEO-02',
           },
           {
-            id: 'semantic-knowledge-graphs',
-            label: 'Semantic Knowledge Graphs',
-            href: '/services/semantic-knowledge-graphs/',
-            description: 'Schema.org JSON-LD entity validation and topical authority vectors',
-          },
-          {
-            id: 'b2b-search-strategy',
-            label: 'High-Intent B2B SEO Strategy',
-            href: '/services/b2b-seo-strategy/',
-            description: 'Pipeline-generating non-brand search acquisition models',
+            id: 'content-authority',
+            label: 'Content Authority Systems',
+            href: '/services/content-authority/',
+            description: 'Information architecture and authoritative topical graph models.',
+            badge: 'SRV-CNT-01',
           },
         ],
       },
       {
-        id: 'performance-media',
-        title: 'Paid Acquisition & Media',
-        description: 'Precision algorithmic bidding with server-side CAPI tracking',
+        id: 'performance-conversion',
+        title: 'Paid Acquisition & CRO',
+        description: 'Predictable demand capture and revenue experimentation',
         items: [
           {
-            id: 'enterprise-paid-search',
-            label: 'Enterprise Google & Bing Ads',
-            href: '/services/paid-search-engineering/',
-            description: 'Value-based smart bidding and high-intent keyword conquesting',
+            id: 'performance-marketing',
+            label: 'Performance Marketing',
+            href: '/services/performance-marketing/',
+            description: 'Precision algorithmic bidding with server-side CAPI tracking.',
+            badge: 'SRV-PAID-01',
           },
           {
-            id: 'paid-social-capi',
-            label: 'Paid Social & Server-Side CAPI',
-            href: '/services/server-side-capi/',
-            description: 'First-party data matching for Meta, LinkedIn, and YouTube',
-            badge: 'CAPI',
+            id: 'web-cro-engineering',
+            label: 'Web CRO Engineering',
+            href: '/services/web-cro-engineering/',
+            description: 'Sub-second landing page architecture and conversion funnels.',
+            badge: 'SRV-CRO-01',
           },
           {
-            id: 'programmatic-dsp',
-            label: 'Account-Based Retargeting (ABM)',
-            href: '/services/abm-retargeting/',
-            description: 'Hyper-targeted account conquesting for enterprise sales pipelines',
-          },
-        ],
-      },
-      {
-        id: 'conversion-engineering',
-        title: 'Engineering & Conversion Systems',
-        description: 'Scientific conversion rate optimization and technical audit pipelines',
-        items: [
-          {
-            id: 'cro-experimentation',
-            label: 'CRO & Revenue Experimentation',
-            href: '/services/cro-revenue-experimentation/',
-            description: 'Bayesian A/B testing, funnel instrumentation, velocity modeling',
-          },
-          {
-            id: 'full-funnel-attribution',
-            label: 'Multi-Touch Revenue Attribution',
-            href: '/services/multi-touch-attribution/',
-            description: 'First-touch to closed-won CRM synchronization and pipeline reporting',
-          },
-          {
-            id: 'growth-audit',
-            label: '360° Growth & Audit Blueprint',
-            href: '/services/growth-audit-blueprint/',
-            description: 'Deep-dive diagnostic of search, media, code, and revenue funnels',
-            badge: 'Audit',
+            id: 'growth-intelligence',
+            label: 'Growth Intelligence',
+            href: '/services/growth-intelligence/',
+            description: 'Raw BigQuery telemetry and predictive econometric models.',
+            badge: 'SRV-DATA-01',
           },
         ],
       },
     ],
   },
 
-  // 2. INDUSTRIES NAVIGATION (Vertical Playbooks)
+  // 2. INDUSTRIES NAVIGATION (Direct from WordPress CMS)
   industries: {
     title: 'Industries',
     href: '/industries/',
     featured: {
-      title: 'Enterprise SaaS Growth Blueprint',
-      description: 'How high-growth B2B software platforms capture 4.8x qualified demo pipeline through technical search and intent modeling.',
+      title: 'B2B & Enterprise SaaS',
+      description: 'Pipeline velocity models and search conquesting for multi-product software suites.',
       href: '/industries/saas/',
-      badge: 'Featured Playbook',
+      badge: 'IND-SAAS-01',
     },
     groups: [
       {
-        id: 'b2b-tech',
-        title: 'Technology & Digital Scale',
+        id: 'enterprise-b2b',
+        title: 'Enterprise Sectors',
         items: [
           {
             id: 'saas',
-            label: 'Enterprise SaaS & Cloud',
+            label: 'B2B & Enterprise SaaS',
             href: '/industries/saas/',
-            description: 'Product-led and sales-led search attribution systems',
-            badge: '+310% ARR',
+            description: 'Pipeline velocity and software buyer journey modeling',
+            badge: 'IND-SAAS-01',
           },
-          {
-            id: 'fintech',
-            label: 'Finance & FinTech',
-            href: '/industries/finance/',
-            description: 'Compliant CAC optimization and high-trust acquisition',
-          },
-        ],
-      },
-      {
-        id: 'high-ticket-commercial',
-        title: 'High-Ticket & Physical Assets',
-        items: [
           {
             id: 'real-estate',
-            label: 'Real Estate & Properties',
+            label: 'Real Estate & Infrastructure',
             href: '/industries/real-estate/',
-            description: 'Ultra-luxury residential and commercial development lead engines',
-            badge: '$140M Pipeline',
-          },
-          {
-            id: 'luxury',
-            label: 'Luxury Brands & High-AOV',
-            href: '/industries/luxury/',
-            description: 'Prestigious brand equity and private client acquisition',
+            description: 'Hyper-local search clusters and high-value lead acquisition',
+            badge: 'IND-REAL-01',
           },
         ],
       },
       {
-        id: 'institutional-services',
-        title: 'Institutional & Professional',
+        id: 'consumer-clinical',
+        title: 'Specialized Markets',
         items: [
           {
+            id: 'luxury-d2c',
+            label: 'Luxury & Premium D2C',
+            href: '/industries/luxury-d2c/',
+            description: 'High-AOV acquisition funnels and brand affinity modeling',
+            badge: 'IND-LUX-01',
+          },
+          {
             id: 'healthcare',
-            label: 'Healthcare & Life Sciences',
+            label: 'Healthcare & Clinical',
             href: '/industries/healthcare/',
-            description: 'HIPAA-compliant patient acquisition and clinical authority',
-          },
-          {
-            id: 'education',
-            label: 'Education & Universities',
-            href: '/industries/education/',
-            description: 'Global student enrollment and high-value program yield',
-          },
-          {
-            id: 'professional-services',
-            label: 'Professional & Legal Services',
-            href: '/industries/professional-services/',
-            description: 'Retainer client generation for top-tier law and advisory firms',
+            description: 'E-E-A-T compliant medical content and HIPAA-compliant tracking',
+            badge: 'IND-HLTH-01',
           },
         ],
       },
     ],
   },
 
-  // 3. INSIGHTS NAVIGATION (Canonical Editorial Section)
+  // 3. INSIGHTS NAVIGATION (Direct from WordPress CMS)
   insights: {
     title: 'Insights',
     href: '/insights/',
     featured: {
-      title: 'The 2025 Generative Engine Optimization Manifesto',
-      description: 'A comprehensive technical breakdown of semantic search indexing, LLM citations, and AI crawler architectures.',
-      href: '/insights/how-ai-search-is-changing-digital-discovery/',
-      readTime: '12 min read',
-      category: 'Research Whitepaper',
+      title: 'Algorithmic Retrieval and Search Architecture in Modern B2B',
+      description: 'An in-depth technical analysis of neural search ranking factors and programmatic information architectures.',
+      href: '/insights/search-architecture-2026/',
+      readTime: '8 min read',
+      category: 'Search Architecture',
     },
     categories: [
-      {
-        id: 'all-insights',
-        label: 'All Research & Intel',
-        href: '/insights/',
-      },
-      {
-        id: 'geo-aeo-research',
-        label: 'AEO & Generative Search',
-        href: '/insights/how-ai-search-is-changing-digital-discovery/',
-        badge: 'Trending',
-      },
-      {
-        id: 'technical-seo-deepdive',
-        label: 'Technical Search Architecture',
-        href: '/insights/why-programmatic-seo-is-the-future-of-scaling-traffic/',
-      },
-      {
-        id: 'performance-media-intel',
-        label: 'Performance Attribution & CAPI',
-        href: '/insights/first-party-data-revolution-marketing-after-cookies/',
-      },
-      {
-        id: 'cro-revenue-models',
-        label: 'Conversion Engineering & CRO',
-        href: '/insights/the-cro-framework-that-doubled-our-enterprise-conversion-rates/',
-      },
+      { id: 'search-architecture', label: 'Search Architecture', href: '/insights/search-architecture-2026/' },
+      { id: 'paid-demand-science', label: 'Paid Demand Science', href: '/insights/paid-demand-science-2026/' },
+      { id: 'conversion-engineering', label: 'Conversion Engineering', href: '/insights/conversion-engineering-playbook/' },
+      { id: 'rag-optimization', label: 'Perplexity RAG Optimization', href: '/insights/perplexity-rag-entity-modeling/' },
+      { id: 'pipeline-velocity', label: 'B2B Pipeline Velocity', href: '/insights/b2b-pipeline-velocity-framework/' },
+      { id: 'programmatic-seo', label: 'Programmatic SEO Taxonomy', href: '/insights/programmatic-seo-taxonomy-systems/' },
     ],
   },
 
-  // 4. REGIONAL LOCATIONS & HUBS
+  // 4. LOCATIONS NAVIGATION (Direct from WordPress CMS)
   locations: {
     title: 'Locations',
     href: '/locations/',
     items: [
       {
-        id: 'bangalore',
+        id: 'loc-bangalore',
         label: 'Bangalore Headquarters',
         href: '/locations/bangalore/',
-        description: 'Indiranagar 100ft Road — Core Engineering & AI Labs',
-        badge: 'HQ',
+        description: 'Koramangala 4th Block, Bengaluru, Karnataka 560034',
+        badge: 'HQ Node',
       },
       {
-        id: 'london',
-        label: 'London EMEA Hub',
-        href: '/locations/',
-        description: 'Canary Wharf — European Enterprise Operations',
+        id: 'loc-mumbai',
+        label: 'Mumbai Hub',
+        href: '/locations/mumbai/',
+        description: 'Bandra Kurla Complex (BKC), Mumbai, Maharashtra 400051',
+        badge: 'Financial Node',
       },
       {
-        id: 'san-francisco',
-        label: 'San Francisco Bay Hub',
-        href: '/locations/',
-        description: 'SOMA Tech Corridor — US Growth Engineering',
+        id: 'loc-delhi-ncr',
+        label: 'Delhi NCR Hub',
+        href: '/locations/delhi-ncr/',
+        description: 'DLF Cyber City, Phase 2, Gurugram, Haryana 122002',
+        badge: 'Strategic Node',
       },
     ],
   },
 
-  // 5. COMPANY & AGENCY
+  // 5. COMPANY NAVIGATION (Direct from WordPress CMS)
   company: {
     title: 'Company',
     items: [
-      {
-        id: 'about',
-        label: 'About MatricsMania',
-        href: '/about/',
-        description: 'Our engineering philosophy, founders, and performance standards',
-      },
-      {
-        id: 'work',
-        label: 'Selected Proof of Work',
-        href: '/work/',
-        description: 'Comprehensive portfolio of scaled clients and revenue outcomes',
-      },
-      {
-        id: 'case-studies',
-        label: 'Case Studies & Teardowns',
-        href: '/case-studies/',
-        description: 'Deep technical audits, methodology logs, and verified ROI metrics',
-        badge: 'Verified',
-      },
-      {
-        id: 'process',
-        label: 'Our Operating Process',
-        href: '/process/',
-        description: 'The 4-stage algorithmic growth framework: Audit, Architect, Scale, Optimize',
-      },
-      {
-        id: 'careers',
-        label: 'Careers & Engineering',
-        href: '/careers/',
-        description: 'Join our elite cohort of growth engineers and data architects',
-        badge: 'Hiring',
-      },
-      {
-        id: 'faq',
-        label: 'Frequently Asked Questions',
-        href: '/faq/',
-        description: 'Transparent answers on engagement models, SLAs, and technical stack',
-      },
-      {
-        id: 'contact',
-        label: 'Contact & Consultation',
-        href: '/contact/',
-        description: 'Connect directly with principal growth engineers',
-      },
+      { id: 'about', label: 'About MatricsMania', href: '/about/', description: 'Engineering ethos and operating principles' },
+      { id: 'work', label: 'Engineered Systems & Portfolio', href: '/work/', description: 'Verified client growth deployments' },
+      { id: 'case-studies', label: 'Case Studies', href: '/case-studies/', description: 'In-depth revenue and pipeline transformations' },
+      { id: 'process', label: 'Engineering Protocol', href: '/process/', description: '5-phase standardized growth protocol' },
+      { id: 'careers', label: 'Careers & Fellowships', href: '/careers/', description: 'Open growth engineering positions' },
+      { id: 'faq', label: 'FAQs & Specifications', href: '/faq/', description: 'Retainer terms, SLAs, and architecture' },
+      { id: 'contact', label: 'Contact Growth Engineers', href: '/contact/', description: 'Schedule an executive diagnostic' },
     ],
   },
 
-  // 6. PRIMARY DESKTOP BAR (Top-level crawlable items)
+  // 6. PRIMARY HEADER NAVIGATION
   primaryNav: [
-    {
-      id: 'services',
-      label: 'Services',
-      href: '/services/',
-    },
-    {
-      id: 'industries',
-      label: 'Industries',
-      href: '/industries/',
-    },
-    {
-      id: 'case-studies',
-      label: 'Case Studies',
-      href: '/case-studies/',
-      badge: 'Proof',
-    },
-    {
-      id: 'insights',
-      label: 'Insights',
-      href: '/insights/',
-    },
-    {
-      id: 'process',
-      label: 'Process',
-      href: '/process/',
-    },
-    {
-      id: 'about',
-      label: 'About',
-      href: '/about/',
-    },
-    {
-      id: 'contact',
-      label: 'Contact',
-      href: '/contact/',
-    },
+    { id: 'nav-services', label: 'Services', href: '/services/' },
+    { id: 'nav-industries', label: 'Industries', href: '/industries/' },
+    { id: 'nav-work', label: 'Work', href: '/work/' },
+    { id: 'nav-case-studies', label: 'Case Studies', href: '/case-studies/' },
+    { id: 'nav-insights', label: 'Insights', href: '/insights/' },
+    { id: 'nav-company', label: 'Company', href: '/about/' },
+    { id: 'nav-contact', label: 'Contact', href: '/contact/' },
   ],
 
   // 7. FOOTER STRUCTURED COLUMNS
   footer: {
     solutions: [
-      { id: 'f-tech-seo', label: 'Technical SEO Infrastructure', href: '/services/technical-seo/' },
-      { id: 'f-aeo-geo', label: 'Generative Engine Optimization (GEO)', href: '/services/technical-seo/' },
-      { id: 'f-knowledge-graphs', label: 'Semantic Knowledge Graphs', href: '/services/technical-seo/' },
-      { id: 'f-paid-search', label: 'Enterprise Google & Bing Ads', href: '/services/technical-seo/' },
-      { id: 'f-capi-social', label: 'Server-Side CAPI Paid Social', href: '/services/technical-seo/' },
-      { id: 'f-cro-revenue', label: 'CRO & Revenue Experimentation', href: '/services/technical-seo/' },
-      { id: 'f-all-services', label: 'View All Growth Services →', href: '/services/' },
+      { id: 'f-tech-seo', label: 'Technical SEO & Search Architecture', href: '/services/technical-seo/' },
+      { id: 'f-seo-growth', label: 'SEO Growth Engineering', href: '/services/seo-growth/' },
+      { id: 'f-performance-mktg', label: 'Performance Marketing', href: '/services/performance-marketing/' },
+      { id: 'f-cro-eng', label: 'Web CRO Engineering', href: '/services/web-cro-engineering/' },
+      { id: 'f-content-auth', label: 'Content Authority Systems', href: '/services/content-authority/' },
+      { id: 'f-growth-intel', label: 'Growth Intelligence', href: '/services/growth-intelligence/' },
+      { id: 'f-all-services', label: 'All Growth Services →', href: '/services/' },
     ],
     industries: [
-      { id: 'f-saas', label: 'Enterprise SaaS & Cloud', href: '/industries/saas/' },
-      { id: 'f-real-estate', label: 'Real Estate & Properties', href: '/industries/real-estate/' },
-      { id: 'f-healthcare', label: 'Healthcare & Life Sciences', href: '/industries/healthcare/' },
-      { id: 'f-finance', label: 'Finance & FinTech', href: '/industries/finance/' },
-      { id: 'f-luxury', label: 'Luxury Brands & High-AOV', href: '/industries/luxury/' },
-      { id: 'f-education', label: 'Education & Universities', href: '/industries/education/' },
-      { id: 'f-all-industries', label: 'View All Industry Playbooks →', href: '/industries/' },
+      { id: 'f-saas', label: 'B2B & Enterprise SaaS', href: '/industries/saas/' },
+      { id: 'f-real-estate', label: 'Real Estate & Infrastructure', href: '/industries/real-estate/' },
+      { id: 'f-luxury', label: 'Luxury & Premium D2C', href: '/industries/luxury-d2c/' },
+      { id: 'f-healthcare', label: 'Healthcare & Clinical', href: '/industries/healthcare/' },
+      { id: 'f-all-industries', label: 'All Industries →', href: '/industries/' },
     ],
     insights: [
-      { id: 'f-geo-whitepaper', label: 'The 2025 GEO Manifesto', href: '/insights/how-ai-search-is-changing-digital-discovery/' },
-      { id: 'f-programmatic-seo', label: 'Programmatic SEO at Scale', href: '/insights/why-programmatic-seo-is-the-future-of-scaling-traffic/' },
-      { id: 'f-first-party-data', label: 'First-Party CAPI Architecture', href: '/insights/first-party-data-revolution-marketing-after-cookies/' },
-      { id: 'f-cro-playbook', label: 'Enterprise CRO Experimentation', href: '/insights/the-cro-framework-that-doubled-our-enterprise-conversion-rates/' },
-      { id: 'f-all-insights', label: 'All Research & Whitepapers →', href: '/insights/' },
+      { id: 'f-ins-1', label: 'Algorithmic Retrieval and Search Architecture', href: '/insights/search-architecture-2026/' },
+      { id: 'f-ins-2', label: 'Eliminating CAC Waste in B2B Paid Media Systems', href: '/insights/paid-demand-science-2026/' },
+      { id: 'f-ins-3', label: 'Deterministic CRO: Why Latency Decides Revenue', href: '/insights/conversion-engineering-playbook/' },
+      { id: 'f-ins-4', label: 'Perplexity RAG Optimization & Knowledge Graph Citation', href: '/insights/perplexity-rag-entity-modeling/' },
+      { id: 'f-all-insights', label: 'All Research & Insights →', href: '/insights/' },
     ],
     hubs: [
-      { id: 'f-bangalore', label: 'Bangalore Headquarters (HQ)', href: '/locations/bangalore/' },
-      { id: 'f-london', label: 'London EMEA Operations', href: '/locations/' },
-      { id: 'f-sf', label: 'San Francisco US Innovation Hub', href: '/locations/' },
-      { id: 'f-all-locations', label: 'Global Operations Network →', href: '/locations/' },
+      { id: 'f-bangalore', label: 'Bangalore Headquarters', href: '/locations/bangalore/' },
+      { id: 'f-mumbai', label: 'Mumbai Financial Hub', href: '/locations/mumbai/' },
+      { id: 'f-delhi-ncr', label: 'Delhi NCR Strategic Node', href: '/locations/delhi-ncr/' },
+      { id: 'f-all-locations', label: 'All Engineering Hubs →', href: '/locations/' },
     ],
     company: [
       { id: 'f-about', label: 'About MatricsMania', href: '/about/' },
       { id: 'f-work', label: 'Portfolio & Proof of Work', href: '/work/' },
-      { id: 'f-case-studies', label: 'Case Studies & Teardowns', href: '/case-studies/' },
-      { id: 'f-process', label: 'Operating Methodology', href: '/process/' },
-      { id: 'f-careers', label: 'Careers (Growth Engineers)', href: '/careers/' },
-      { id: 'f-faq', label: 'Frequently Asked Questions', href: '/faq/' },
-      { id: 'f-contact', label: 'Contact Growth Engineers', href: '/contact/' },
+      { id: 'f-case-studies', label: 'Case Studies', href: '/case-studies/' },
+      { id: 'f-process', label: 'Engineering Protocol', href: '/process/' },
+      { id: 'f-careers', label: 'Careers & Fellowships', href: '/careers/' },
+      { id: 'f-faq', label: 'FAQs & Specifications', href: '/faq/' },
+      { id: 'f-contact', label: 'Contact', href: '/contact/' },
     ],
     legal: [
-      { id: 'f-privacy', label: 'Privacy Policy', href: '/faq/' },
-      { id: 'f-terms', label: 'Terms of Engagement', href: '/faq/' },
-      { id: 'f-security', label: 'Enterprise Security & Compliance', href: '/faq/' },
-      { id: 'f-cookies', label: 'Cookie Preferences', href: '/faq/' },
-      { id: 'f-sitemap', label: 'XML Sitemap Index', href: '/services/' },
+      { id: 'f-privacy', label: 'Privacy Policy', href: '/privacy/' },
+      { id: 'f-terms', label: 'Terms of Service', href: '/terms/' },
+      { id: 'f-faq-legal', label: 'Retainer Terms & SLAs', href: '/faq/' },
     ],
   },
 };

@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import { BlogPost } from '../types';
 import { OptimizedImage } from './OptimizedImage';
-import { BLOG_POSTS_DATA } from '../data/mockData';
 import { X, Calendar, Clock, Bookmark, Share2, Sparkles, CheckCircle2, FileText, ArrowRight, Copy, Check, Quote, ListOrdered } from 'lucide-react';
 
 interface BlogReaderModalProps {
@@ -38,8 +37,6 @@ export const BlogReaderModal: React.FC<BlogReaderModalProps> = ({
     onShowToast('Code Copied!', 'JSON-LD Schema copied to clipboard.', 'success');
     setTimeout(() => setCopiedSnippetIndex(null), 3000);
   };
-
-  const relatedPosts = BLOG_POSTS_DATA.filter((p) => p.id !== post.id).slice(0, 2);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-[#171717]/80 backdrop-blur-md">

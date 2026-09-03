@@ -9,7 +9,8 @@ export const revalidate = 0;
 
 export const metadata = toNextMetadata(getStaticRouteSeo('faq'));
 
-export default function FAQPage() {
+export default async function FAQPage() {
+  await wordPressProvider.asyncGetAllServices();
   const faqs = wordPressProvider.getAllFAQs();
   return <FAQTemplate faqs={faqs} />;
 }

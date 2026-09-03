@@ -9,7 +9,8 @@ export const revalidate = 0;
 
 export const metadata = toNextMetadata(getStaticRouteSeo('contact'));
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  await wordPressProvider.asyncGetAllLocations();
   const contactInfo = wordPressProvider.getContactInfo();
   return <ContactTemplate contactInfo={contactInfo} />;
 }

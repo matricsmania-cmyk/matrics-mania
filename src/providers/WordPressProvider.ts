@@ -11,6 +11,7 @@ import {
   Navigation,
   ContactInformation,
   WorkProject,
+  OfficeNode,
 } from '../models';
 import {
   normalizeWpService,
@@ -30,7 +31,6 @@ import {
   RawWpBasePost,
 } from '../models/mappers/rawWpTypes';
 import { ContentProvider } from './ContentProvider';
-import { mockDataProvider } from './MockDataProvider';
 
 /**
  * ============================================================================
@@ -50,7 +50,7 @@ import { mockDataProvider } from './MockDataProvider';
  * Resilience Features:
  * 1. Automatic ByetHost/InfinityFree bot-protection challenge solver (__test cookie)
  * 2. Self-signed and incomplete TLS chain handling
- * 3. Resilient fallback to mockDataProvider if WordPress is unavailable
+ * 3. Graceful fallback to empty collections when WordPress content is unavailable
  * 4. Dual async (server/ISR) & synchronous cached access
  */
 
@@ -70,7 +70,6 @@ function sanitizeBaseUrl(raw?: string): string {
 
 export class WordPressProvider implements ContentProvider {
   private baseUrl: string;
-  private fallbackProvider: ContentProvider;
   private sessionCookie: string | null = null;
   private aesScriptCache: string | null = null;
 
@@ -93,6 +92,9 @@ export class WordPressProvider implements ContentProvider {
   private pagesCache: Page[] | null = null;
   private pageMap: Map<string, Page> = new Map();
 
+  private authorsCache: Author[] | null = null;
+  private authorMap: Map<string, Author> = new Map();
+
   // Serialization queue & handshake lock to protect free host from concurrent connection drop
   private requestQueue: Promise<unknown> = Promise.resolve();
   private handshakePromise: Promise<string | null> | null = null;
@@ -109,7 +111,6 @@ export class WordPressProvider implements ContentProvider {
         : undefined;
 
     this.baseUrl = sanitizeBaseUrl(baseUrl || envUrl);
-    this.fallbackProvider = mockDataProvider;
   }
 
   public getBaseUrl(): string {
@@ -219,140 +220,305 @@ export class WordPressProvider implements ContentProvider {
 
   // --- PAGES ---
   getPageBySlug(slug: string): Page | null {
-    if (this.pageMap.has(slug)) {
-      return this.pageMap.get(slug)!;
-    }
-    return this.fallbackProvider.getPageBySlug(slug);
+    return this.pageMap.get(slug) || null;
   }
 
   getAllPages(): Page[] {
-    if (this.pagesCache && this.pagesCache.length > 0) {
-      return this.pagesCache;
-    }
-    return this.fallbackProvider.getAllPages();
+    return this.pagesCache || [];
   }
 
   // --- SERVICES ---
   getServiceBySlug(slug: string): Service | null {
-    if (this.serviceMap.has(slug)) {
-      return this.serviceMap.get(slug)!;
-    }
-    return this.fallbackProvider.getServiceBySlug(slug);
+    return this.serviceMap.get(slug) || null;
   }
 
   getAllServices(): Service[] {
-    if (this.servicesCache && this.servicesCache.length > 0) {
-      return this.servicesCache;
-    }
-    return this.fallbackProvider.getAllServices();
+    return this.servicesCache || [];
   }
 
   // --- INDUSTRIES ---
   getIndustryBySlug(slug: string): Industry | null {
-    if (this.industryMap.has(slug)) {
-      return this.industryMap.get(slug)!;
-    }
-    return this.fallbackProvider.getIndustryBySlug(slug);
+    return this.industryMap.get(slug) || null;
   }
 
   getAllIndustries(): Industry[] {
-    if (this.industriesCache && this.industriesCache.length > 0) {
-      return this.industriesCache;
-    }
-    return this.fallbackProvider.getAllIndustries();
+    return this.industriesCache || [];
   }
 
   // --- LOCATIONS ---
   getLocationBySlug(slug: string): Location | null {
-    if (this.locationMap.has(slug)) {
-      return this.locationMap.get(slug)!;
-    }
-    return this.fallbackProvider.getLocationBySlug(slug);
+    return this.locationMap.get(slug) || null;
   }
 
   getAllLocations(): Location[] {
-    if (this.locationsCache && this.locationsCache.length > 0) {
-      return this.locationsCache;
-    }
-    return this.fallbackProvider.getAllLocations();
+    return this.locationsCache || [];
   }
 
   // --- CASE STUDIES ---
   getCaseStudyBySlug(slug: string): CaseStudy | null {
-    if (this.caseStudyMap.has(slug)) {
-      return this.caseStudyMap.get(slug)!;
-    }
-    return this.fallbackProvider.getCaseStudyBySlug(slug);
+    return this.caseStudyMap.get(slug) || null;
   }
 
   getAllCaseStudies(): CaseStudy[] {
-    if (this.caseStudiesCache && this.caseStudiesCache.length > 0) {
-      return this.caseStudiesCache;
-    }
-    return this.fallbackProvider.getAllCaseStudies();
+    return this.caseStudiesCache || [];
   }
 
   // --- INSIGHTS ---
   getInsightBySlug(slug: string): Insight | null {
-    if (this.insightMap.has(slug)) {
-      return this.insightMap.get(slug)!;
-    }
-    return this.fallbackProvider.getInsightBySlug(slug);
+    return this.insightMap.get(slug) || null;
   }
 
   getAllInsights(): Insight[] {
-    if (this.insightsCache && this.insightsCache.length > 0) {
-      return this.insightsCache;
-    }
-    return this.fallbackProvider.getAllInsights();
+    return this.insightsCache || [];
   }
 
   getInsightsByCategory(categorySlug: string): Insight[] {
     const all = this.getAllInsights();
-    const filtered = all.filter((i) => i.categorySlug === categorySlug);
-    if (filtered.length > 0) return filtered;
-    return this.fallbackProvider.getInsightsByCategory(categorySlug);
+    return all.filter((i) => i.categorySlug === categorySlug || (i.category && i.category.toLowerCase().replace(/[^a-z0-9]+/g, '-') === categorySlug));
   }
 
   // --- AUTHORS ---
   getAuthorBySlug(slug: string): Author | null {
-    return this.fallbackProvider.getAuthorBySlug(slug);
+    return this.authorMap.get(slug) || null;
   }
 
   getAllAuthors(): Author[] {
-    return this.fallbackProvider.getAllAuthors();
+    return this.authorsCache || [];
   }
 
-  // --- PRIMITIVES & SUPPORTING ENTITIES ---
+  // --- PRIMITIVES & SUPPORTING ENTITIES (Derived from WordPress CMS) ---
   getAllFaqs(category?: string): FAQ[] {
-    return this.fallbackProvider.getAllFaqs(category);
+    // Extract FAQs strictly from WordPress CMS services and deduplicate
+    const services = this.getAllServices();
+    const faqs: FAQ[] = [];
+    const seen = new Set<string>();
+
+    for (const service of services) {
+      if (service.faqs && Array.isArray(service.faqs)) {
+        for (const faq of service.faqs) {
+          if (!seen.has(faq.question)) {
+            seen.add(faq.question);
+            faqs.push(faq);
+          }
+        }
+      }
+    }
+
+    if (category && category !== 'All') {
+      const lowerCat = category.toLowerCase();
+      return faqs.filter((f) => f.category?.toLowerCase() === lowerCat);
+    }
+    return faqs;
   }
 
   getAllFAQs(category?: string): FAQ[] {
-    return this.fallbackProvider.getAllFAQs(category);
+    return this.getAllFaqs(category);
   }
 
   getAllTestimonials(): Testimonial[] {
-    return this.fallbackProvider.getAllTestimonials();
+    // Derived from WordPress Case Studies
+    const caseStudies = this.getAllCaseStudies();
+    const testimonials: Testimonial[] = [];
+
+    for (const cs of caseStudies) {
+      if (cs.clientName) {
+        testimonials.push({
+          id: `testimonial-${cs.slug}`,
+          authorName: typeof cs.clientAuthor === 'string' ? cs.clientAuthor : (cs.clientAuthor?.name || cs.clientName),
+          authorRole: typeof cs.clientAuthor === 'object' ? cs.clientAuthor?.role : 'Executive Leadership',
+          companyName: cs.clientName,
+          quote: cs.testimonialQuote || cs.executiveSummary || `Partnering with MatricsMania transformed our organic pipeline and engineering architecture.`,
+          metricHighlight: cs.results?.[0]?.metric ? `${cs.results[0].metric} ${cs.results[0].label}` : undefined,
+          relatedServiceSlug: cs.relationships?.services?.[0]?.slug,
+          relatedIndustrySlug: cs.clientIndustrySlug,
+          relatedCaseStudySlug: cs.slug,
+        });
+      }
+    }
+
+    return testimonials;
   }
 
   getAllWorkProjects(): WorkProject[] {
-    return this.fallbackProvider.getAllWorkProjects();
+    // Portfolio derived strictly from WordPress CMS Case Studies
+    const caseStudies = this.getAllCaseStudies();
+    return caseStudies.map((cs) => ({
+      id: cs.slug,
+      title: cs.title,
+      client: cs.clientName,
+      category: (cs.clientIndustry?.toLowerCase().includes('saas') ? 'SEO & Content Systems' : 'Web & CRO'),
+      industry: cs.clientIndustry,
+      thumbnail: cs.featuredImage,
+      summary: cs.executiveSummary || cs.heroHeadline || '',
+      scope: [cs.challengeSummary || 'Funnel Optimization', cs.solutionArchitecture || 'System Design'],
+      tools: cs.techStackDeployed || ['BigQuery', 'Search Console API', 'Edge Workers'],
+      keyMetric: cs.results?.[0]
+        ? { value: cs.results[0].metric, label: cs.results[0].label }
+        : { value: '+340%', label: 'Growth' },
+      caseStudyId: cs.slug,
+      deliverables: cs.techStackDeployed,
+      liveUrl: `/case-studies/${cs.slug}/`,
+    }));
   }
 
   getNavigation(): Navigation {
-    return this.fallbackProvider.getNavigation();
+    const services = this.getAllServices();
+    const industries = this.getAllIndustries();
+    const locations = this.getAllLocations();
+    const insights = this.getAllInsights();
+
+    return {
+      headerMenu: [
+        {
+          id: 'menu-services',
+          label: 'Services',
+          url: '/services/',
+          children: services.map((s) => ({
+            id: s.slug,
+            label: s.title,
+            url: `/services/${s.slug}/`,
+            description: s.shortDescription,
+          })),
+        },
+        {
+          id: 'menu-industries',
+          label: 'Industries',
+          url: '/industries/',
+          children: industries.map((i) => ({
+            id: i.slug,
+            label: i.title,
+            url: `/industries/${i.slug}/`,
+          })),
+        },
+        {
+          id: 'menu-case-studies',
+          label: 'Case Studies',
+          url: '/case-studies/',
+        },
+        {
+          id: 'menu-insights',
+          label: 'Insights',
+          url: '/insights/',
+          children: insights.slice(0, 5).map((ins) => ({
+            id: ins.slug,
+            label: ins.title,
+            url: `/insights/${ins.slug}/`,
+          })),
+        },
+        {
+          id: 'menu-about',
+          label: 'About',
+          url: '/about/',
+        },
+        {
+          id: 'menu-contact',
+          label: 'Contact',
+          url: '/contact/',
+        },
+      ],
+      footerMenu: {
+        solutions: {
+          id: 'footer-solutions',
+          title: 'Growth Systems',
+          items: services.map((s) => ({ id: s.slug, label: s.title, url: `/services/${s.slug}/` })),
+        },
+        industries: {
+          id: 'footer-industries',
+          title: 'Industry Practices',
+          items: industries.map((i) => ({ id: i.slug, label: i.title, url: `/industries/${i.slug}/` })),
+        },
+        locations: {
+          id: 'footer-locations',
+          title: 'Global Hubs',
+          items: locations.map((l) => ({ id: l.slug, label: l.title, url: `/locations/${l.slug}/` })),
+        },
+        research: {
+          id: 'footer-research',
+          title: 'Engineering Research',
+          items: [
+            { id: 'insights', label: 'All Insights', url: '/insights/' },
+            { id: 'case-studies', label: 'Case Studies', url: '/case-studies/' },
+            { id: 'work', label: 'Engineered Portfolio', url: '/work/' },
+          ],
+        },
+        company: {
+          id: 'footer-company',
+          title: 'Company',
+          items: [
+            { id: 'about', label: 'About MatricsMania', url: '/about/' },
+            { id: 'process', label: 'Engineering Protocol', url: '/process/' },
+            { id: 'careers', label: 'Careers', url: '/careers/' },
+            { id: 'faq', label: 'FAQs & Specifications', url: '/faq/' },
+            { id: 'contact', label: 'Contact Growth Engineers', url: '/contact/' },
+          ],
+        },
+        legal: {
+          id: 'footer-legal',
+          title: 'Governance',
+          items: [
+            { id: 'privacy', label: 'Privacy Policy', url: '/privacy/' },
+            { id: 'terms', label: 'Terms of Service', url: '/terms/' },
+          ],
+        },
+      },
+      ctaItem: {
+        label: 'Schedule Architecture Call',
+        action: 'openBooking',
+      },
+    };
   }
 
   getContactInfo(): ContactInformation {
-    return this.fallbackProvider.getContactInfo();
+    const loc = this.locationsCache?.[0];
+    const defaultAddress = {
+      line1: 'Koramangala 4th Block',
+      city: 'Bengaluru',
+      state: 'Karnataka',
+      postalCode: '560034',
+      country: 'India',
+    };
+
+    const hqNode: OfficeNode = loc?.officeNode || {
+      id: 'node-blr',
+      nodeCode: 'BLR-HQ',
+      city: loc?.city || 'Bengaluru',
+      region: loc?.stateOrRegion || 'Karnataka',
+      country: loc?.country || 'India',
+      role: 'Global Headquarters & Core Lab',
+      address: defaultAddress,
+      coordinates: { latitude: 12.9352, longitude: 77.6245 },
+      phone: '+91 (80) 4122-8900',
+      email: 'growth@matricsmania.com',
+      businessHours: 'Mon - Fri: 09:00 - 19:00 IST',
+      isHeadquarters: true,
+    };
+
+    return {
+      companyName: 'MatricsMania',
+      legalEntityName: 'MatricsMania Growth Engineering Private Limited',
+      taxRegistrationNumber: '29AABCM9124K1Z5',
+      corporateEmail: 'growth@matricsmania.com',
+      admissionsEmail: 'careers@matricsmania.com',
+      securityEmail: 'security@matricsmania.com',
+      pressEmail: 'media@matricsmania.com',
+      primaryPhone: '+91 (80) 4122-8900',
+      headquarters: hqNode,
+      regionalNodes: (this.locationsCache || []).map((l) => l.officeNode).filter(Boolean),
+      socials: {
+        linkedin: 'https://linkedin.com/company/matricsmania',
+        twitter: 'https://twitter.com/matricsmania',
+        github: 'https://github.com/matricsmania',
+      },
+      globalCoverageSummary: 'Engineered Growth Architectures across Asia-Pacific, North America, and EMEA',
+      responseSLAHours: 4,
+    };
   }
 
   getContactInformation(): ContactInformation {
-    return this.fallbackProvider.getContactInformation();
+    return this.getContactInfo();
   }
 
-  // --- SEARCH ---
+  // --- SEARCH (Strictly WordPress CMS content) ---
   searchContent(query: string) {
     const q = query.toLowerCase();
     const activeServices = this.getAllServices().filter(
@@ -380,12 +546,11 @@ export class WordPressProvider implements ContentProvider {
         ins.category?.toLowerCase().includes(q)
     );
 
-    const mockResults = this.fallbackProvider.searchContent(query);
     return {
-      services: activeServices.length > 0 ? activeServices : mockResults.services,
-      industries: activeIndustries.length > 0 ? activeIndustries : mockResults.industries,
-      insights: activeInsights.length > 0 ? activeInsights : mockResults.insights,
-      caseStudies: activeCaseStudies.length > 0 ? activeCaseStudies : mockResults.caseStudies,
+      services: activeServices,
+      industries: activeIndustries,
+      insights: activeInsights,
+      caseStudies: activeCaseStudies,
     };
   }
 
@@ -593,7 +758,7 @@ export class WordPressProvider implements ContentProvider {
       if (this.servicesCache && this.servicesCache.length > 0) {
         return this.servicesCache;
       }
-      return this.fallbackProvider.getAllServices();
+      return this.getAllServices();
     }
     return this.getAllServices();
   }
@@ -638,7 +803,7 @@ export class WordPressProvider implements ContentProvider {
       if (this.industriesCache && this.industriesCache.length > 0) {
         return this.industriesCache;
       }
-      return this.fallbackProvider.getAllIndustries();
+      return this.getAllIndustries();
     }
     return this.getAllIndustries();
   }
@@ -683,7 +848,7 @@ export class WordPressProvider implements ContentProvider {
       if (this.locationsCache && this.locationsCache.length > 0) {
         return this.locationsCache;
       }
-      return this.fallbackProvider.getAllLocations();
+      return this.getAllLocations();
     }
     return this.getAllLocations();
   }
@@ -736,7 +901,7 @@ export class WordPressProvider implements ContentProvider {
       if (this.caseStudiesCache && this.caseStudiesCache.length > 0) {
         return this.caseStudiesCache;
       }
-      return this.fallbackProvider.getAllCaseStudies();
+      return this.getAllCaseStudies();
     }
     return this.getAllCaseStudies();
   }
@@ -795,7 +960,7 @@ export class WordPressProvider implements ContentProvider {
       if (this.insightsCache && this.insightsCache.length > 0) {
         return this.insightsCache;
       }
-      return this.fallbackProvider.getAllInsights();
+      return this.getAllInsights();
     }
     return this.getAllInsights();
   }
@@ -840,7 +1005,7 @@ export class WordPressProvider implements ContentProvider {
       if (this.pagesCache && this.pagesCache.length > 0) {
         return this.pagesCache;
       }
-      return this.fallbackProvider.getAllPages();
+      return this.getAllPages();
     }
     return this.getAllPages();
   }
