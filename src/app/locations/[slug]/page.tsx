@@ -14,18 +14,21 @@ export const dynamicParams = true;
 export const revalidate = 0;
 
 export async function generateStaticParams() {
-  const locations = wordPressProvider.getAllLocations();
-  const slugSet = new Set(locations.map((l) => l.slug));
-  const knownSlugs = ['bangalore', 'mumbai', 'delhi-ncr', 'singapore', 'san-francisco'];
-  knownSlugs.forEach((s) => slugSet.add(s));
-  return Array.from(slugSet).map((slug) => ({ slug }));
+  const locations = await wordPressProvider.asyncGetAllLocations();
+  return locations.map((l) => ({ slug: l.slug }));
 }
 
 export async function generateMetadata({ params }: LocationPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const location = (await wordPressProvider.asyncGetLocationBySlug(slug)) || wordPressProvider.getLocationBySlug(slug);
+  const location = await wordPressProvider.asyncGetLocationBySlug(slug);
   if (!location) {
-    return { title: 'Location Not Found | MatricsMania' };
+    return {
+      title: 'Location Not Found | MatricsMania',
+      robots: {
+        index: false,
+        follow: false,
+      },
+    };
   }
   const seo = resolveSeoMetadata({
     entityData: location,
@@ -36,7 +39,7 @@ export async function generateMetadata({ params }: LocationPageProps): Promise<M
 
 export default async function LocationPage({ params }: LocationPageProps) {
   const { slug } = await params;
-  const location = (await wordPressProvider.asyncGetLocationBySlug(slug)) || wordPressProvider.getLocationBySlug(slug);
+  const location = await wordPressProvider.asyncGetLocationBySlug(slug);
 
   if (!location) {
     notFound();

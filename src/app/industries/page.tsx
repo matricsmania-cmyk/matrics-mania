@@ -10,7 +10,7 @@ export const revalidate = 0;
 export const metadata = toNextMetadata(getStaticRouteSeo('industries-index'));
 
 export default async function IndustriesPage() {
-  const industries = (await wordPressProvider.asyncGetAllIndustries()) || wordPressProvider.getAllIndustries();
+  const industries = await wordPressProvider.asyncGetAllIndustries();
   const defaultIndustry = industries[0] || undefined;
 
   return <IndustryTemplate industry={defaultIndustry} />;

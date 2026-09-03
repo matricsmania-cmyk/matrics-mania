@@ -14,23 +14,21 @@ export const dynamicParams = true;
 export const revalidate = 0;
 
 export async function generateStaticParams() {
-  const insights = wordPressProvider.getAllInsights();
-  const slugSet = new Set(insights.map((i) => i.slug));
-  const knownSlugs = [
-    'b2b-growth-playbook-2025',
-    'search-algorithm-intelligence-report',
-    'cro-audit-framework',
-    'multi-region-infrastructure-scaling',
-  ];
-  knownSlugs.forEach((s) => slugSet.add(s));
-  return Array.from(slugSet).map((slug) => ({ slug }));
+  const insights = await wordPressProvider.asyncGetAllInsights();
+  return insights.map((i) => ({ slug: i.slug }));
 }
 
 export async function generateMetadata({ params }: InsightPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const insight = (await wordPressProvider.asyncGetInsightBySlug(slug)) || wordPressProvider.getInsightBySlug(slug);
+  const insight = await wordPressProvider.asyncGetInsightBySlug(slug);
   if (!insight) {
-    return { title: 'Insight Not Found | MatricsMania' };
+    return {
+      title: 'Insight Not Found | MatricsMania',
+      robots: {
+        index: false,
+        follow: false,
+      },
+    };
   }
   const seo = resolveSeoMetadata({
     entityData: insight,
@@ -41,7 +39,7 @@ export async function generateMetadata({ params }: InsightPageProps): Promise<Me
 
 export default async function InsightPage({ params }: InsightPageProps) {
   const { slug } = await params;
-  const insight = (await wordPressProvider.asyncGetInsightBySlug(slug)) || wordPressProvider.getInsightBySlug(slug);
+  const insight = await wordPressProvider.asyncGetInsightBySlug(slug);
 
   if (!insight) {
     notFound();

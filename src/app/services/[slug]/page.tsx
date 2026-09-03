@@ -14,35 +14,21 @@ export const dynamicParams = true;
 export const revalidate = 0;
 
 export async function generateStaticParams() {
-  const services = (await wordPressProvider.asyncGetAllServices()) || wordPressProvider.getAllServices();
-  const slugSet = new Set(services.map((s) => s.slug));
-  const knownSlugs = [
-    'technical-seo',
-    'seo-growth',
-    'generative-engine-optimization',
-    'semantic-knowledge-graphs',
-    'b2b-seo-strategy',
-    'paid-media-architecture',
-    'performance-marketing',
-    'paid-search-engineering',
-    'server-side-capi',
-    'abm-retargeting',
-    'web-cro-engineering',
-    'cro-revenue-experimentation',
-    'multi-touch-attribution',
-    'growth-audit-blueprint',
-    'content-authority',
-    'growth-intelligence',
-  ];
-  knownSlugs.forEach((s) => slugSet.add(s));
-  return Array.from(slugSet).map((slug) => ({ slug }));
+  const services = await wordPressProvider.asyncGetAllServices();
+  return services.map((s) => ({ slug: s.slug }));
 }
 
 export async function generateMetadata({ params }: ServicePageProps): Promise<Metadata> {
   const { slug } = await params;
-  const service = (await wordPressProvider.asyncGetServiceBySlug(slug)) || wordPressProvider.getServiceBySlug(slug);
+  const service = await wordPressProvider.asyncGetServiceBySlug(slug);
   if (!service) {
-    return { title: 'Service Not Found | MatricsMania' };
+    return {
+      title: 'Service Not Found | MatricsMania',
+      robots: {
+        index: false,
+        follow: false,
+      },
+    };
   }
   const seo = resolveSeoMetadata({
     entityData: service,
@@ -53,7 +39,7 @@ export async function generateMetadata({ params }: ServicePageProps): Promise<Me
 
 export default async function ServicePage({ params }: ServicePageProps) {
   const { slug } = await params;
-  const service = (await wordPressProvider.asyncGetServiceBySlug(slug)) || wordPressProvider.getServiceBySlug(slug);
+  const service = await wordPressProvider.asyncGetServiceBySlug(slug);
 
   if (!service) {
     notFound();

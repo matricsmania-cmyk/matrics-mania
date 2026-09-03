@@ -1,5 +1,5 @@
 import { MetadataRoute } from 'next';
-import { mockDataProvider } from '../providers/MockDataProvider';
+import { wordPressProvider } from '../providers/WordPressProvider';
 import { PUBLIC_DOMAIN } from '../utils/seo';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -29,8 +29,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: route === '' ? 1.0 : 0.8,
   }));
 
-  // Add services
-  const services = mockDataProvider.getAllServices();
+  // Add services from WordPress
+  const services = await wordPressProvider.asyncGetAllServices();
   for (const s of services) {
     routes.push({
       url: `${PUBLIC_DOMAIN}/services/${s.slug}/`,
@@ -40,8 +40,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     });
   }
 
-  // Add industries
-  const industries = mockDataProvider.getAllIndustries();
+  // Add industries from WordPress
+  const industries = await wordPressProvider.asyncGetAllIndustries();
   for (const ind of industries) {
     routes.push({
       url: `${PUBLIC_DOMAIN}/industries/${ind.slug}/`,
@@ -51,8 +51,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     });
   }
 
-  // Add locations
-  const locations = mockDataProvider.getAllLocations();
+  // Add locations from WordPress
+  const locations = await wordPressProvider.asyncGetAllLocations();
   for (const loc of locations) {
     routes.push({
       url: `${PUBLIC_DOMAIN}/locations/${loc.slug}/`,
@@ -62,8 +62,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     });
   }
 
-  // Add case studies
-  const caseStudies = mockDataProvider.getAllCaseStudies();
+  // Add case studies from WordPress
+  const caseStudies = await wordPressProvider.asyncGetAllCaseStudies();
   for (const cs of caseStudies) {
     routes.push({
       url: `${PUBLIC_DOMAIN}/case-studies/${cs.slug}/`,
@@ -73,8 +73,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     });
   }
 
-  // Add insights
-  const insights = mockDataProvider.getAllInsights();
+  // Add insights from WordPress
+  const insights = await wordPressProvider.asyncGetAllInsights();
   for (const ins of insights) {
     routes.push({
       url: `${PUBLIC_DOMAIN}/insights/${ins.slug}/`,

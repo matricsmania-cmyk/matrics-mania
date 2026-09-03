@@ -14,18 +14,21 @@ export const dynamicParams = true;
 export const revalidate = 0;
 
 export async function generateStaticParams() {
-  const industries = (await wordPressProvider.asyncGetAllIndustries()) || wordPressProvider.getAllIndustries();
-  const slugSet = new Set(industries.map((i) => i.slug));
-  const knownSlugs = ['healthcare', 'saas', 'real-estate', 'luxury-d2c'];
-  knownSlugs.forEach((s) => slugSet.add(s));
-  return Array.from(slugSet).map((slug) => ({ slug }));
+  const industries = await wordPressProvider.asyncGetAllIndustries();
+  return industries.map((i) => ({ slug: i.slug }));
 }
 
 export async function generateMetadata({ params }: IndustryPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const industry = (await wordPressProvider.asyncGetIndustryBySlug(slug)) || wordPressProvider.getIndustryBySlug(slug);
+  const industry = await wordPressProvider.asyncGetIndustryBySlug(slug);
   if (!industry) {
-    return { title: 'Industry Not Found | MatricsMania' };
+    return {
+      title: 'Industry Not Found | MatricsMania',
+      robots: {
+        index: false,
+        follow: false,
+      },
+    };
   }
   const seo = resolveSeoMetadata({
     entityData: industry,
@@ -36,7 +39,7 @@ export async function generateMetadata({ params }: IndustryPageProps): Promise<M
 
 export default async function IndustryPage({ params }: IndustryPageProps) {
   const { slug } = await params;
-  const industry = (await wordPressProvider.asyncGetIndustryBySlug(slug)) || wordPressProvider.getIndustryBySlug(slug);
+  const industry = await wordPressProvider.asyncGetIndustryBySlug(slug);
 
   if (!industry) {
     notFound();

@@ -119,26 +119,31 @@ export class WordPressProvider implements ContentProvider {
   // --- MANUAL CACHE INJECTION (For testing & SSR pre-warming) ---
   public setServicesCache(services: Service[]): void {
     this.servicesCache = services;
+    this.serviceMap.clear();
     services.forEach((s) => this.serviceMap.set(s.slug, s));
   }
 
   public setIndustriesCache(industries: Industry[]): void {
     this.industriesCache = industries;
+    this.industryMap.clear();
     industries.forEach((i) => this.industryMap.set(i.slug, i));
   }
 
   public setLocationsCache(locations: Location[]): void {
     this.locationsCache = locations;
+    this.locationMap.clear();
     locations.forEach((l) => this.locationMap.set(l.slug, l));
   }
 
   public setCaseStudiesCache(caseStudies: CaseStudy[]): void {
     this.caseStudiesCache = caseStudies;
+    this.caseStudyMap.clear();
     caseStudies.forEach((c) => this.caseStudyMap.set(c.slug, c));
   }
 
   public setInsightsCache(insights: Insight[]): void {
     this.insightsCache = insights;
+    this.insightMap.clear();
     insights.forEach((ins) => this.insightMap.set(ins.slug, ins));
   }
 
@@ -473,18 +478,28 @@ export class WordPressProvider implements ContentProvider {
   // --- ASYNC SERVICES ---
   async asyncGetServiceBySlug(slug: string): Promise<Service | null> {
     if (!slug) return null;
+    if (this.serviceMap.has(slug)) {
+      return this.serviceMap.get(slug)!;
+    }
     if (this.isConfigured()) {
       try {
         const raw = await this.fetchFromWordPress<RawWpServicePost[]>(
           `services?slug=${encodeURIComponent(slug)}&_embed=true`
         );
-        if (raw && Array.isArray(raw) && raw[0]) {
-          const service = normalizeWpService(raw[0]);
-          this.serviceMap.set(service.slug, service);
-          return service;
+        if (raw && Array.isArray(raw)) {
+          if (raw.length > 0 && raw[0]) {
+            const service = normalizeWpService(raw[0]);
+            this.serviceMap.set(service.slug, service);
+            return service;
+          }
+          // WordPress returned 200 OK with [] -> Authoritative CMS record not found
+          return null;
         }
-      } catch {
-        // fallback
+        console.error(`[WordPressProvider] WordPress request failed for service slug: ${slug}`);
+        return null;
+      } catch (err) {
+        console.error(`[WordPressProvider] Network error fetching service "${slug}":`, err);
+        return null;
       }
     }
     return this.getServiceBySlug(slug);
@@ -494,14 +509,18 @@ export class WordPressProvider implements ContentProvider {
     if (this.isConfigured()) {
       try {
         const raw = await this.fetchFromWordPress<RawWpServicePost[]>('services?_embed=true&per_page=100');
-        if (raw && Array.isArray(raw) && raw.length > 0) {
+        if (raw && Array.isArray(raw)) {
           const services = raw.map((post) => normalizeWpService(post));
           this.servicesCache = services;
+          this.serviceMap.clear();
           services.forEach((s) => this.serviceMap.set(s.slug, s));
           return services;
         }
-      } catch {
-        // fallback
+        console.error('[WordPressProvider] WordPress services query failed or returned invalid data');
+        return this.servicesCache || [];
+      } catch (err) {
+        console.error('[WordPressProvider] Network error fetching services:', err);
+        return this.servicesCache || [];
       }
     }
     return this.getAllServices();
@@ -510,18 +529,28 @@ export class WordPressProvider implements ContentProvider {
   // --- ASYNC INDUSTRIES ---
   async asyncGetIndustryBySlug(slug: string): Promise<Industry | null> {
     if (!slug) return null;
+    if (this.industryMap.has(slug)) {
+      return this.industryMap.get(slug)!;
+    }
     if (this.isConfigured()) {
       try {
         const raw = await this.fetchFromWordPress<RawWpIndustryPost[]>(
           `industries?slug=${encodeURIComponent(slug)}&_embed=true`
         );
-        if (raw && Array.isArray(raw) && raw[0]) {
-          const industry = normalizeWpIndustry(raw[0]);
-          this.industryMap.set(industry.slug, industry);
-          return industry;
+        if (raw && Array.isArray(raw)) {
+          if (raw.length > 0 && raw[0]) {
+            const industry = normalizeWpIndustry(raw[0]);
+            this.industryMap.set(industry.slug, industry);
+            return industry;
+          }
+          // WordPress returned 200 OK with [] -> Authoritative CMS record not found
+          return null;
         }
-      } catch {
-        // fallback
+        console.error(`[WordPressProvider] WordPress request failed for industry slug: ${slug}`);
+        return null;
+      } catch (err) {
+        console.error(`[WordPressProvider] Network error fetching industry "${slug}":`, err);
+        return null;
       }
     }
     return this.getIndustryBySlug(slug);
@@ -531,14 +560,18 @@ export class WordPressProvider implements ContentProvider {
     if (this.isConfigured()) {
       try {
         const raw = await this.fetchFromWordPress<RawWpIndustryPost[]>('industries?_embed=true&per_page=100');
-        if (raw && Array.isArray(raw) && raw.length > 0) {
+        if (raw && Array.isArray(raw)) {
           const industries = raw.map((post) => normalizeWpIndustry(post));
           this.industriesCache = industries;
+          this.industryMap.clear();
           industries.forEach((i) => this.industryMap.set(i.slug, i));
           return industries;
         }
-      } catch {
-        // fallback
+        console.error('[WordPressProvider] WordPress industries query failed or returned invalid data');
+        return this.industriesCache || [];
+      } catch (err) {
+        console.error('[WordPressProvider] Network error fetching industries:', err);
+        return this.industriesCache || [];
       }
     }
     return this.getAllIndustries();
@@ -547,18 +580,28 @@ export class WordPressProvider implements ContentProvider {
   // --- ASYNC LOCATIONS ---
   async asyncGetLocationBySlug(slug: string): Promise<Location | null> {
     if (!slug) return null;
+    if (this.locationMap.has(slug)) {
+      return this.locationMap.get(slug)!;
+    }
     if (this.isConfigured()) {
       try {
         const raw = await this.fetchFromWordPress<RawWpLocationPost[]>(
           `locations?slug=${encodeURIComponent(slug)}&_embed=true`
         );
-        if (raw && Array.isArray(raw) && raw[0]) {
-          const location = normalizeWpLocation(raw[0]);
-          this.locationMap.set(location.slug, location);
-          return location;
+        if (raw && Array.isArray(raw)) {
+          if (raw.length > 0 && raw[0]) {
+            const location = normalizeWpLocation(raw[0]);
+            this.locationMap.set(location.slug, location);
+            return location;
+          }
+          // Authoritative CMS record not found
+          return null;
         }
-      } catch {
-        // fallback
+        console.error(`[WordPressProvider] WordPress request failed for location slug: ${slug}`);
+        return null;
+      } catch (err) {
+        console.error(`[WordPressProvider] Network error fetching location "${slug}":`, err);
+        return null;
       }
     }
     return this.getLocationBySlug(slug);
@@ -568,14 +611,18 @@ export class WordPressProvider implements ContentProvider {
     if (this.isConfigured()) {
       try {
         const raw = await this.fetchFromWordPress<RawWpLocationPost[]>('locations?_embed=true&per_page=100');
-        if (raw && Array.isArray(raw) && raw.length > 0) {
+        if (raw && Array.isArray(raw)) {
           const locations = raw.map((post) => normalizeWpLocation(post));
           this.locationsCache = locations;
+          this.locationMap.clear();
           locations.forEach((l) => this.locationMap.set(l.slug, l));
           return locations;
         }
-      } catch {
-        // fallback
+        console.error('[WordPressProvider] WordPress locations query failed or returned invalid data');
+        return this.locationsCache || [];
+      } catch (err) {
+        console.error('[WordPressProvider] Network error fetching locations:', err);
+        return this.locationsCache || [];
       }
     }
     return this.getAllLocations();
@@ -584,24 +631,33 @@ export class WordPressProvider implements ContentProvider {
   // --- ASYNC CASE STUDIES ---
   async asyncGetCaseStudyBySlug(slug: string): Promise<CaseStudy | null> {
     if (!slug) return null;
+    if (this.caseStudyMap.has(slug)) {
+      return this.caseStudyMap.get(slug)!;
+    }
     if (this.isConfigured()) {
       try {
-        // Try case_studies first, then case-studies
         let raw = await this.fetchFromWordPress<RawWpCaseStudyPost[]>(
           `case_studies?slug=${encodeURIComponent(slug)}&_embed=true`
         );
-        if (!raw || !Array.isArray(raw) || raw.length === 0) {
+        if (!Array.isArray(raw)) {
           raw = await this.fetchFromWordPress<RawWpCaseStudyPost[]>(
             `case-studies?slug=${encodeURIComponent(slug)}&_embed=true`
           );
         }
-        if (raw && Array.isArray(raw) && raw[0]) {
-          const caseStudy = normalizeWpCaseStudy(raw[0]);
-          this.caseStudyMap.set(caseStudy.slug, caseStudy);
-          return caseStudy;
+        if (raw && Array.isArray(raw)) {
+          if (raw.length > 0 && raw[0]) {
+            const caseStudy = normalizeWpCaseStudy(raw[0]);
+            this.caseStudyMap.set(caseStudy.slug, caseStudy);
+            return caseStudy;
+          }
+          // Authoritative CMS record not found
+          return null;
         }
-      } catch {
-        // fallback
+        console.error(`[WordPressProvider] WordPress request failed for case study slug: ${slug}`);
+        return null;
+      } catch (err) {
+        console.error(`[WordPressProvider] Network error fetching case study "${slug}":`, err);
+        return null;
       }
     }
     return this.getCaseStudyBySlug(slug);
@@ -611,17 +667,21 @@ export class WordPressProvider implements ContentProvider {
     if (this.isConfigured()) {
       try {
         let raw = await this.fetchFromWordPress<RawWpCaseStudyPost[]>('case_studies?_embed=true&per_page=100');
-        if (!raw || !Array.isArray(raw) || raw.length === 0) {
+        if (!Array.isArray(raw)) {
           raw = await this.fetchFromWordPress<RawWpCaseStudyPost[]>('case-studies?_embed=true&per_page=100');
         }
-        if (raw && Array.isArray(raw) && raw.length > 0) {
+        if (raw && Array.isArray(raw)) {
           const caseStudies = raw.map((post) => normalizeWpCaseStudy(post));
           this.caseStudiesCache = caseStudies;
+          this.caseStudyMap.clear();
           caseStudies.forEach((c) => this.caseStudyMap.set(c.slug, c));
           return caseStudies;
         }
-      } catch {
-        // fallback
+        console.error('[WordPressProvider] WordPress case studies query failed or returned invalid data');
+        return this.caseStudiesCache || [];
+      } catch (err) {
+        console.error('[WordPressProvider] Network error fetching case studies:', err);
+        return this.caseStudiesCache || [];
       }
     }
     return this.getAllCaseStudies();
@@ -630,18 +690,28 @@ export class WordPressProvider implements ContentProvider {
   // --- ASYNC INSIGHTS ---
   async asyncGetInsightBySlug(slug: string): Promise<Insight | null> {
     if (!slug) return null;
+    if (this.insightMap.has(slug)) {
+      return this.insightMap.get(slug)!;
+    }
     if (this.isConfigured()) {
       try {
         const raw = await this.fetchFromWordPress<RawWpInsightPost[]>(
           `posts?slug=${encodeURIComponent(slug)}&_embed=true`
         );
-        if (raw && Array.isArray(raw) && raw[0]) {
-          const insight = normalizeWpInsight(raw[0]);
-          this.insightMap.set(insight.slug, insight);
-          return insight;
+        if (raw && Array.isArray(raw)) {
+          if (raw.length > 0 && raw[0]) {
+            const insight = normalizeWpInsight(raw[0]);
+            this.insightMap.set(insight.slug, insight);
+            return insight;
+          }
+          // Authoritative CMS record not found
+          return null;
         }
-      } catch {
-        // fallback
+        console.error(`[WordPressProvider] WordPress request failed for insight slug: ${slug}`);
+        return null;
+      } catch (err) {
+        console.error(`[WordPressProvider] Network error fetching insight "${slug}":`, err);
+        return null;
       }
     }
     return this.getInsightBySlug(slug);
@@ -651,14 +721,18 @@ export class WordPressProvider implements ContentProvider {
     if (this.isConfigured()) {
       try {
         const raw = await this.fetchFromWordPress<RawWpInsightPost[]>('posts?_embed=true&per_page=100');
-        if (raw && Array.isArray(raw) && raw.length > 0) {
+        if (raw && Array.isArray(raw)) {
           const insights = raw.map((post) => normalizeWpInsight(post));
           this.insightsCache = insights;
+          this.insightMap.clear();
           insights.forEach((ins) => this.insightMap.set(ins.slug, ins));
           return insights;
         }
-      } catch {
-        // fallback
+        console.error('[WordPressProvider] WordPress insights query failed or returned invalid data');
+        return this.insightsCache || [];
+      } catch (err) {
+        console.error('[WordPressProvider] Network error fetching insights:', err);
+        return this.insightsCache || [];
       }
     }
     return this.getAllInsights();
@@ -667,18 +741,28 @@ export class WordPressProvider implements ContentProvider {
   // --- ASYNC PAGES ---
   async asyncGetPageBySlug(slug: string): Promise<Page | null> {
     if (!slug) return null;
+    if (this.pageMap.has(slug)) {
+      return this.pageMap.get(slug)!;
+    }
     if (this.isConfigured()) {
       try {
         const raw = await this.fetchFromWordPress<RawWpBasePost[]>(
           `pages?slug=${encodeURIComponent(slug)}&_embed=true`
         );
-        if (raw && Array.isArray(raw) && raw[0]) {
-          const page = normalizeWpPage(raw[0]);
-          this.pageMap.set(page.slug, page);
-          return page;
+        if (raw && Array.isArray(raw)) {
+          if (raw.length > 0 && raw[0]) {
+            const page = normalizeWpPage(raw[0]);
+            this.pageMap.set(page.slug, page);
+            return page;
+          }
+          // Authoritative CMS record not found
+          return null;
         }
-      } catch {
-        // fallback
+        console.error(`[WordPressProvider] WordPress request failed for page slug: ${slug}`);
+        return null;
+      } catch (err) {
+        console.error(`[WordPressProvider] Network error fetching page "${slug}":`, err);
+        return null;
       }
     }
     return this.getPageBySlug(slug);
@@ -688,14 +772,18 @@ export class WordPressProvider implements ContentProvider {
     if (this.isConfigured()) {
       try {
         const raw = await this.fetchFromWordPress<RawWpBasePost[]>('pages?_embed=true&per_page=100');
-        if (raw && Array.isArray(raw) && raw.length > 0) {
+        if (raw && Array.isArray(raw)) {
           const pages = raw.map((post) => normalizeWpPage(post));
           this.pagesCache = pages;
+          this.pageMap.clear();
           pages.forEach((p) => this.pageMap.set(p.slug, p));
           return pages;
         }
-      } catch {
-        // fallback
+        console.error('[WordPressProvider] WordPress pages query failed or returned invalid data');
+        return this.pagesCache || [];
+      } catch (err) {
+        console.error('[WordPressProvider] Network error fetching pages:', err);
+        return this.pagesCache || [];
       }
     }
     return this.getAllPages();

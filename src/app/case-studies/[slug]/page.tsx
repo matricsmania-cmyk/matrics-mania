@@ -14,24 +14,21 @@ export const dynamicParams = true;
 export const revalidate = 0;
 
 export async function generateStaticParams() {
-  const caseStudies = wordPressProvider.getAllCaseStudies();
-  const slugSet = new Set(caseStudies.map((c) => c.slug));
-  const knownSlugs = [
-    'shashi-solar-energy',
-    'cloudscale-infra-migration',
-    'finflow-compliance-automation',
-    'healthbridge-telehealth-platform',
-    'retailcore-omnichannel-expansion',
-  ];
-  knownSlugs.forEach((s) => slugSet.add(s));
-  return Array.from(slugSet).map((slug) => ({ slug }));
+  const caseStudies = await wordPressProvider.asyncGetAllCaseStudies();
+  return caseStudies.map((c) => ({ slug: c.slug }));
 }
 
 export async function generateMetadata({ params }: CaseStudyPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const caseStudy = (await wordPressProvider.asyncGetCaseStudyBySlug(slug)) || wordPressProvider.getCaseStudyBySlug(slug);
+  const caseStudy = await wordPressProvider.asyncGetCaseStudyBySlug(slug);
   if (!caseStudy) {
-    return { title: 'Case Study Not Found | MatricsMania' };
+    return {
+      title: 'Case Study Not Found | MatricsMania',
+      robots: {
+        index: false,
+        follow: false,
+      },
+    };
   }
   const seo = resolveSeoMetadata({
     entityData: caseStudy,
@@ -42,7 +39,7 @@ export async function generateMetadata({ params }: CaseStudyPageProps): Promise<
 
 export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
   const { slug } = await params;
-  const caseStudy = (await wordPressProvider.asyncGetCaseStudyBySlug(slug)) || wordPressProvider.getCaseStudyBySlug(slug);
+  const caseStudy = await wordPressProvider.asyncGetCaseStudyBySlug(slug);
 
   if (!caseStudy) {
     notFound();
