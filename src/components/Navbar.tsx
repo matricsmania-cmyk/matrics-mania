@@ -166,14 +166,14 @@ export interface NavbarProps {
   onOpenBooking?: (prefillInfo?: any) => void;
 }
 
-type DesktopDropdown = 'services' | 'industries' | 'insights' | 'company' | null;
+type DesktopDropdown = 'services' | 'industries' | 'company' | null;
 
 export const Navbar: React.FC<NavbarProps> = ({
   currentPath = '/',
   onNavigate,
   onOpenBooking,
 }) => {
-  const { services, industries, locations, insights } = useContent();
+  const { services, industries } = useContent();
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileSectionOpen, setMobileSectionOpen] = useState<string | null>(null);
@@ -218,30 +218,6 @@ export const Navbar: React.FC<NavbarProps> = ({
       href: `/industries/${feat.slug}/`,
     };
   }, [industries]);
-
-  // Live insights from CMS
-  const liveInsightItems = useMemo(() => {
-    if (!insights || insights.length === 0) return [];
-    return insights.slice(0, 6).map((ins) => ({
-      id: ins.slug,
-      label: ins.title,
-      href: `/insights/${ins.slug}/`,
-      badge: ins.category || 'Research',
-    }));
-  }, [insights]);
-
-  // Featured insight from live CMS
-  const featuredInsight = useMemo(() => {
-    if (!insights || insights.length === 0) return null;
-    const feat = insights[0];
-    return {
-      category: feat.category || 'Research',
-      readTime: feat.readingTimeMinutes ? `${feat.readingTimeMinutes} min read` : '5 min read',
-      title: feat.title,
-      description: feat.excerpt || 'Algorithmic growth systems and attribution research.',
-      href: `/insights/${feat.slug}/`,
-    };
-  }, [insights]);
 
   // Close dropdown on outside click or escape
   useEffect(() => {
@@ -504,84 +480,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               </Badge>
             </a>
 
-            {/* 4. Insights (Canonical Editorial Hub) */}
-            <div
-              className="relative"
-              onMouseEnter={() => handleDropdownEnter('insights')}
-              onMouseLeave={handleDropdownLeave}
-            >
-              <a
-                href={NAVIGATION_CONFIG.insights.href}
-                onClick={(e) => handleLinkClick(e, NAVIGATION_CONFIG.insights.href)}
-                className={`flex items-center gap-1.5 px-3 py-2 text-xs font-semibold uppercase tracking-wider rounded-md transition-colors ${
-                  isLinkActive('/insights/')
-                    ? 'text-[#60A5FA] bg-[#131D33]'
-                    : 'text-[#94A3B8] hover:text-white hover:bg-[#0D1424]'
-                }`}
-                aria-expanded={activeDropdown === 'insights'}
-                aria-haspopup="true"
-              >
-                <span>Insights</span>
-                <ChevronDown
-                  className={`w-3.5 h-3.5 transition-transform duration-200 ${
-                    activeDropdown === 'insights' ? 'rotate-180 text-[#60A5FA]' : ''
-                  }`}
-                />
-              </a>
-
-              {/* Insights Dropdown */}
-              <AnimatePresence>
-                {activeDropdown === 'insights' && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 4 }}
-                    transition={{ duration: 0.15 }}
-                    className="absolute top-full left-0 w-[420px] mt-1 bg-[#0D1424] border border-[#1E293B] rounded-xl shadow-xl shadow-black/60 p-6 z-50"
-                  >
-                    <div className="space-y-3">
-                      <div className="border-b border-[#1E293B] pb-2 flex items-center justify-between">
-                        <span className="text-[11px] font-mono font-bold text-[#60A5FA] uppercase tracking-wider">
-                          Research & Publications
-                        </span>
-                        <a
-                          href="/insights/"
-                          onClick={(e) => handleLinkClick(e, '/insights/')}
-                          className="text-[10px] font-mono text-[#60A5FA] hover:underline"
-                        >
-                          All Articles →
-                        </a>
-                      </div>
-                      <ul className="space-y-2">
-                        {liveInsightItems.map((cat) => (
-                          <li key={cat.id}>
-                            <a
-                              href={cat.href}
-                              onClick={(e) => handleLinkClick(e, cat.href)}
-                              className="group flex items-center justify-between p-2 rounded hover:bg-[#131D33] text-xs font-semibold text-[#CBD5E1] hover:text-white transition-colors"
-                            >
-                              <span className="line-clamp-1">{cat.label}</span>
-                              {cat.badge && (
-                                <Badge variant="accent" size="sm">
-                                  {cat.badge}
-                                </Badge>
-                              )}
-                            </a>
-                          </li>
-                        ))}
-                        {liveInsightItems.length === 0 && (
-                          <li className="p-3 text-xs text-[#94A3B8]">
-                            No research papers published yet.
-                          </li>
-                        )}
-                      </ul>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-
-            {/* 5. Company Dropdown */}
+            {/* 4. Company Dropdown */}
             <div
               className="relative"
               onMouseEnter={() => handleDropdownEnter('company')}
@@ -591,7 +490,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 href="/about/"
                 onClick={(e) => handleLinkClick(e, '/about/')}
                 className={`flex items-center gap-1.5 px-3 py-2 text-xs font-semibold uppercase tracking-wider rounded-md transition-colors ${
-                  isLinkActive('/about/') || isLinkActive('/work/') || isLinkActive('/case-studies/') || isLinkActive('/process/') || isLinkActive('/careers/') || isLinkActive('/faq/') || isLinkActive('/contact/')
+                  isLinkActive('/about/') || isLinkActive('/work/') || isLinkActive('/case-studies/') || isLinkActive('/insights/') || isLinkActive('/process/') || isLinkActive('/careers/') || isLinkActive('/faq/') || isLinkActive('/contact/')
                     ? 'text-[#60A5FA] bg-[#131D33]'
                     : 'text-[#94A3B8] hover:text-white hover:bg-[#0D1424]'
                 }`}
@@ -790,19 +689,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   </Badge>
                 </a>
 
-                {/* 4. Insights */}
-                <a
-                  href="/insights/"
-                  onClick={(e) => handleLinkClick(e, '/insights/')}
-                  className="p-4 border border-[#1E293B] rounded-lg bg-[#0D1424] flex items-center justify-between text-sm font-bold text-white uppercase tracking-wider"
-                >
-                  <span>Insights & Research</span>
-                  <Badge variant="mono" size="sm">
-                    2025
-                  </Badge>
-                </a>
-
-                {/* 5. Company Hubs */}
+                {/* 4. Company Hubs */}
                 <div className="border border-[#1E293B] rounded-lg bg-[#0D1424] overflow-hidden">
                   <button
                     type="button"

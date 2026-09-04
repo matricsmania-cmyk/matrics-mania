@@ -343,6 +343,11 @@ export const NAVIGATION_CONFIG: NavigationConfig = {
         href: '/case-studies/',
       },
       {
+        id: 'insights',
+        label: 'Insights',
+        href: '/insights/',
+      },
+      {
         id: 'process',
         label: 'Process',
         href: '/process/',
@@ -359,7 +364,7 @@ export const NAVIGATION_CONFIG: NavigationConfig = {
       },
       {
         id: 'contact',
-        label: 'Contant',
+        label: 'Contact',
         href: '/contact/',
       },
     ],
@@ -384,18 +389,13 @@ export const NAVIGATION_CONFIG: NavigationConfig = {
       badge: 'Proof',
     },
     {
-      id: 'insights',
-      label: 'Insights',
-      href: '/insights/',
-    },
-    {
       id: 'company',
       label: 'Company',
       href: '/about/',
     },
     {
       id: 'contact',
-      label: 'Contant',
+      label: 'Contact',
       href: '/contact/',
     },
   ],
