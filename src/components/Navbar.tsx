@@ -643,25 +643,18 @@ export const Navbar: React.FC<NavbarProps> = ({
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 4 }}
                     transition={{ duration: 0.15 }}
-                    className="absolute top-full right-0 w-[380px] mt-1 bg-[#0D1424] border border-[#1E293B] rounded-xl shadow-xl shadow-black/60 p-4 space-y-1 z-50"
+                    className="absolute top-full right-0 w-[240px] mt-1 bg-[#0D1424] border border-[#1E293B] rounded-xl shadow-xl shadow-black/60 p-2 space-y-0.5 z-50"
                   >
                     {NAVIGATION_CONFIG.company.items.map((item) => (
                       <a
                         key={item.id}
                         href={item.href}
                         onClick={(e) => handleLinkClick(e, item.href)}
-                        className="group flex items-start justify-between p-2.5 rounded-lg hover:bg-[#131D33] border border-transparent hover:border-[#1E293B] transition-colors"
+                        className="group flex items-center justify-between px-3 py-2 rounded-lg hover:bg-[#131D33] transition-colors"
                       >
-                        <div>
-                          <div className="text-xs font-semibold text-white group-hover:text-[#60A5FA] transition-colors">
-                            {item.label}
-                          </div>
-                          {item.description && (
-                            <div className="text-[10px] text-[#94A3B8] line-clamp-1 mt-0.5">
-                              {item.description}
-                            </div>
-                          )}
-                        </div>
+                        <span className="text-xs font-medium text-slate-200 group-hover:text-[#60A5FA] transition-colors">
+                          {item.label}
+                        </span>
                         {item.badge && (
                           <Badge variant="mono" size="sm">
                             {item.badge}
