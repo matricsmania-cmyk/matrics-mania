@@ -110,8 +110,8 @@ export class WordPressProvider implements ContentProvider {
 
     const envUrl =
       typeof process !== 'undefined'
-        ? process.env.NEXT_PUBLIC_WORDPRESS_URL || process.env.WORDPRESS_URL
-        : undefined;
+        ? process.env.NEXT_PUBLIC_WORDPRESS_URL || process.env.WORDPRESS_URL || 'https://cms.matricsmania.com'
+        : 'https://cms.matricsmania.com';
 
     this.baseUrl = sanitizeBaseUrl(baseUrlOrConfig !== undefined ? baseUrlOrConfig : envUrl);
     this.fallbackProvider = mockDataProvider;
