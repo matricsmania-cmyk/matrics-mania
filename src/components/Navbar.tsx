@@ -669,16 +669,6 @@ export const Navbar: React.FC<NavbarProps> = ({
                         )}
                       </a>
                     ))}
-                    <div className="pt-2 mt-2 border-t border-[#1E293B]">
-                      <a
-                        href="/locations/bangalore/"
-                        onClick={(e) => handleLinkClick(e, '/locations/bangalore/')}
-                        className="flex items-center justify-between p-2 rounded hover:bg-[#131D33] text-xs font-mono text-[#60A5FA]"
-                      >
-                        <span>Bangalore HQ & Labs</span>
-                        <span className="text-[10px] text-[#94A3B8]">Indiranagar</span>
-                      </a>
-                    </div>
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -884,13 +874,6 @@ export const Navbar: React.FC<NavbarProps> = ({
                           {item.label}
                         </a>
                       ))}
-                      <a
-                        href="/locations/bangalore/"
-                        onClick={(e) => handleLinkClick(e, '/locations/bangalore/')}
-                        className="block p-2 text-xs font-mono text-[#60A5FA] font-bold"
-                      >
-                        Bangalore HQ (Indiranagar) →
-                      </a>
                     </div>
                   )}
                 </div>
