@@ -5,11 +5,8 @@ import { useContentProvider } from '../providers/ContentContext';
 import { SEOHead } from '../components/SEOHead';
 import {
   HomeHeroSection,
-  PositioningPromiseSection,
-  CredibilityEvidenceSection,
   CoreServicesSection,
   IndustriesSection,
-  MethodologySection,
   CaseStudyEvidenceSection,
   InsightsSection,
   ConversionCTASection,
@@ -88,32 +85,19 @@ export const HomeTemplate: React.FC<HomeTemplateProps> = ({
         onNavigate={onNavigate}
       />
 
-      {/* 2. POSITIONING / CORE PROMISE: Engineering vs. Traditional Agency */}
-      <PositioningPromiseSection
-        onNavigate={onNavigate}
-      />
-
-      {/* 3. EVIDENCE / CREDIBILITY: Verified Technical Standards & Disclosures */}
-      <CredibilityEvidenceSection />
-
-      {/* 4. CORE SERVICES: Modular Grid of 5 Active Disciplines */}
+      {/* 2. CORE SERVICES: Modular Grid of Active Disciplines */}
       <CoreServicesSection
         services={services}
         onNavigate={onNavigate}
       />
 
-      {/* 6. INDUSTRIES SERVED: Domain Specialization & Compliance */}
+      {/* 3. INDUSTRIES SERVED: Domain Specialization & Compliance */}
       <IndustriesSection
         industries={industries}
         onNavigate={onNavigate}
       />
 
-      {/* 7. METHODOLOGY: The 5-Phase Growth Execution Protocol */}
-      <MethodologySection
-        onNavigate={onNavigate}
-      />
-
-      {/* 8. SELECTED WORK / CASE-STUDY EVIDENCE: Verified Technical Outcomes */}
+      {/* 4. SELECTED WORK / CASE-STUDY EVIDENCE: Verified Technical Outcomes */}
       <CaseStudyEvidenceSection
         caseStudies={caseStudies}
         onNavigate={onNavigate}
