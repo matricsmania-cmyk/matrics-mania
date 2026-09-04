@@ -33,6 +33,7 @@ import { CaseStudy } from '../models/entities/caseStudy';
 import { Page } from '../models/entities/page';
 import { SEO } from '../models/seo';
 import { WordPressProvider } from '../providers/WordPressProvider';
+import { mockDataProvider } from '../providers/MockDataProvider';
 
 // Test Assertion Utilities
 class ContractAssertionError extends Error {
@@ -398,14 +399,22 @@ export function runCmsContractTest(): { success: boolean; testsRun: number; fail
     if (wpProvider.getBaseUrl() !== 'https://cms.matricsmania.com') {
       throw new ContractAssertionError('WordPressProvider', 'baseUrl', 'https://cms.matricsmania.com', wpProvider.getBaseUrl());
     }
-    const defaultServices = wpProvider.getAllServices();
-    if (!Array.isArray(defaultServices) || defaultServices.length === 0) {
-      throw new ContractAssertionError('WordPressProvider', 'getAllServices (fallback)', 'non-empty array', defaultServices);
+    const unseededServices = wpProvider.getAllServices();
+    if (unseededServices.length !== 0) {
+      throw new ContractAssertionError('WordPressProvider', 'getAllServices (configured unseeded)', 'empty array []', unseededServices);
+    }
+    const unconfiguredServices = new WordPressProvider('').getAllServices();
+    if (!Array.isArray(unconfiguredServices) || unconfiguredServices.length === 0) {
+      throw new ContractAssertionError('WordPressProvider', 'getAllServices (unconfigured fallback)', 'non-empty array', unconfiguredServices);
     }
     wpProvider.setServicesCache([liveService]);
     const cachedService = wpProvider.getServiceBySlug('paid-media-architecture');
     if (!cachedService || cachedService.serviceCode !== 'SRV-PAID-01') {
       throw new ContractAssertionError('WordPressProvider', 'getServiceBySlug', 'SRV-PAID-01', cachedService?.serviceCode);
+    }
+    const missingService = wpProvider.getServiceBySlug('nonexistent-service');
+    if (missingService !== null) {
+      throw new ContractAssertionError('WordPressProvider', 'getServiceBySlug (missing record)', 'null', missingService);
     }
 
     console.log('✓ Service CPT Contract Passed');
@@ -476,14 +485,22 @@ export function runCmsContractTest(): { success: boolean; testsRun: number; fail
 
     // Test 2C: WordPressProvider Industry Boundary & Fallback Verification
     const wpProvider = new WordPressProvider('https://cms.matricsmania.com');
-    const defaultIndustries = wpProvider.getAllIndustries();
-    if (!Array.isArray(defaultIndustries) || defaultIndustries.length === 0) {
-      throw new ContractAssertionError('WordPressProvider', 'getAllIndustries (fallback)', 'non-empty array', defaultIndustries);
+    const unseededIndustries = wpProvider.getAllIndustries();
+    if (unseededIndustries.length !== 0) {
+      throw new ContractAssertionError('WordPressProvider', 'getAllIndustries (configured unseeded)', 'empty array []', unseededIndustries);
+    }
+    const unconfiguredIndustries = new WordPressProvider('').getAllIndustries();
+    if (!Array.isArray(unconfiguredIndustries) || unconfiguredIndustries.length === 0) {
+      throw new ContractAssertionError('WordPressProvider', 'getAllIndustries (unconfigured fallback)', 'non-empty array', unconfiguredIndustries);
     }
     wpProvider.setIndustriesCache([liveIndustry]);
     const cachedIndustry = wpProvider.getIndustryBySlug('healthcare');
     if (!cachedIndustry || cachedIndustry.industryCode !== 'IND-HLTH-01') {
       throw new ContractAssertionError('WordPressProvider', 'getIndustryBySlug', 'IND-HLTH-01', cachedIndustry?.industryCode);
+    }
+    const missingIndustry = wpProvider.getIndustryBySlug('nonexistent-industry');
+    if (missingIndustry !== null) {
+      throw new ContractAssertionError('WordPressProvider', 'getIndustryBySlug (missing record)', 'null', missingIndustry);
     }
 
     console.log('✓ Industry CPT Contract Passed');
@@ -554,6 +571,41 @@ export function runCmsContractTest(): { success: boolean; testsRun: number; fail
   } catch (err: any) {
     failures.push(err.message || String(err));
     console.error('✕ Page Contract Failed:', err.message);
+  }
+
+  // 7. MOCK DATA PROVIDER UNKNOWN SLUG CONTRACT TEST
+  try {
+    testsRun++;
+    const unknownService = mockDataProvider.getServiceBySlug('non-existent-random-service-12345');
+    if (unknownService !== null) {
+      throw new Error(`MockDataProvider generated synthetic service for unknown slug: ${JSON.stringify(unknownService)}`);
+    }
+    const unknownIndustry = mockDataProvider.getIndustryBySlug('non-existent-random-industry-12345');
+    if (unknownIndustry !== null) {
+      throw new Error(`MockDataProvider generated synthetic industry for unknown slug: ${JSON.stringify(unknownIndustry)}`);
+    }
+    console.log('✓ MockDataProvider Unknown Slug Strict Null Contract Passed');
+  } catch (err: any) {
+    failures.push(err.message || String(err));
+    console.error('✕ MockDataProvider Unknown Slug Contract Failed:', err.message);
+  }
+
+  // 8. WORDPRESS PROVIDER AUTHORITY CONTRACT TEST
+  try {
+    testsRun++;
+    const configuredProvider = new WordPressProvider({
+      endpoint: 'https://cms.matricsmania.com/wp-json/wp/v2',
+      timeoutMs: 500,
+    });
+    // When configured with no cache, synchronous getter must return null, not fallback to mock
+    const syncService = configuredProvider.getServiceBySlug('non-existent-slug');
+    if (syncService !== null) {
+      throw new Error(`Configured WordPressProvider returned non-null service without CMS data: ${JSON.stringify(syncService)}`);
+    }
+    console.log('✓ WordPressProvider Strict Authority Contract Passed');
+  } catch (err: any) {
+    failures.push(err.message || String(err));
+    console.error('✕ WordPressProvider Authority Contract Failed:', err.message);
   }
 
   console.log('------------------------------------------------------------');

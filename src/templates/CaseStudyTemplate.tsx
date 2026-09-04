@@ -57,8 +57,7 @@ export const CaseStudyTemplate: React.FC<CaseStudyTemplateProps> = ({
   const provider = useContentProvider();
   const caseStudy =
     propCaseStudy ||
-    (slug ? provider.getCaseStudyBySlug(slug) : null) ||
-    (!slug ? provider.getAllCaseStudies()[0] : null);
+    (slug ? provider.getCaseStudyBySlug(slug) : null);
 
   const allCaseStudies = provider.getAllCaseStudies();
   const [copiedUrl, setCopiedUrl] = useState(false);

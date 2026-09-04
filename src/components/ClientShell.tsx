@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import { Navbar } from './Navbar';
 import { Footer } from './Footer';
-import { GlobalBreadcrumbs } from './GlobalBreadcrumbs';
 import { ToastContainer, ToastMessage } from './Toast';
 import { CookieConsent } from './CookieConsent';
 import { BookingModal } from './BookingModal';
@@ -55,7 +54,6 @@ export function ClientShell({
           onNavigate={handleNavigate}
           onOpenBooking={handleOpenBooking}
         />
-        <GlobalBreadcrumbs currentPath={pathname || '/'} onNavigate={handleNavigate} />
         <main className="flex-grow">{children}</main>
         <Footer onNavigate={handleNavigate} />
         <ToastContainer toasts={toasts} onDismiss={handleDismissToast} />

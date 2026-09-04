@@ -7,14 +7,11 @@ import {
   HomeHeroSection,
   PositioningPromiseSection,
   CredibilityEvidenceSection,
-  FivePillarsSection,
   CoreServicesSection,
   IndustriesSection,
   MethodologySection,
   CaseStudyEvidenceSection,
-  GrowthIntelligenceSection,
   InsightsSection,
-  FAQAccordionSection,
   ConversionCTASection,
 } from '../components/sections';
 import { useRouter } from 'next/navigation';
@@ -54,8 +51,6 @@ export const HomeTemplate: React.FC<HomeTemplateProps> = ({
   const industries = propIndustries && propIndustries.length > 0 ? propIndustries : provider.getAllIndustries();
   const caseStudies = propCaseStudies && propCaseStudies.length > 0 ? propCaseStudies : provider.getAllCaseStudies();
   const insights = propInsights && propInsights.length > 0 ? propInsights : provider.getAllInsights();
-  const faqs = provider.getAllFaqs('general');
-
   const canonicalUrl = page?.seo?.canonicalUrl || 'https://matricsmania.com/';
 
   const schemaData = {
@@ -79,56 +74,12 @@ export const HomeTemplate: React.FC<HomeTemplateProps> = ({
     },
   };
 
-  const homepageFaqs = faqs.length > 0 ? faqs : [
-    {
-      id: 'faq-hp-1',
-      question: 'How does MatricsMania differ from a traditional digital marketing agency?',
-      answer:
-        'We operate as an engineering lab rather than a creative consultancy. We deliver production-grade code, server log crawl reclamation, Schema.org entity graphs, and first-party BigQuery telemetry instead of subjective opinions and vanity slide decks.',
-      category: 'general',
-      order: 1,
-    },
-    {
-      id: 'faq-hp-2',
-      question: 'How quickly does MatricsMania deploy technical recommendations?',
-      answer:
-        'Initial crawl fixes, Schema validation, and server-side log telemetry begin within 7 business days of repository and analytics access authorization.',
-      category: 'general',
-      order: 2,
-    },
-    {
-      id: 'faq-hp-3',
-      question: 'How do you optimize for AI Search (Perplexity, SearchGPT, Gemini)?',
-      answer:
-        'We optimize for entity embeddings, Perplexity citation graphs, and OpenAI SearchGPT schema standards, ensuring your brand is synthesized in direct answer prompts and comparison queries.',
-      category: 'general',
-      order: 3,
-    },
-    {
-      id: 'faq-hp-4',
-      question: 'Who owns the infrastructure and data pipelines created during the engagement?',
-      answer:
-        'You maintain 100% full ownership of all code pull requests, BigQuery data models, Cloudflare Edge worker configurations, and Schema JSON-LD graphs. Zero proprietary lock-in.',
-      category: 'general',
-      order: 4,
-    },
-    {
-      id: 'faq-hp-5',
-      question: 'What is the standard engagement structure and pricing model?',
-      answer:
-        'We offer transparent monthly engineering retainers starting at $4,500/month with defined sprint deliverables, as well as dedicated 60-day architectural sprint contracts.',
-      category: 'general',
-      order: 5,
-    },
-  ];
-
   return (
     <div className="bg-[#070B14] text-white selection:bg-[#2563EB]/30 selection:text-white font-sans antialiased">
       <SEOHead
         seo={page?.seo}
         entity={page}
         pageType="home"
-        faqs={homepageFaqs}
       />
 
       {/* 1. HERO: Positioning & Core Promise within Seconds */}
@@ -145,12 +96,7 @@ export const HomeTemplate: React.FC<HomeTemplateProps> = ({
       {/* 3. EVIDENCE / CREDIBILITY: Verified Technical Standards & Disclosures */}
       <CredibilityEvidenceSection />
 
-      {/* 4. FIVE-PILLAR GROWTH SYSTEM: Search, Content, Paid, CRO, Telemetry */}
-      <FivePillarsSection
-        onNavigate={onNavigate}
-      />
-
-      {/* 5. CORE SERVICES: Modular Grid of 5 Active Disciplines */}
+      {/* 4. CORE SERVICES: Modular Grid of 5 Active Disciplines */}
       <CoreServicesSection
         services={services}
         onNavigate={onNavigate}
@@ -173,27 +119,14 @@ export const HomeTemplate: React.FC<HomeTemplateProps> = ({
         onNavigate={onNavigate}
       />
 
-      {/* 9. GROWTH INTELLIGENCE / MEASUREMENT: Audit Simulator & ROI Estimator */}
-      <GrowthIntelligenceSection
-        onOpenBooking={onOpenBooking}
-        onShowToast={onShowToast}
-      />
-
-      {/* 10. INSIGHTS / THOUGHT LEADERSHIP: Research Papers & Protocols */}
+      {/* 9. INSIGHTS / THOUGHT LEADERSHIP: Research Papers & Protocols */}
       <InsightsSection
         insights={insights}
         onNavigate={onNavigate}
         onNavigateToBlogSlug={onNavigateToBlogSlug}
       />
 
-      {/* 11. FAQ: Technical Qualification & SLAs */}
-      <FAQAccordionSection
-        title="Technical Specifications & Qualification FAQs"
-        subtitle="Transparent answers on implementation SLAs, code ownership, tech stack integration, and pricing models."
-        faqs={homepageFaqs}
-      />
-
-      {/* 12. HIGH-INTENT CTA: Advisory Diagnostic Booking */}
+      {/* 10. HIGH-INTENT CTA: Advisory Diagnostic Booking */}
       <ConversionCTASection
         title="Ready to Eliminate CAC Waste & Engineer Predictable Pipeline?"
         subtitle="Schedule a 30-minute diagnostic session with our Principal Growth Architects. We review your live crawl logs, paid media telemetry, and conversion friction."

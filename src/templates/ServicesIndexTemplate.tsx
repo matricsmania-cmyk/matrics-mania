@@ -16,7 +16,6 @@ import {
   Cpu,
   BookOpen,
   Filter,
-  ShieldCheck,
   Code2,
 } from 'lucide-react';
 
@@ -37,34 +36,7 @@ export const ServicesIndexTemplate: React.FC<ServicesIndexTemplateProps> = ({
   const onNavigate = propNavigate;
   const onOpenBooking = propBooking;
   const provider = useContentProvider();
-  const allServices = propServices && propServices.length > 0 ? propServices : provider.getAllServices();
-
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [searchQuery, setSearchQuery] = useState<string>('');
-
-  // Extract unique categories dynamically
-  const categories = useMemo(() => {
-    const set = new Set<string>();
-    allServices.forEach((s) => {
-      if (s.category) set.add(s.category);
-    });
-    return Array.from(set);
-  }, [allServices]);
-
-  // Filter services by category and query
-  const filteredServices = useMemo(() => {
-    return allServices.filter((s) => {
-      const matchCat = selectedCategory === 'all' || s.category === selectedCategory;
-      const q = searchQuery.toLowerCase().trim();
-      const matchQuery =
-        !q ||
-        s.title.toLowerCase().includes(q) ||
-        s.shortDescription.toLowerCase().includes(q) ||
-        s.serviceCode.toLowerCase().includes(q) ||
-        s.deliverablesSummary.some((d) => d.toLowerCase().includes(q));
-      return matchCat && matchQuery;
-    });
-  }, [allServices, selectedCategory, searchQuery]);
+  const allServices = propServices !== undefined ? propServices : provider.getAllServices();
 
   const getServiceIcon = (iconName: string) => {
     switch (iconName?.toLowerCase()) {
@@ -97,14 +69,6 @@ export const ServicesIndexTemplate: React.FC<ServicesIndexTemplateProps> = ({
         <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-[#2563EB]/10 blur-[140px] pointer-events-none rounded-full" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-6">
-          <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs font-mono text-[#64748B]">
-            <button onClick={() => onNavigate('/')} className="hover:text-white transition-colors cursor-pointer">
-              Home
-            </button>
-            <span>/</span>
-            <span className="text-[#60A5FA]">Services</span>
-          </nav>
-
           <ScrollReveal className="max-w-3xl space-y-4">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[#0D1424] border border-[#1E293B] text-[11px] font-mono font-semibold text-[#60A5FA] uppercase tracking-wider">
               <Code2 className="w-3.5 h-3.5 text-[#3B82F6]" />
@@ -129,7 +93,7 @@ export const ServicesIndexTemplate: React.FC<ServicesIndexTemplateProps> = ({
               </button>
               <button
                 onClick={() => {
-                  const el = document.getElementById('services-grid');
+                  const el = document.getElementById('services-list');
                   if (el) el.scrollIntoView({ behavior: 'smooth' });
                 }}
                 className="px-6 py-3 rounded-xl bg-[#0D1424] hover:bg-[#1E293B] border border-[#1E293B] text-xs sm:text-sm font-semibold text-[#94A3B8] hover:text-white transition-all cursor-pointer"
@@ -141,72 +105,12 @@ export const ServicesIndexTemplate: React.FC<ServicesIndexTemplateProps> = ({
         </div>
       </section>
 
-      {/* 2. FILTER & SEARCH CONTROLS */}
-      <section id="services-grid" className="py-8 border-b border-[#1E293B] bg-[#0A0F1D]/80 sticky top-16 z-30 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
-            {/* Category Pills */}
-            <div className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 scrollbar-none">
-              <button
-                onClick={() => setSelectedCategory('all')}
-                className={`px-3.5 py-1.5 rounded-lg text-xs font-mono transition-all shrink-0 cursor-pointer ${
-                  selectedCategory === 'all'
-                    ? 'bg-[#2563EB] text-white font-bold shadow-md shadow-[#2563EB]/30'
-                    : 'bg-[#0D1424] text-[#94A3B8] hover:text-white border border-[#1E293B]'
-                }`}
-              >
-                All Disciplines ({allServices.length})
-              </button>
-              {categories.map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => setSelectedCategory(cat)}
-                  className={`px-3.5 py-1.5 rounded-lg text-xs font-mono transition-all shrink-0 cursor-pointer ${
-                    selectedCategory === cat
-                      ? 'bg-[#2563EB] text-white font-bold shadow-md shadow-[#2563EB]/30'
-                      : 'bg-[#0D1424] text-[#94A3B8] hover:text-white border border-[#1E293B]'
-                  }`}
-                >
-                  {cat}
-                </button>
-              ))}
-            </div>
-
-            {/* Search Box */}
-            <div className="relative min-w-[240px]">
-              <Search className="w-4 h-4 text-[#64748B] absolute left-3 top-1/2 -translate-y-1/2" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search capabilities, deliverables..."
-                className="w-full pl-9 pr-4 py-1.5 rounded-lg bg-[#0D1424] border border-[#1E293B] text-xs text-white placeholder-[#64748B] focus:outline-none focus:border-[#2563EB] transition-colors"
-              />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 3. SERVICES DIRECTORY GRID */}
-      <section className="py-16 md:py-24 bg-[#070B14]">
+      {/* 2. SERVICES DIRECTORY GRID */}
+      <section id="services-list" className="py-16 md:py-24 bg-[#070B14]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
-          {filteredServices.length === 0 ? (
-            <div className="p-12 text-center rounded-2xl bg-[#0D1424] border border-[#1E293B] space-y-4">
-              <p className="text-[#94A3B8] text-sm">No services matched your query.</p>
-              <button
-                onClick={() => {
-                  setSelectedCategory('all');
-                  setSearchQuery('');
-                }}
-                className="px-4 py-2 rounded-lg bg-[#2563EB] text-xs font-bold text-white cursor-pointer"
-              >
-                Reset Filters
-              </button>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              {filteredServices.map((service, idx) => (
-                <ScrollReveal key={service.id || service.slug}>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {allServices.map((service, idx) => (
+              <ScrollReveal key={service.id || service.slug}>
                   <div className="h-full rounded-2xl bg-[#0D1424] border border-[#1E293B] p-6 sm:p-8 space-y-6 hover:border-[#2563EB]/50 transition-all flex flex-col justify-between group">
                     <div className="space-y-5">
                       {/* Top Badges */}
@@ -304,53 +208,10 @@ export const ServicesIndexTemplate: React.FC<ServicesIndexTemplateProps> = ({
                 </ScrollReveal>
               ))}
             </div>
-          )}
         </div>
       </section>
 
-      {/* 4. SLA & GOVERNANCE COMMITMENTS */}
-      <section className="py-16 md:py-20 border-t border-b border-[#1E293B] bg-[#050811]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-          <ScrollReveal className="max-w-3xl space-y-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[#0D1424] border border-[#1E293B] text-[11px] font-mono font-semibold text-[#60A5FA] uppercase">
-              <ShieldCheck className="w-3.5 h-3.5 text-[#3B82F6]" />
-              Engineering Standard of Practice
-            </div>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white">
-              Deterministic Operating Principles
-            </h2>
-            <p className="text-sm sm:text-base text-[#94A3B8]">
-              Every growth service is governed by strict technical SLAs, verifiable code deliverables, and absolute client data ownership.
-            </p>
-          </ScrollReveal>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="p-6 rounded-2xl bg-[#0D1424] border border-[#1E293B] space-y-3">
-              <span className="text-xs font-mono font-bold text-[#60A5FA]">PRINCIPLE 01</span>
-              <h3 className="text-lg font-bold text-white">Production Code PRs</h3>
-              <p className="text-xs text-[#94A3B8] leading-relaxed">
-                We deliver deployable code pull requests, JSON-LD schemas, and edge worker scripts directly to your GitHub/GitLab repositories. No non-actionable PDF decks.
-              </p>
-            </div>
-            <div className="p-6 rounded-2xl bg-[#0D1424] border border-[#1E293B] space-y-3">
-              <span className="text-xs font-mono font-bold text-[#60A5FA]">PRINCIPLE 02</span>
-              <h3 className="text-lg font-bold text-white">First-Party Telemetry</h3>
-              <p className="text-xs text-[#94A3B8] leading-relaxed">
-                We build direct server-side CAPI pipelines and centralized BigQuery warehouses so attribution is transparent, verifiable, and free of platform bias.
-              </p>
-            </div>
-            <div className="p-6 rounded-2xl bg-[#0D1424] border border-[#1E293B] space-y-3">
-              <span className="text-xs font-mono font-bold text-[#60A5FA]">PRINCIPLE 03</span>
-              <h3 className="text-lg font-bold text-white">100% Asset Ownership</h3>
-              <p className="text-xs text-[#94A3B8] leading-relaxed">
-                All tracking containers, data pipelines, ad accounts, and custom code modules remain in your company's full legal ownership at all times.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 5. BOTTOM CONVERSION CTA */}
+      {/* 3. BOTTOM CONVERSION CTA */}
       <section className="py-20 bg-[#070B14] relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="rounded-3xl bg-gradient-to-b from-[#0D1424] to-[#070B14] border border-[#1E293B] p-8 sm:p-12 md:p-16 text-center space-y-8 relative overflow-hidden">

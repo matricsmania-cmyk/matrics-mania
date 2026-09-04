@@ -10,6 +10,6 @@ export const revalidate = 0;
 export const metadata = toNextMetadata(getStaticRouteSeo('insights-index'));
 
 export default async function InsightsPage() {
-  const insights = (await wordPressProvider.asyncGetAllInsights()) || wordPressProvider.getAllInsights();
+  const insights = await wordPressProvider.asyncGetAllInsights();
   return <InsightIndexTemplate insights={insights} />;
 }

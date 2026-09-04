@@ -57,8 +57,7 @@ export const LocationTemplate: React.FC<LocationTemplateProps> = ({
   const provider = useContentProvider();
   const location =
     propLocation ||
-    (slug ? provider.getLocationBySlug(slug) : null) ||
-    (!slug ? provider.getAllLocations()[0] : null);
+    (slug ? provider.getLocationBySlug(slug) : null);
 
   const allLocations = provider.getAllLocations();
 
@@ -88,27 +87,6 @@ export const LocationTemplate: React.FC<LocationTemplateProps> = ({
         entity={location}
         pageType="location"
       />
-
-      {/* 1. BREADCRUMBS */}
-      <div className="border-b border-[#1E293B] bg-[#050811] py-3">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center gap-2 text-xs font-mono text-[#64748B]">
-          <button
-            onClick={() => onNavigate('/')}
-            className="hover:text-white transition-colors cursor-pointer"
-          >
-            Home
-          </button>
-          <span>/</span>
-          <button
-            onClick={() => onNavigate('/locations/')}
-            className="hover:text-white transition-colors cursor-pointer"
-          >
-            Locations
-          </button>
-          <span>/</span>
-          <span className="text-[#60A5FA] truncate">{locationName}</span>
-        </div>
-      </div>
 
       {/* 2. HERO */}
       <PageHeroSection

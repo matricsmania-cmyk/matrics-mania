@@ -19,10 +19,10 @@ export default async function HomePage() {
 
   return (
     <HomeTemplate
-      services={services.length > 0 ? services : wordPressProvider.getAllServices()}
-      industries={industries.length > 0 ? industries : wordPressProvider.getAllIndustries()}
-      caseStudies={caseStudies.length > 0 ? caseStudies : wordPressProvider.getAllCaseStudies()}
-      insights={insights.length > 0 ? insights : wordPressProvider.getAllInsights()}
+      services={services}
+      industries={industries}
+      caseStudies={caseStudies}
+      insights={insights}
     />
   );
 }

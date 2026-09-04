@@ -10,6 +10,6 @@ export const revalidate = 0;
 export const metadata = toNextMetadata(getStaticRouteSeo('services-index'));
 
 export default async function ServicesPage() {
-  const services = (await wordPressProvider.asyncGetAllServices()) || wordPressProvider.getAllServices();
+  const services = await wordPressProvider.asyncGetAllServices();
   return <ServicesIndexTemplate services={services} />;
 }

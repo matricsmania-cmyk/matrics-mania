@@ -57,8 +57,7 @@ export const ServiceTemplate: React.FC<ServiceTemplateProps> = ({
     if (slug) {
       return provider.getServiceBySlug(slug) || null;
     }
-    const all = provider.getAllServices();
-    return all[0] || null;
+    return null;
   }, [propService, slug, provider]);
 
   const [activePillarTab, setActivePillarTab] = useState<number>(0);
@@ -121,34 +120,7 @@ export const ServiceTemplate: React.FC<ServiceTemplateProps> = ({
       />
 
       {/* =========================================================================
-          1. BREADCRUMB
-         ========================================================================= */}
-      <div className="border-b border-[#1E293B] bg-[#070B14]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5">
-          <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs font-mono text-[#64748B] flex-wrap">
-            <button
-              onClick={() => onNavigate('/')}
-              className="hover:text-white transition-colors cursor-pointer"
-            >
-              Home
-            </button>
-            <span>/</span>
-            <button
-              onClick={() => onNavigate('/services/')}
-              className="hover:text-white transition-colors cursor-pointer"
-            >
-              Services
-            </button>
-            <span>/</span>
-            <span className="text-[#94A3B8] truncate">{service.category}</span>
-            <span>/</span>
-            <span className="text-[#60A5FA] font-semibold truncate">{serviceTitle}</span>
-          </nav>
-        </div>
-      </div>
-
-      {/* =========================================================================
-          2. HERO
+          HERO
          ========================================================================= */}
       <section className="relative border-b border-[#1E293B] pt-12 pb-16 md:pt-16 md:pb-24 overflow-hidden bg-gradient-to-b from-[#0B1120] to-[#070B14]">
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-[#2563EB]/12 blur-[140px] pointer-events-none rounded-full" />

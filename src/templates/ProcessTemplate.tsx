@@ -8,7 +8,6 @@ import {
   PageHeroSection,
   ProcessPhasesSection,
   DeliverablesSection,
-  FAQAccordionSection,
   ConversionCTASection,
 } from '../components/sections';
 import { ProcessPhase } from '../models';
@@ -107,74 +106,6 @@ export const ProcessTemplate: React.FC<ProcessTemplateProps> = ({
           phases={phases}
         />
       </div>
-
-      {/* SLAs and Operational Guarantees */}
-      <section className="py-16 md:py-20 border-b border-[#1E293B] bg-[#050811]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <ScrollReveal className="text-center max-w-3xl mx-auto mb-14 space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[#0D1424] border border-[#1E293B] text-[11px] font-mono font-semibold tracking-wider text-[#60A5FA] uppercase">
-              <ShieldCheck className="w-3.5 h-3.5 text-[#3B82F6]" />
-              Operational Discipline
-            </div>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white">
-              Our 4 Engineering Standards
-            </h2>
-          </ScrollReveal>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              {
-                title: 'Direct Code Commits',
-                desc: 'We submit tested GitHub pull requests rather than sending 80-page slide decks of recommendations.',
-              },
-              {
-                title: 'Data Sovereignty',
-                desc: 'You own 100% of BigQuery databases, analytics containers, ad accounts, and creative assets.',
-              },
-              {
-                title: 'Zero Vanity Metrics',
-                desc: 'We measure pipeline velocity, qualified revenue opportunities, and marginal customer acquisition costs.',
-              },
-              {
-                title: 'Weekly Sprint Demos',
-                desc: 'Structured 30-minute weekly sprint checkpoints reviewing deployed code and attribution deltas.',
-              },
-            ].map((std, idx) => (
-              <div
-                key={idx}
-                className="p-6 rounded-2xl bg-[#0D1424] border border-[#1E293B] space-y-3"
-              >
-                <div className="text-xs font-mono font-bold text-[#60A5FA]">STANDARD 0{idx + 1}</div>
-                <h3 className="text-base font-bold text-white">{std.title}</h3>
-                <p className="text-xs text-[#94A3B8] leading-relaxed">{std.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* FAQs */}
-      <FAQAccordionSection
-        title="Protocol & Engagement FAQs"
-        subtitle="Common questions about kickoff timeframes, technical access, and team bandwidth requirements."
-        faqs={[
-          {
-            question: 'How much developer time is required from our internal engineering team?',
-            answer:
-              'Minimal. Our team operates directly inside your staging and production environments via PR reviews, requiring only standard code-review approval from your technical lead.',
-          },
-          {
-            question: 'What happens during Phase 01 Diagnostic?',
-            answer:
-              'We connect to your GSC, Google Analytics, ad platforms, and server logs to construct a complete baseline attribution matrix before any changes are deployed.',
-          },
-          {
-            question: 'Can this protocol be customized for our release cycle?',
-            answer:
-              'Yes. Our sprints synchronize with your bi-weekly or monthly release cycles, whether you deploy on Vercel, AWS, or custom Kubernetes clusters.',
-          },
-        ]}
-      />
 
       {/* CTA */}
       <ConversionCTASection

@@ -10,7 +10,7 @@ export const revalidate = 0;
 export const metadata = toNextMetadata(getStaticRouteSeo('locations-index'));
 
 export default async function LocationsPage() {
-  const locations = (await wordPressProvider.asyncGetAllLocations()) || wordPressProvider.getAllLocations();
+  const locations = await wordPressProvider.asyncGetAllLocations();
   const defaultLocation = locations[0] || undefined;
 
   return <LocationTemplate location={defaultLocation} />;

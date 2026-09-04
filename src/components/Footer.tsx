@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   ArrowRight,
   ShieldCheck,
@@ -20,6 +20,7 @@ import { Badge } from '../design-system/primitives/Badge';
 import { Eyebrow } from '../design-system/primitives/Eyebrow';
 import { Heading } from '../design-system/primitives/Heading';
 import { Divider } from '../design-system/primitives/Divider';
+import { useContent } from '../providers/ContentContext';
 
 export interface FooterProps {
   onNavigate?: (path: string) => void;
@@ -32,6 +33,50 @@ export const Footer: React.FC<FooterProps> = ({
   onOpenBooking,
   onShowToast,
 }) => {
+  const { services, industries, insights } = useContent();
+
+  const footerSolutions = useMemo(() => {
+    if (services && services.length > 0) {
+      return [
+        ...services.map((s) => ({
+          id: `f-${s.slug}`,
+          label: s.title,
+          href: `/services/${s.slug}/`,
+        })),
+        { id: 'f-all-services', label: 'View All Growth Services →', href: '/services/' },
+      ];
+    }
+    return [{ id: 'f-all-services', label: 'View All Growth Services →', href: '/services/' }];
+  }, [services]);
+
+  const footerIndustries = useMemo(() => {
+    if (industries && industries.length > 0) {
+      return [
+        ...industries.map((ind) => ({
+          id: `f-${ind.slug}`,
+          label: ind.title,
+          href: `/industries/${ind.slug}/`,
+        })),
+        { id: 'f-all-industries', label: 'View All Industry Playbooks →', href: '/industries/' },
+      ];
+    }
+    return [{ id: 'f-all-industries', label: 'View All Industry Playbooks →', href: '/industries/' }];
+  }, [industries]);
+
+  const footerInsights = useMemo(() => {
+    if (insights && insights.length > 0) {
+      return [
+        ...insights.slice(0, 5).map((ins) => ({
+          id: `f-${ins.slug}`,
+          label: ins.title,
+          href: `/insights/${ins.slug}/`,
+        })),
+        { id: 'f-all-insights', label: 'All Research & Whitepapers →', href: '/insights/' },
+      ];
+    }
+    return [{ id: 'f-all-insights', label: 'All Research & Whitepapers →', href: '/insights/' }];
+  }, [insights]);
+
   const [intelEmail, setIntelEmail] = useState('');
   const [isSubscribing, setIsSubscribing] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
@@ -134,7 +179,7 @@ export const Footer: React.FC<FooterProps> = ({
               Growth Solutions
             </h4>
             <ul className="space-y-2 text-xs">
-              {NAVIGATION_CONFIG.footer.solutions.map((item) => (
+              {footerSolutions.map((item) => (
                 <li key={item.id}>
                   <a
                     href={item.href}
@@ -154,7 +199,7 @@ export const Footer: React.FC<FooterProps> = ({
               Industry Verticals
             </h4>
             <ul className="space-y-2 text-xs">
-              {NAVIGATION_CONFIG.footer.industries.map((item) => (
+              {footerIndustries.map((item) => (
                 <li key={item.id}>
                   <a
                     href={item.href}
@@ -174,7 +219,7 @@ export const Footer: React.FC<FooterProps> = ({
               Research & Intel
             </h4>
             <ul className="space-y-2 text-xs">
-              {NAVIGATION_CONFIG.footer.insights.map((item) => (
+              {footerInsights.map((item) => (
                 <li key={item.id}>
                   <a
                     href={item.href}

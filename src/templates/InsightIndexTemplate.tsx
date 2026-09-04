@@ -47,7 +47,7 @@ export const InsightIndexTemplate: React.FC<InsightIndexTemplateProps> = ({
   const onNavigate = propNavigate;
   const onOpenBooking = propBooking;
   const provider = useContentProvider();
-  const allInsights = propInsights || provider.getAllInsights();
+  const allInsights = propInsights !== undefined ? propInsights : provider.getAllInsights();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
@@ -169,107 +169,6 @@ export const InsightIndexTemplate: React.FC<InsightIndexTemplateProps> = ({
         description="Technical papers, crawl engineering benchmarks, Perplexity citation analysis, and conversion protocols."
       />
 
-      {/* Hero */}
-      <section className="relative border-b border-[#1E293B] pt-12 pb-16 md:py-20 overflow-hidden bg-[#070B14]">
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[380px] bg-[#2563EB]/10 blur-[140px] pointer-events-none rounded-full" />
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center space-y-6">
-          {/* Breadcrumb indicator */}
-          <nav aria-label="Breadcrumb" className="flex items-center justify-center gap-2 text-xs font-mono text-[#64748B] mb-2">
-            <button onClick={() => onNavigate('/')} className="hover:text-[#60A5FA] transition-colors cursor-pointer">Home</button>
-            <span>/</span>
-            <span className="text-[#60A5FA]">Insights &amp; Research</span>
-          </nav>
-
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[#0D1424] border border-[#1E293B] text-[11px] font-mono font-semibold tracking-wider text-[#60A5FA] uppercase mx-auto">
-            <BookOpen className="w-3.5 h-3.5 text-[#3B82F6]" />
-            Peer-Reviewed Growth Intelligence &amp; Empirical Frameworks
-          </div>
-
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-white max-w-4xl mx-auto leading-tight">
-            Research, Protocols &amp; Growth Insights
-          </h1>
-
-          <p className="text-base sm:text-lg text-[#94A3B8] max-w-3xl mx-auto leading-relaxed">
-            Proprietary research papers on AI search engine optimization, full-funnel attribution mathematics, log-file crawl telemetry, and deterministic conversion testing.
-          </p>
-
-          {/* Search Interface */}
-          <div className="max-w-3xl mx-auto pt-4 space-y-4">
-            <div className="relative">
-              <label htmlFor="insight-search-input" className="sr-only">
-                Search insights, research papers, and technical guides
-              </label>
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#64748B]" aria-hidden="true" />
-              <input
-                id="insight-search-input"
-                type="text"
-                aria-label="Search research papers and technical insights"
-                placeholder="Search research papers, vector search, CAPI attribution, Core Web Vitals..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-11 pr-20 py-3.5 rounded-2xl bg-[#0D1424] border border-[#1E293B] text-sm text-white placeholder-[#64748B] focus:outline-none focus:ring-2 focus:ring-[#2563EB] transition-colors shadow-lg"
-              />
-              {searchQuery && (
-                <button
-                  type="button"
-                  aria-label="Clear search input"
-                  onClick={() => setSearchQuery('')}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-mono text-[#64748B] hover:text-white px-2 py-1 rounded bg-[#1E293B] focus:outline-none focus:ring-2 focus:ring-[#2563EB]"
-                >
-                  Clear
-                </button>
-              )}
-            </div>
-
-            {/* Quick Keyword Chips */}
-            <div className="flex flex-wrap items-center justify-center gap-2 pt-1" role="toolbar" aria-label="Trending search topics">
-              <span className="text-[11px] font-mono text-[#64748B]">Trending:</span>
-              {quickFilterTags.map((tag) => (
-                <button
-                  key={tag}
-                  type="button"
-                  onClick={() => setSearchQuery(tag)}
-                  className="px-2.5 py-1 rounded-md bg-[#0D1424] hover:bg-[#1E293B] border border-[#1E293B] text-[11px] font-mono text-[#94A3B8] hover:text-[#60A5FA] focus:outline-none focus:ring-2 focus:ring-[#2563EB] transition-colors cursor-pointer"
-                >
-                  #{tag}
-                </button>
-              ))}
-            </div>
-
-            {/* Category Filter Tabs with Item Counts */}
-            <div className="flex flex-wrap items-center justify-center gap-2 pt-2" role="toolbar" aria-label="Filter insights by category">
-              {categories.map((cat) => {
-                const count = categoryCounts[cat] || 0;
-                const isSelected = selectedCategory === cat;
-                return (
-                  <button
-                    key={cat}
-                    type="button"
-                    aria-pressed={isSelected}
-                    onClick={() => setSelectedCategory(cat)}
-                    className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-all cursor-pointer flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-[#2563EB] ${
-                      isSelected
-                        ? 'bg-[#2563EB] text-white shadow-md shadow-blue-500/25'
-                        : 'bg-[#0D1424] text-[#94A3B8] hover:text-white border border-[#1E293B]'
-                    }`}
-                  >
-                    <span>{cat}</span>
-                    <span
-                      className={`text-[10px] font-mono px-1.5 py-0.2 rounded-full ${
-                        isSelected ? 'bg-white/20 text-white' : 'bg-[#1E293B] text-[#64748B]'
-                      }`}
-                    >
-                      {count}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Main Content Grid */}
       <section id="insights-grid-container" className="py-16 md:py-20 bg-[#050811] border-b border-[#1E293B]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -350,50 +249,6 @@ export const InsightIndexTemplate: React.FC<InsightIndexTemplateProps> = ({
               </div>
             </ScrollReveal>
           )}
-
-          {/* Secondary Controls Bar: Content Type & Sort & View Controls */}
-          <div className="flex flex-wrap items-center justify-between gap-4 pb-8 border-b border-[#1E293B] mb-8">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="text-xs font-mono text-[#64748B] flex items-center gap-1 mr-1">
-                <Filter className="w-3.5 h-3.5" /> Type:
-              </span>
-              {contentTypes.map((type) => (
-                <button
-                  key={type}
-                  onClick={() => setSelectedContentType(type)}
-                  className={`px-3 py-1 rounded-lg text-xs font-mono transition-colors cursor-pointer ${
-                    selectedContentType === type
-                      ? 'bg-[#1E293B] text-[#60A5FA] border border-[#2563EB]/50'
-                      : 'text-[#94A3B8] hover:text-white bg-[#0D1424] border border-[#1E293B]'
-                  }`}
-                >
-                  {type}
-                </button>
-              ))}
-            </div>
-
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-mono text-[#64748B] flex items-center gap-1">
-                  <SlidersHorizontal className="w-3.5 h-3.5" /> Sort:
-                </span>
-                <select
-                  value={sortOption}
-                  onChange={(e) => setSortOption(e.target.value as SortOption)}
-                  className="bg-[#0D1424] border border-[#1E293B] text-xs font-mono text-[#CBD5E1] rounded-lg px-3 py-1.5 focus:outline-none focus:border-[#2563EB] cursor-pointer"
-                >
-                  <option value="newest">Newest First</option>
-                  <option value="oldest">Oldest First</option>
-                  <option value="reading_time_asc">Fastest Read</option>
-                  <option value="reading_time_desc">Deepest Analysis</option>
-                </select>
-              </div>
-
-              <div className="text-xs font-mono text-[#64748B]">
-                Showing <span className="text-white font-bold">{filteredAndSortedInsights.length}</span> papers
-              </div>
-            </div>
-          </div>
 
           {/* Grid of Results */}
           {filteredAndSortedInsights.length === 0 ? (

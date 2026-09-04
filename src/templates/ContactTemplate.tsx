@@ -225,7 +225,6 @@ export const ContactTemplate: React.FC<ContactTemplateProps> = ({
   // Submission States
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submissionResult, setSubmissionResult] = useState<ContactSubmissionResult | null>(null);
-  const [activeFaq, setActiveFaq] = useState<number | null>(null);
 
   // Auto-extract company name from domain if empty
   const handleWebsiteBlur = () => {
@@ -1355,45 +1354,6 @@ export const ContactTemplate: React.FC<ContactTemplateProps> = ({
                     <span>View Bangalore Lab Infrastructure</span>
                     <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                   </a>
-                </div>
-              </div>
-
-              {/* Qualification Standards FAQ */}
-              <div className="p-6 rounded-3xl bg-[#0D1424] border border-[#1E293B] space-y-4">
-                <div className="text-xs font-mono uppercase text-[#60A5FA] font-bold tracking-wider">
-                  Qualification Criteria
-                </div>
-                <div className="space-y-3 text-xs">
-                  {[
-                    {
-                      q: 'Why does MatricsMania qualify accounts?',
-                      a: 'Our Principal Architects personally audit live crawl logs, server response latencies, and conversion pipelines. We cap active concurrent client engagements to maintain deep architectural execution.',
-                    },
-                    {
-                      q: 'What if we are an early-stage startup?',
-                      a: 'If you are pre-$2M ARR, we provide our open technical research papers and diagnostic audit tools in our Insights hub.',
-                    },
-                    {
-                      q: 'Is our telemetry protected under NDA?',
-                      a: 'Yes. All domain logs, analytics permissions, and architecture disclosures are covered by our standard mutual non-disclosure agreement.',
-                    },
-                  ].map((faq, idx) => (
-                    <div key={idx} className="border-b border-[#1E293B] pb-3 last:border-0 last:pb-0">
-                      <button
-                        type="button"
-                        onClick={() => setActiveFaq(activeFaq === idx ? null : idx)}
-                        className="w-full text-left font-medium text-white hover:text-[#60A5FA] flex items-center justify-between gap-2 cursor-pointer"
-                      >
-                        <span>{faq.q}</span>
-                        <span className="text-[#64748B] font-mono text-xs">{activeFaq === idx ? '−' : '+'}</span>
-                      </button>
-                      {activeFaq === idx && (
-                        <p className="text-[11px] text-[#94A3B8] leading-relaxed mt-2 pl-1 border-l-2 border-[#2563EB]">
-                          {faq.a}
-                        </p>
-                      )}
-                    </div>
-                  ))}
                 </div>
               </div>
 

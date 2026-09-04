@@ -64,8 +64,7 @@ export const InsightTemplate: React.FC<InsightTemplateProps> = ({
   const provider = useContentProvider();
   const post =
     propInsight ||
-    (slug ? provider.getInsightBySlug(slug) : null) ||
-    (!slug ? provider.getAllInsights()[0] : null);
+    (slug ? provider.getInsightBySlug(slug) : null);
 
   const allPosts = provider.getAllInsights();
   const [copiedUrl, setCopiedUrl] = useState(false);
@@ -201,28 +200,16 @@ export const InsightTemplate: React.FC<InsightTemplateProps> = ({
         />
       </div>
 
-      {/* Top Sticky Header & Global Breadcrumbs */}
+      {/* Top Sticky Header */}
       <div className="border-b border-[#1E293B] bg-[#070B14]/90 backdrop-blur-md sticky top-16 z-30 py-3">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
-          <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs font-mono text-[#64748B] overflow-x-auto whitespace-nowrap scrollbar-none">
-            <button
-              onClick={() => onNavigate('/')}
-              className="hover:text-[#60A5FA] transition-colors cursor-pointer"
-            >
-              Home
-            </button>
-            <span>/</span>
-            <button
-              onClick={() => onNavigate('/insights/')}
-              className="hover:text-[#60A5FA] transition-colors cursor-pointer"
-            >
-              Insights
-            </button>
-            <span>/</span>
-            <span className="text-[#94A3B8]">{post.category}</span>
-            <span>/</span>
-            <span className="text-[#60A5FA] truncate max-w-[200px] sm:max-w-xs">{post.title}</span>
-          </nav>
+          <button
+            onClick={() => onNavigate('/insights/')}
+            className="inline-flex items-center gap-1.5 text-xs font-mono text-[#94A3B8] hover:text-[#60A5FA] transition-colors cursor-pointer"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" />
+            <span>Back to Insights Hub</span>
+          </button>
 
           <div className="flex items-center gap-2 shrink-0">
             <button
