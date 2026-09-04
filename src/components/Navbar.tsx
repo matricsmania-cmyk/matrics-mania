@@ -367,10 +367,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 4 }}
                     transition={{ duration: 0.15 }}
-                    className="absolute top-full left-0 w-[840px] mt-1 bg-[#0D1424] border border-[#1E293B] rounded-xl shadow-xl shadow-black/60 p-6 grid grid-cols-12 gap-6 z-50"
+                    className="absolute top-full left-0 w-[580px] mt-1 bg-[#0D1424] border border-[#1E293B] rounded-xl shadow-xl shadow-black/60 p-6 z-50"
                   >
-                    {/* Left Columns: Service Groups */}
-                    <div className={`col-span-8 ${serviceGroups.length > 1 ? 'grid grid-cols-2 gap-6' : 'space-y-6'}`}>
+                    {/* Service Groups */}
+                    <div className={serviceGroups.length > 1 ? 'grid grid-cols-2 gap-6' : 'space-y-6'}>
                       {serviceGroups.map((group) => (
                         <div key={group.id} className="space-y-3">
                           <div className="border-b border-[#1E293B] pb-1.5 flex items-center justify-between">
@@ -416,57 +416,6 @@ export const Navbar: React.FC<NavbarProps> = ({
                         </div>
                       )}
                     </div>
-
-                    {/* Right Column: Featured Callout */}
-                    {featuredService ? (
-                      <div className="col-span-4 bg-[#131D33] border border-[#1E293B] rounded-lg p-4 flex flex-col justify-between">
-                        <div className="space-y-3">
-                          <Eyebrow variant="mono" dot dotColor="blue">
-                            {featuredService.badge}
-                          </Eyebrow>
-                          <h4 className="text-sm font-bold text-white leading-snug">
-                            {featuredService.title}
-                          </h4>
-                          <p className="text-xs text-[#94A3B8] leading-relaxed line-clamp-4">
-                            {featuredService.description}
-                          </p>
-                        </div>
-                        <div className="pt-4 mt-4 border-t border-[#1E293B]">
-                          <a
-                            href={featuredService.href}
-                            onClick={(e) => handleLinkClick(e, featuredService.href)}
-                            className="text-xs font-mono font-bold text-[#60A5FA] hover:text-white flex items-center gap-1.5 group"
-                          >
-                            Explore {featuredService.title}{' '}
-                            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-                          </a>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="col-span-4 bg-[#131D33] border border-[#1E293B] rounded-lg p-4 flex flex-col justify-between">
-                        <div className="space-y-3">
-                          <Eyebrow variant="mono" dot dotColor="blue">
-                            CMS VERIFIED
-                          </Eyebrow>
-                          <h4 className="text-sm font-bold text-white leading-snug">
-                            Custom Growth Engineering
-                          </h4>
-                          <p className="text-xs text-[#94A3B8] leading-relaxed">
-                            Algorithmic search and revenue attribution architectures.
-                          </p>
-                        </div>
-                        <div className="pt-4 mt-4 border-t border-[#1E293B]">
-                          <a
-                            href="/services/"
-                            onClick={(e) => handleLinkClick(e, '/services/')}
-                            className="text-xs font-mono font-bold text-[#60A5FA] hover:text-white flex items-center gap-1.5 group"
-                          >
-                            All Services Overview{' '}
-                            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-                          </a>
-                        </div>
-                      </div>
-                    )}
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -505,9 +454,9 @@ export const Navbar: React.FC<NavbarProps> = ({
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 4 }}
                     transition={{ duration: 0.15 }}
-                    className="absolute top-full left-0 w-[720px] mt-1 bg-[#0D1424] border border-[#1E293B] rounded-xl shadow-xl shadow-black/60 p-6 grid grid-cols-12 gap-6 z-50"
+                    className="absolute top-full left-0 w-[540px] mt-1 bg-[#0D1424] border border-[#1E293B] rounded-xl shadow-xl shadow-black/60 p-6 z-50"
                   >
-                    <div className="col-span-8 space-y-4">
+                    <div className="space-y-4">
                       <div className="flex items-center justify-between border-b border-[#1E293B] pb-2">
                         <span className="text-[11px] font-mono font-bold text-[#60A5FA] uppercase tracking-wider">
                           Industry Growth Playbooks
@@ -550,54 +499,6 @@ export const Navbar: React.FC<NavbarProps> = ({
                         )}
                       </div>
                     </div>
-
-                    {featuredIndustry ? (
-                      <div className="col-span-4 bg-[#131D33] border border-[#1E293B] rounded-lg p-4 flex flex-col justify-between">
-                        <div className="space-y-3">
-                          <Eyebrow variant="mono" dot dotColor="green">
-                            {featuredIndustry.badge}
-                          </Eyebrow>
-                          <h4 className="text-xs font-bold text-white">
-                            {featuredIndustry.title}
-                          </h4>
-                          <p className="text-[11px] text-[#94A3B8] leading-relaxed line-clamp-4">
-                            {featuredIndustry.description}
-                          </p>
-                        </div>
-                        <div className="pt-3 border-t border-[#1E293B]">
-                          <a
-                            href={featuredIndustry.href}
-                            onClick={(e) => handleLinkClick(e, featuredIndustry.href)}
-                            className="text-xs font-mono font-bold text-[#60A5FA] hover:text-white flex items-center gap-1 group"
-                          >
-                            View {featuredIndustry.title} Playbook →
-                          </a>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="col-span-4 bg-[#131D33] border border-[#1E293B] rounded-lg p-4 flex flex-col justify-between">
-                        <div className="space-y-3">
-                          <Eyebrow variant="mono" dot dotColor="green">
-                            CMS SYNC
-                          </Eyebrow>
-                          <h4 className="text-xs font-bold text-white">
-                            Vertical Playbooks
-                          </h4>
-                          <p className="text-[11px] text-[#94A3B8] leading-relaxed">
-                            Tailored organic and paid strategies engineered for specific regulatory and margin structures.
-                          </p>
-                        </div>
-                        <div className="pt-3 border-t border-[#1E293B]">
-                          <a
-                            href="/industries/"
-                            onClick={(e) => handleLinkClick(e, '/industries/')}
-                            className="text-xs font-mono font-bold text-[#60A5FA] hover:text-white flex items-center gap-1 group"
-                          >
-                            All Industry Playbooks →
-                          </a>
-                        </div>
-                      </div>
-                    )}
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -652,9 +553,9 @@ export const Navbar: React.FC<NavbarProps> = ({
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 4 }}
                     transition={{ duration: 0.15 }}
-                    className="absolute top-full left-0 w-[640px] mt-1 bg-[#0D1424] border border-[#1E293B] rounded-xl shadow-xl shadow-black/60 p-6 grid grid-cols-12 gap-6 z-50"
+                    className="absolute top-full left-0 w-[420px] mt-1 bg-[#0D1424] border border-[#1E293B] rounded-xl shadow-xl shadow-black/60 p-6 z-50"
                   >
-                    <div className="col-span-6 space-y-3">
+                    <div className="space-y-3">
                       <div className="border-b border-[#1E293B] pb-2 flex items-center justify-between">
                         <span className="text-[11px] font-mono font-bold text-[#60A5FA] uppercase tracking-wider">
                           Research & Publications
@@ -691,54 +592,6 @@ export const Navbar: React.FC<NavbarProps> = ({
                         )}
                       </ul>
                     </div>
-
-                    {featuredInsight ? (
-                      <div className="col-span-6 bg-[#131D33] border border-[#1E293B] rounded-lg p-4 flex flex-col justify-between">
-                        <div className="space-y-2">
-                          <span className="font-mono text-[10px] uppercase text-[#10B981] font-bold">
-                            {featuredInsight.category} • {featuredInsight.readTime}
-                          </span>
-                          <h4 className="text-xs font-bold text-white leading-snug">
-                            {featuredInsight.title}
-                          </h4>
-                          <p className="text-[11px] text-[#94A3B8] leading-relaxed line-clamp-3">
-                            {featuredInsight.description}
-                          </p>
-                        </div>
-                        <div className="pt-3 border-t border-[#1E293B]">
-                          <a
-                            href={featuredInsight.href}
-                            onClick={(e) => handleLinkClick(e, featuredInsight.href)}
-                            className="text-xs font-mono font-bold text-[#60A5FA] hover:text-white flex items-center gap-1 group"
-                          >
-                            Read Paper →
-                          </a>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="col-span-6 bg-[#131D33] border border-[#1E293B] rounded-lg p-4 flex flex-col justify-between">
-                        <div className="space-y-2">
-                          <span className="font-mono text-[10px] uppercase text-[#10B981] font-bold">
-                            EDITORIAL ARCHIVE
-                          </span>
-                          <h4 className="text-xs font-bold text-white leading-snug">
-                            Growth Intelligence & Lab Notes
-                          </h4>
-                          <p className="text-[11px] text-[#94A3B8] leading-relaxed">
-                            Explore deep dives on LLM citations, attribution modeling, and search ranking updates.
-                          </p>
-                        </div>
-                        <div className="pt-3 border-t border-[#1E293B]">
-                          <a
-                            href="/insights/"
-                            onClick={(e) => handleLinkClick(e, '/insights/')}
-                            className="text-xs font-mono font-bold text-[#60A5FA] hover:text-white flex items-center gap-1 group"
-                          >
-                            Explore Insights Archive →
-                          </a>
-                        </div>
-                      </div>
-                    )}
                   </motion.div>
                 )}
               </AnimatePresence>

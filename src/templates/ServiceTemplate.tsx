@@ -7,7 +7,6 @@ import { ScrollReveal } from '../components/ScrollReveal';
 import { Service, ServicePillar, ServiceDiagnosisSymptom } from '../models';
 import { NotFoundState } from '../components/ErrorStates';
 import { InternalLinkingGraph } from '../components/InternalLinkingGraph';
-import { GrowthCalculator } from '../components/GrowthCalculator';
 import { getServiceContextualLinks } from '../utils/internalLinking';
 import {
   ArrowRight,
@@ -785,19 +784,6 @@ export const ServiceTemplate: React.FC<ServiceTemplateProps> = ({
         services={contextualLinks.relatedServices}
         onNavigate={onNavigate}
       />
-
-      {/* =========================================================================
-          11. INTERACTIVE SERVICE FINANCIAL MODELING & UNIT ECONOMICS
-         ========================================================================= */}
-      <section className="py-16 md:py-24 border-b border-[#1E293B] bg-[#070B14]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <GrowthCalculator
-            title={`Simulate the Pipeline & Financial Impact of ${serviceTitle}`}
-            subtitle={`Explore projected revenue scaling, conversion lift, and CAC efficiency models for ${serviceTitle}.`}
-            onOpenBooking={onOpenBooking}
-          />
-        </div>
-      </section>
 
       {/* =========================================================================
           13. FAQ
