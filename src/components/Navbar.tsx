@@ -597,20 +597,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               </AnimatePresence>
             </div>
 
-            {/* 5. Process */}
-            <a
-              href="/process/"
-              onClick={(e) => handleLinkClick(e, '/process/')}
-              className={`px-3 py-2 text-xs font-semibold uppercase tracking-wider rounded-md transition-colors ${
-                isLinkActive('/process/')
-                  ? 'text-[#60A5FA] bg-[#131D33]'
-                  : 'text-[#94A3B8] hover:text-white hover:bg-[#0D1424]'
-              }`}
-            >
-              Process
-            </a>
-
-            {/* 6. Company Dropdown (About, Locations, Careers, FAQ) */}
+            {/* 5. Company Dropdown */}
             <div
               className="relative"
               onMouseEnter={() => handleDropdownEnter('company')}
@@ -620,7 +607,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 href="/about/"
                 onClick={(e) => handleLinkClick(e, '/about/')}
                 className={`flex items-center gap-1.5 px-3 py-2 text-xs font-semibold uppercase tracking-wider rounded-md transition-colors ${
-                  isLinkActive('/about/') || isLinkActive('/locations/') || isLinkActive('/careers/') || isLinkActive('/faq/')
+                  isLinkActive('/about/') || isLinkActive('/work/') || isLinkActive('/case-studies/') || isLinkActive('/process/') || isLinkActive('/careers/') || isLinkActive('/faq/') || isLinkActive('/contact/')
                     ? 'text-[#60A5FA] bg-[#131D33]'
                     : 'text-[#94A3B8] hover:text-white hover:bg-[#0D1424]'
                 }`}
@@ -635,7 +622,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 />
               </a>
 
-              {/* Company Dropdown */}
+              {/* Company Dropdown: 2 columns, 4 rows */}
               <AnimatePresence>
                 {activeDropdown === 'company' && (
                   <motion.div
@@ -643,25 +630,27 @@ export const Navbar: React.FC<NavbarProps> = ({
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 4 }}
                     transition={{ duration: 0.15 }}
-                    className="absolute top-full right-0 w-[240px] mt-1 bg-[#0D1424] border border-[#1E293B] rounded-xl shadow-xl shadow-black/60 p-2 space-y-0.5 z-50"
+                    className="absolute top-full right-0 w-[360px] mt-1 bg-[#0D1424] border border-[#1E293B] rounded-xl shadow-xl shadow-black/60 p-3 z-50"
                   >
-                    {NAVIGATION_CONFIG.company.items.map((item) => (
-                      <a
-                        key={item.id}
-                        href={item.href}
-                        onClick={(e) => handleLinkClick(e, item.href)}
-                        className="group flex items-center justify-between px-3 py-2 rounded-lg hover:bg-[#131D33] transition-colors"
-                      >
-                        <span className="text-xs font-medium text-slate-200 group-hover:text-[#60A5FA] transition-colors">
-                          {item.label}
-                        </span>
-                        {item.badge && (
-                          <Badge variant="mono" size="sm">
-                            {item.badge}
-                          </Badge>
-                        )}
-                      </a>
-                    ))}
+                    <div className="grid grid-cols-2 grid-rows-4 gap-1">
+                      {NAVIGATION_CONFIG.company.items.map((item) => (
+                        <a
+                          key={item.id}
+                          href={item.href}
+                          onClick={(e) => handleLinkClick(e, item.href)}
+                          className="group flex items-center justify-between px-3 py-2 rounded-lg hover:bg-[#131D33] transition-colors"
+                        >
+                          <span className="text-xs font-medium text-slate-200 group-hover:text-[#60A5FA] transition-colors">
+                            {item.label}
+                          </span>
+                          {item.badge && (
+                            <Badge variant="mono" size="sm">
+                              {item.badge}
+                            </Badge>
+                          )}
+                        </a>
+                      ))}
+                    </div>
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -829,16 +818,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   </Badge>
                 </a>
 
-                {/* 5. Process */}
-                <a
-                  href="/process/"
-                  onClick={(e) => handleLinkClick(e, '/process/')}
-                  className="p-4 border border-[#1E293B] rounded-lg bg-[#0D1424] flex items-center justify-between text-sm font-bold text-white uppercase tracking-wider"
-                >
-                  <span>Operating Methodology</span>
-                </a>
-
-                {/* 6. Company Hubs */}
+                {/* 5. Company Hubs */}
                 <div className="border border-[#1E293B] rounded-lg bg-[#0D1424] overflow-hidden">
                   <button
                     type="button"
@@ -847,7 +827,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     }
                     className="w-full p-4 flex items-center justify-between text-sm font-bold text-white uppercase tracking-wider"
                   >
-                    <span>Company & Hubs</span>
+                    <span>Company</span>
                     <ChevronDown
                       className={`w-4 h-4 transition-transform duration-200 ${
                         mobileSectionOpen === 'company' ? 'rotate-180 text-[#60A5FA]' : ''
@@ -856,15 +836,20 @@ export const Navbar: React.FC<NavbarProps> = ({
                   </button>
 
                   {mobileSectionOpen === 'company' && (
-                    <div className="px-4 pb-4 space-y-2 border-t border-[#1E293B] pt-3">
+                    <div className="px-4 pb-4 grid grid-cols-2 gap-1 border-t border-[#1E293B] pt-3">
                       {NAVIGATION_CONFIG.company.items.map((item) => (
                         <a
                           key={item.id}
                           href={item.href}
                           onClick={(e) => handleLinkClick(e, item.href)}
-                          className="block p-2 text-xs font-medium text-[#CBD5E1] hover:text-white rounded hover:bg-[#131D33]"
+                          className="flex items-center justify-between p-2 text-xs font-medium text-[#CBD5E1] hover:text-white rounded hover:bg-[#131D33]"
                         >
-                          {item.label}
+                          <span>{item.label}</span>
+                          {item.badge && (
+                            <Badge variant="mono" size="sm">
+                              {item.badge}
+                            </Badge>
+                          )}
                         </a>
                       ))}
                     </div>

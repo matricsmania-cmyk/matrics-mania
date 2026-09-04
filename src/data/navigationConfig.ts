@@ -391,18 +391,13 @@ export const NAVIGATION_CONFIG: NavigationConfig = {
       href: '/insights/',
     },
     {
-      id: 'process',
-      label: 'Process',
-      href: '/process/',
-    },
-    {
-      id: 'about',
-      label: 'About',
+      id: 'company',
+      label: 'Company',
       href: '/about/',
     },
     {
       id: 'contact',
-      label: 'Contact',
+      label: 'Contant',
       href: '/contact/',
     },
   ],
