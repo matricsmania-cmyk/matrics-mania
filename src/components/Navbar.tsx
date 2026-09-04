@@ -131,7 +131,6 @@ function groupServicesForNavigation(services: Service[]): DynamicNavGroup[] {
       label: s.title,
       href: `/services/${s.slug}/`,
       description: s.shortDescription || s.tagline || undefined,
-      badge: s.serviceCode || undefined,
     };
 
     let matched = false;
@@ -205,7 +204,6 @@ export const Navbar: React.FC<NavbarProps> = ({
       label: ind.title,
       href: `/industries/${ind.slug}/`,
       description: ind.tagline || ind.industryCode || 'Growth Playbook',
-      badge: ind.industryCode || undefined,
     }));
   }, [industries]);
 
@@ -389,16 +387,9 @@ export const Navbar: React.FC<NavbarProps> = ({
                                   onClick={(e) => handleLinkClick(e, item.href)}
                                   className="group block p-2 rounded-lg hover:bg-[#131D33] transition-colors border border-transparent hover:border-[#1E293B]"
                                 >
-                                  <div className="flex items-center justify-between gap-2">
-                                    <span className="text-xs font-semibold text-white group-hover:text-[#60A5FA] transition-colors">
-                                      {item.label}
-                                    </span>
-                                    {item.badge && (
-                                      <Badge variant="mono" size="sm">
-                                        {item.badge}
-                                      </Badge>
-                                    )}
-                                  </div>
+                                  <span className="text-xs font-semibold text-white group-hover:text-[#60A5FA] transition-colors block">
+                                    {item.label}
+                                  </span>
                                   {item.description && (
                                     <p className="text-[11px] text-[#94A3B8] line-clamp-1 mt-0.5">
                                       {item.description}
@@ -475,21 +466,14 @@ export const Navbar: React.FC<NavbarProps> = ({
                             key={item.id}
                             href={item.href}
                             onClick={(e) => handleLinkClick(e, item.href)}
-                            className="group p-2.5 rounded-lg hover:bg-[#131D33] border border-transparent hover:border-[#1E293B] transition-colors flex items-start justify-between gap-2"
+                            className="group p-2.5 rounded-lg hover:bg-[#131D33] border border-transparent hover:border-[#1E293B] transition-colors block"
                           >
-                            <div>
-                              <span className="text-xs font-semibold text-white group-hover:text-[#60A5FA] transition-colors block">
-                                {item.label}
-                              </span>
-                              <span className="text-[10px] text-[#94A3B8] line-clamp-1">
-                                {item.description}
-                              </span>
-                            </div>
-                            {item.badge && (
-                              <Badge variant="metric" size="sm">
-                                {item.badge}
-                              </Badge>
-                            )}
+                            <span className="text-xs font-semibold text-white group-hover:text-[#60A5FA] transition-colors block">
+                              {item.label}
+                            </span>
+                            <span className="text-[10px] text-[#94A3B8] line-clamp-1">
+                              {item.description}
+                            </span>
                           </a>
                         ))}
                         {liveIndustryItems.length === 0 && (

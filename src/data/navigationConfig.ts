@@ -341,7 +341,6 @@ export const NAVIGATION_CONFIG: NavigationConfig = {
         id: 'case-studies',
         label: 'Case Studies',
         href: '/case-studies/',
-        badge: 'Verified',
       },
       {
         id: 'process',
@@ -352,7 +351,6 @@ export const NAVIGATION_CONFIG: NavigationConfig = {
         id: 'careers',
         label: 'Careers',
         href: '/careers/',
-        badge: 'Hiring',
       },
       {
         id: 'faq',
