@@ -11,7 +11,7 @@ interface LocationPageProps {
 }
 
 export const dynamicParams = true;
-export const revalidate = 0;
+export const revalidate = 3600;
 
 export async function generateStaticParams() {
   const locations = await wordPressProvider.asyncGetAllLocations();

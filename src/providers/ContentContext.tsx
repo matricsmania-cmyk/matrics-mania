@@ -96,10 +96,7 @@ export const ContentContextProvider: React.FC<{
     if (typeof window === 'undefined') return;
     setIsSyncing(true);
     try {
-      const res = await fetch('/api/content?refresh=true', {
-        cache: 'no-store',
-        headers: { 'Cache-Control': 'no-cache' },
-      });
+      const res = await fetch('/api/content');
       if (res.ok) {
         const json = await res.json();
         if (json.data) {
@@ -144,33 +141,10 @@ export const ContentContextProvider: React.FC<{
     }
   }, [provider]);
 
-  // Sync on initial mount + auto-polling so newly created items in CMS reflect immediately
+  // Expose global manual refresh function without automatic polling or focus loops
   useEffect(() => {
-    refreshContent();
-
-    // Auto-poll every 20 seconds so items created in CMS appear promptly without manual refresh
-    const interval = setInterval(() => {
-      refreshContent();
-    }, 20000);
-
-    // Auto-sync when switching back to tab after editing in WordPress admin
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible') {
-        refreshContent();
-      }
-    };
-
-    window.addEventListener('visibilitychange', handleVisibilityChange);
-    window.addEventListener('focus', handleVisibilityChange);
-
-    // Expose global trigger for instantaneous manual refresh
+    // Expose global trigger for manual administrative refresh if needed
     (window as any).__refreshWordPressContent = refreshContent;
-
-    return () => {
-      clearInterval(interval);
-      window.removeEventListener('visibilitychange', handleVisibilityChange);
-      window.removeEventListener('focus', handleVisibilityChange);
-    };
   }, [refreshContent]);
 
   const value = useMemo(
