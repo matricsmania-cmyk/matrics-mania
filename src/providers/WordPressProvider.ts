@@ -441,6 +441,15 @@ export class WordPressProvider implements ContentProvider {
         ins.category?.toLowerCase().includes(q)
     );
 
+    if (this.isConfigured()) {
+      return {
+        services: activeServices,
+        industries: activeIndustries,
+        insights: activeInsights,
+        caseStudies: activeCaseStudies,
+      };
+    }
+
     const mockResults = this.fallbackProvider.searchContent(query);
     return {
       services: activeServices.length > 0 ? activeServices : mockResults.services,
@@ -627,7 +636,7 @@ export class WordPressProvider implements ContentProvider {
     if (this.isConfigured()) {
       try {
         const raw = await this.fetchFromWordPress<RawWpServicePost[]>('services?_embed=true&per_page=100');
-        if (raw && Array.isArray(raw) && raw.length > 0) {
+        if (raw && Array.isArray(raw)) {
           const services = raw.map((post) => normalizeWpService(post));
           this.servicesCache = services;
           this.cacheExpiry['services'] = Date.now() + this.CACHE_TTL_MS;
@@ -635,12 +644,9 @@ export class WordPressProvider implements ContentProvider {
           return services;
         }
       } catch {
-        // Fallback to local provider on network interruption
+        // Fallback to in-memory cache if available
       }
-      if (this.servicesCache && this.servicesCache.length > 0) {
-        return this.servicesCache;
-      }
-      return this.fallbackProvider.getAllServices();
+      return this.servicesCache || [];
     }
     return this.getAllServices();
   }
@@ -682,7 +688,7 @@ export class WordPressProvider implements ContentProvider {
     if (this.isConfigured()) {
       try {
         const raw = await this.fetchFromWordPress<RawWpIndustryPost[]>('industries?_embed=true&per_page=100');
-        if (raw && Array.isArray(raw) && raw.length > 0) {
+        if (raw && Array.isArray(raw)) {
           const industries = raw.map((post) => normalizeWpIndustry(post));
           this.industriesCache = industries;
           this.cacheExpiry['industries'] = Date.now() + this.CACHE_TTL_MS;
@@ -690,12 +696,9 @@ export class WordPressProvider implements ContentProvider {
           return industries;
         }
       } catch {
-        // Fallback to local provider on network interruption
+        // Fallback to in-memory cache if available
       }
-      if (this.industriesCache && this.industriesCache.length > 0) {
-        return this.industriesCache;
-      }
-      return this.fallbackProvider.getAllIndustries();
+      return this.industriesCache || [];
     }
     return this.getAllIndustries();
   }
@@ -737,7 +740,7 @@ export class WordPressProvider implements ContentProvider {
     if (this.isConfigured()) {
       try {
         const raw = await this.fetchFromWordPress<RawWpLocationPost[]>('locations?_embed=true&per_page=100');
-        if (raw && Array.isArray(raw) && raw.length > 0) {
+        if (raw && Array.isArray(raw)) {
           const locations = raw.map((post) => normalizeWpLocation(post));
           this.locationsCache = locations;
           this.cacheExpiry['locations'] = Date.now() + this.CACHE_TTL_MS;
@@ -745,12 +748,9 @@ export class WordPressProvider implements ContentProvider {
           return locations;
         }
       } catch {
-        // Fallback to local provider on network interruption
+        // Fallback to in-memory cache if available
       }
-      if (this.locationsCache && this.locationsCache.length > 0) {
-        return this.locationsCache;
-      }
-      return this.fallbackProvider.getAllLocations();
+      return this.locationsCache || [];
     }
     return this.getAllLocations();
   }
@@ -812,7 +812,7 @@ export class WordPressProvider implements ContentProvider {
         } else if (Array.isArray(raw)) {
           this.workingCaseStudyEndpoint = endpoint;
         }
-        if (raw && Array.isArray(raw) && raw.length > 0) {
+        if (raw && Array.isArray(raw)) {
           const caseStudies = raw.map((post) => normalizeWpCaseStudy(post));
           this.caseStudiesCache = caseStudies;
           this.cacheExpiry['case_studies'] = Date.now() + this.CACHE_TTL_MS;
@@ -820,12 +820,9 @@ export class WordPressProvider implements ContentProvider {
           return caseStudies;
         }
       } catch {
-        // Fallback to local provider on network interruption
+        // Fallback to in-memory cache if available
       }
-      if (this.caseStudiesCache && this.caseStudiesCache.length > 0) {
-        return this.caseStudiesCache;
-      }
-      return this.fallbackProvider.getAllCaseStudies();
+      return this.caseStudiesCache || [];
     }
     return this.getAllCaseStudies();
   }
@@ -867,7 +864,7 @@ export class WordPressProvider implements ContentProvider {
     if (this.isConfigured()) {
       try {
         const raw = await this.fetchFromWordPress<RawWpInsightPost[]>('posts?_embed=true&per_page=100');
-        if (raw && Array.isArray(raw) && raw.length > 0) {
+        if (raw && Array.isArray(raw)) {
           const insights = raw.map((post) => normalizeWpInsight(post));
           this.insightsCache = insights;
           this.cacheExpiry['insights'] = Date.now() + this.CACHE_TTL_MS;
@@ -875,12 +872,9 @@ export class WordPressProvider implements ContentProvider {
           return insights;
         }
       } catch {
-        // Fallback to local provider on network interruption
+        // Fallback to in-memory cache if available
       }
-      if (this.insightsCache && this.insightsCache.length > 0) {
-        return this.insightsCache;
-      }
-      return this.fallbackProvider.getAllInsights();
+      return this.insightsCache || [];
     }
     return this.getAllInsights();
   }
@@ -922,7 +916,7 @@ export class WordPressProvider implements ContentProvider {
     if (this.isConfigured()) {
       try {
         const raw = await this.fetchFromWordPress<RawWpBasePost[]>('pages?_embed=true&per_page=100');
-        if (raw && Array.isArray(raw) && raw.length > 0) {
+        if (raw && Array.isArray(raw)) {
           const pages = raw.map((post) => normalizeWpPage(post));
           this.pagesCache = pages;
           this.cacheExpiry['pages'] = Date.now() + this.CACHE_TTL_MS;
@@ -930,12 +924,9 @@ export class WordPressProvider implements ContentProvider {
           return pages;
         }
       } catch {
-        // Fallback to local provider on network interruption
+        // Fallback to in-memory cache if available
       }
-      if (this.pagesCache && this.pagesCache.length > 0) {
-        return this.pagesCache;
-      }
-      return this.fallbackProvider.getAllPages();
+      return this.pagesCache || [];
     }
     return this.getAllPages();
   }

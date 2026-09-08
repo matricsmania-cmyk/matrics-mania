@@ -68,4 +68,7 @@ export interface ContentProvider {
     insights: Insight[];
     caseStudies: CaseStudy[];
   };
+
+  // Environment & Configuration Check
+  isConfigured?(): boolean;
 }

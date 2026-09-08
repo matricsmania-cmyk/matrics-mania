@@ -11,6 +11,7 @@ import {
   Navigation,
   ContactInformation,
   WorkProject,
+  createMediaFromUrl,
 } from '../models';
 import { ContentProvider } from './ContentProvider';
 
@@ -123,8 +124,89 @@ export const MOCK_CONTACT_INFO: ContactInformation = {
 };
 
 export const MOCK_AUTHORS: Author[] = [];
-export const MOCK_SERVICES: Service[] = [];
-export const MOCK_INDUSTRIES: Industry[] = [];
+export const MOCK_SERVICES: Service[] = [
+  {
+    id: 1,
+    slug: 'technical-seo',
+    title: 'Technical SEO',
+    status: 'published',
+    publishedAt: '2025-01-01T00:00:00Z',
+    updatedAt: '2025-01-01T00:00:00Z',
+    featuredImage: createMediaFromUrl('/og.png', 'Technical SEO'),
+    content: '<p>Technical SEO</p>',
+    excerpt: 'Technical SEO',
+    seo: {
+      seoTitle: 'Technical SEO | MatricsMania',
+      metaDescription: 'Technical SEO description',
+      canonicalUrl: 'https://matricsmania.com/services/technical-seo/',
+      ogTitle: 'Technical SEO',
+      ogDescription: 'Technical SEO',
+      ogImage: 'https://matricsmania.com/og.png',
+      twitterTitle: 'Technical SEO',
+      twitterDescription: 'Technical SEO',
+      twitterImage: 'https://matricsmania.com/og.png',
+      robotsIndex: true,
+      robotsFollow: true,
+    },
+    serviceCode: 'SRV-SEO-01',
+    category: 'Search & Organic Architecture',
+    categorySlug: 'search-organic',
+    iconName: 'Search',
+    shortDescription: 'Technical SEO',
+    tagline: 'Technical SEO Tagline',
+    deliverablesSummary: [],
+    metrics: [],
+    processPhases: [],
+    deliverableList: [],
+    toolchain: [],
+    recommendedFor: [],
+    relationships: {
+      industries: [],
+      caseStudies: [],
+      insights: [],
+    },
+  },
+];
+export const MOCK_INDUSTRIES: Industry[] = [
+  {
+    id: 1,
+    slug: 'healthcare',
+    title: 'Healthcare',
+    status: 'published',
+    publishedAt: '2025-01-01T00:00:00Z',
+    updatedAt: '2025-01-01T00:00:00Z',
+    featuredImage: createMediaFromUrl('/og.png', 'Healthcare'),
+    content: '<p>Healthcare</p>',
+    excerpt: 'Healthcare',
+    seo: {
+      seoTitle: 'Healthcare | MatricsMania',
+      metaDescription: 'Healthcare description',
+      canonicalUrl: 'https://matricsmania.com/industries/healthcare/',
+      ogTitle: 'Healthcare',
+      ogDescription: 'Healthcare',
+      ogImage: 'https://matricsmania.com/og.png',
+      twitterTitle: 'Healthcare',
+      twitterDescription: 'Healthcare',
+      twitterImage: 'https://matricsmania.com/og.png',
+      robotsIndex: true,
+      robotsFollow: true,
+    },
+    industryCode: 'IND-HLTH-01',
+    tagline: 'Healthcare Tagline',
+    marketSummary: 'Healthcare Market Summary',
+    challenges: [],
+    benchmarks: [],
+    playbookPillars: [],
+    complianceStandards: [],
+    typicalSalesCycle: '6 months',
+    averageACV: '$100k',
+    relationships: {
+      services: [],
+      caseStudies: [],
+      insights: [],
+    },
+  },
+];
 export const MOCK_LOCATIONS: Location[] = [];
 export const MOCK_INSIGHTS: Insight[] = [];
 export const MOCK_CASE_STUDIES: CaseStudy[] = [];
@@ -229,6 +311,10 @@ export class MockDataProvider implements ContentProvider {
 
   getContactInformation(): ContactInformation {
     return MOCK_CONTACT_INFO;
+  }
+
+  isConfigured(): boolean {
+    return false;
   }
 
   searchContent(query: string) {

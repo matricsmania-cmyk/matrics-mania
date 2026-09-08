@@ -46,7 +46,7 @@ export const CoreServicesSection: React.FC<CoreServicesSectionProps> = ({
             onClick={() => handleNav('/services/')}
             className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[#60A5FA] hover:text-white transition-colors group cursor-pointer"
           >
-            <span>View All 5 Services</span>
+            <span>View All Services</span>
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </button>
         </ScrollReveal>

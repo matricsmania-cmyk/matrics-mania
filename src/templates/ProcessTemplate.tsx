@@ -38,9 +38,7 @@ export const ProcessTemplate: React.FC<ProcessTemplateProps> = ({
   const router = useRouter();
   const onNavigate = propNavigate;
   const onOpenBooking = propBooking;
-  const provider = useContentProvider();
-  const service = provider.getServiceBySlug('technical-seo');
-  const phases = propPhases || service?.processPhases || [
+  const phases = propPhases || [
     {
       step: '01',
       title: 'Telemetry Diagnostic & Crawl Forensics',

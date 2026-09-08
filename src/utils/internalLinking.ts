@@ -96,8 +96,8 @@ export function resolveEntityRef(
     }
   }
 
-  // If passed an EntityRef object whose URL is already explicitly set and non-empty, keep it if title exists
-  if (typeof item === 'object' && item.title && item.url) {
+  // If provider is not configured (offline mode), fallback to object properties if provided
+  if (!provider.isConfigured() && typeof item === 'object' && item.title && item.url) {
     return {
       id: item.id || cleanSlug,
       slug: item.slug || cleanSlug,

@@ -9,7 +9,9 @@
     "start": "node server.ts",
     "clean": "rm -rf dist server.js",
     "lint": "tsc --noEmit",
-    "test:contract": "tsx src/tests/cmsContractTest.ts"
+    "test:contract": "tsx src/tests/cmsContractTest.ts",
+    "test:acceptance": "tsx src/tests/productionAcceptanceTest.ts",
+    "test": "tsx src/tests/cmsContractTest.ts && tsx src/tests/productionAcceptanceTest.ts"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",

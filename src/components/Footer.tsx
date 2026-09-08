@@ -33,7 +33,7 @@ export const Footer: React.FC<FooterProps> = ({
   onOpenBooking,
   onShowToast,
 }) => {
-  const { services, industries, insights } = useContent();
+  const { services, industries, locations, insights } = useContent();
 
   const footerSolutions = useMemo(() => {
     if (services && services.length > 0) {
@@ -62,6 +62,20 @@ export const Footer: React.FC<FooterProps> = ({
     }
     return [{ id: 'f-all-industries', label: 'View All Industry Playbooks →', href: '/industries/' }];
   }, [industries]);
+
+  const footerLocations = useMemo(() => {
+    if (locations && locations.length > 0) {
+      return [
+        ...locations.map((loc) => ({
+          id: `f-${loc.slug}`,
+          label: `${loc.city} Hub (${loc.countryCode || loc.country})`,
+          href: `/locations/${loc.slug}/`,
+        })),
+        { id: 'f-all-locations', label: 'Global Operations Network →', href: '/locations/' },
+      ];
+    }
+    return [{ id: 'f-all-locations', label: 'Global Operations Network →', href: '/locations/' }];
+  }, [locations]);
 
   const footerInsights = useMemo(() => {
     if (insights && insights.length > 0) {
@@ -239,7 +253,7 @@ export const Footer: React.FC<FooterProps> = ({
               Regional Hubs
             </h4>
             <ul className="space-y-2 text-xs">
-              {NAVIGATION_CONFIG.footer.hubs.map((item) => (
+              {footerLocations.map((item) => (
                 <li key={item.id}>
                   <a
                     href={item.href}

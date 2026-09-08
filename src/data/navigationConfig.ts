@@ -428,9 +428,6 @@ export const NAVIGATION_CONFIG: NavigationConfig = {
       { id: 'f-all-insights', label: 'All Research & Whitepapers →', href: '/insights/' },
     ],
     hubs: [
-      { id: 'f-bangalore', label: 'Bangalore Headquarters (HQ)', href: '/locations/bangalore/' },
-      { id: 'f-london', label: 'London EMEA Operations', href: '/locations/' },
-      { id: 'f-sf', label: 'San Francisco US Innovation Hub', href: '/locations/' },
       { id: 'f-all-locations', label: 'Global Operations Network →', href: '/locations/' },
     ],
     company: [
@@ -443,11 +440,10 @@ export const NAVIGATION_CONFIG: NavigationConfig = {
       { id: 'f-contact', label: 'Contact Growth Engineers', href: '/contact/' },
     ],
     legal: [
-      { id: 'f-privacy', label: 'Privacy Policy', href: '/faq/' },
-      { id: 'f-terms', label: 'Terms of Engagement', href: '/faq/' },
-      { id: 'f-security', label: 'Enterprise Security & Compliance', href: '/faq/' },
-      { id: 'f-cookies', label: 'Cookie Preferences', href: '/faq/' },
-      { id: 'f-sitemap', label: 'XML Sitemap Index', href: '/services/' },
+      { id: 'f-privacy', label: 'Privacy Policy', href: '/privacy/' },
+      { id: 'f-terms', label: 'Terms of Engagement', href: '/terms/' },
+      { id: 'f-security', label: 'Enterprise Security & Compliance', href: '/contact/' },
+      { id: 'f-sitemap', label: 'XML Sitemap Index', href: '/sitemap.xml' },
     ],
   },
 };
