@@ -87,8 +87,8 @@ export class WordPressProvider implements ContentProvider {
   // In-flight request deduplication
   private inFlightRequests: Map<string, Promise<any>> = new Map();
 
-  // Cache TTL: 1 hour (3600 seconds)
-  private readonly CACHE_TTL_MS = 3600 * 1000;
+  // Cache TTL: 300 seconds (5 minutes) safety net
+  private readonly CACHE_TTL_MS = 300 * 1000;
   private cacheExpiry: { [key: string]: number } = {};
 
   // In-memory Caches
@@ -143,35 +143,50 @@ export class WordPressProvider implements ContentProvider {
     this.servicesCache = services;
     this.cacheExpiry['services'] = Date.now() + this.CACHE_TTL_MS;
     this.serviceMap.clear();
-    services.forEach((s) => this.serviceMap.set(s.slug, s));
+    services.forEach((s) => {
+      this.serviceMap.set(s.slug, s);
+      this.cacheExpiry[`service:${s.slug}`] = Date.now() + this.CACHE_TTL_MS;
+    });
   }
 
   public setIndustriesCache(industries: Industry[]): void {
     this.industriesCache = industries;
     this.cacheExpiry['industries'] = Date.now() + this.CACHE_TTL_MS;
     this.industryMap.clear();
-    industries.forEach((i) => this.industryMap.set(i.slug, i));
+    industries.forEach((i) => {
+      this.industryMap.set(i.slug, i);
+      this.cacheExpiry[`industry:${i.slug}`] = Date.now() + this.CACHE_TTL_MS;
+    });
   }
 
   public setLocationsCache(locations: Location[]): void {
     this.locationsCache = locations;
     this.cacheExpiry['locations'] = Date.now() + this.CACHE_TTL_MS;
     this.locationMap.clear();
-    locations.forEach((l) => this.locationMap.set(l.slug, l));
+    locations.forEach((l) => {
+      this.locationMap.set(l.slug, l);
+      this.cacheExpiry[`location:${l.slug}`] = Date.now() + this.CACHE_TTL_MS;
+    });
   }
 
   public setCaseStudiesCache(caseStudies: CaseStudy[]): void {
     this.caseStudiesCache = caseStudies;
     this.cacheExpiry['case_studies'] = Date.now() + this.CACHE_TTL_MS;
     this.caseStudyMap.clear();
-    caseStudies.forEach((c) => this.caseStudyMap.set(c.slug, c));
+    caseStudies.forEach((c) => {
+      this.caseStudyMap.set(c.slug, c);
+      this.cacheExpiry[`case_study:${c.slug}`] = Date.now() + this.CACHE_TTL_MS;
+    });
   }
 
   public setInsightsCache(insights: Insight[]): void {
     this.insightsCache = insights;
     this.cacheExpiry['insights'] = Date.now() + this.CACHE_TTL_MS;
     this.insightMap.clear();
-    insights.forEach((ins) => this.insightMap.set(ins.slug, ins));
+    insights.forEach((ins) => {
+      this.insightMap.set(ins.slug, ins);
+      this.cacheExpiry[`insight:${ins.slug}`] = Date.now() + this.CACHE_TTL_MS;
+    });
   }
 
   public getServicesCache(): Service[] | null {
@@ -192,6 +207,72 @@ export class WordPressProvider implements ContentProvider {
 
   public getInsightsCache(): Insight[] | null {
     return this.insightsCache;
+  }
+
+  /**
+   * Granularly invalidates a specific entity or content type
+   */
+  public invalidateEntity(postType: string, slug?: string): void {
+    const cleanType = (postType || '').toLowerCase();
+    const cleanSlug = slug ? slug.toLowerCase().trim() : undefined;
+
+    if (cleanType.includes('service')) {
+      this.servicesCache = null;
+      delete this.cacheExpiry['services'];
+      if (cleanSlug) {
+        this.serviceMap.delete(cleanSlug);
+        delete this.cacheExpiry[`service:${cleanSlug}`];
+      } else {
+        this.serviceMap.clear();
+      }
+    } else if (cleanType.includes('industr')) {
+      this.industriesCache = null;
+      delete this.cacheExpiry['industries'];
+      if (cleanSlug) {
+        this.industryMap.delete(cleanSlug);
+        delete this.cacheExpiry[`industry:${cleanSlug}`];
+      } else {
+        this.industryMap.clear();
+      }
+    } else if (cleanType.includes('location')) {
+      this.locationsCache = null;
+      delete this.cacheExpiry['locations'];
+      if (cleanSlug) {
+        this.locationMap.delete(cleanSlug);
+        delete this.cacheExpiry[`location:${cleanSlug}`];
+      } else {
+        this.locationMap.clear();
+      }
+    } else if (cleanType.includes('case') || cleanType.includes('stud')) {
+      this.caseStudiesCache = null;
+      delete this.cacheExpiry['case_studies'];
+      if (cleanSlug) {
+        this.caseStudyMap.delete(cleanSlug);
+        delete this.cacheExpiry[`case_study:${cleanSlug}`];
+      } else {
+        this.caseStudyMap.clear();
+      }
+    } else if (cleanType.includes('post') || cleanType.includes('insight')) {
+      this.insightsCache = null;
+      delete this.cacheExpiry['insights'];
+      if (cleanSlug) {
+        this.insightMap.delete(cleanSlug);
+        delete this.cacheExpiry[`insight:${cleanSlug}`];
+      } else {
+        this.insightMap.clear();
+      }
+    } else if (cleanType.includes('page')) {
+      this.pagesCache = null;
+      delete this.cacheExpiry['pages'];
+      if (cleanSlug) {
+        this.pageMap.delete(cleanSlug);
+        delete this.cacheExpiry[`page:${cleanSlug}`];
+      } else {
+        this.pageMap.clear();
+      }
+    } else {
+      this.clearCache();
+    }
   }
 
   /**
@@ -510,7 +591,15 @@ export class WordPressProvider implements ContentProvider {
     const userAgent =
       'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
     let currentUrl = targetUrl;
-    const tag = `wp-${cleanEndpoint.split('?')[0].replace(/[^a-zA-Z0-9_-]/g, '_')}`;
+    const baseEndpoint = cleanEndpoint.split('?')[0].replace(/[^a-zA-Z0-9_-]/g, '_');
+    const tags: string[] = ['wordpress', `wp-${baseEndpoint}`];
+
+    // Granular entity tag extraction
+    const slugMatch = cleanEndpoint.match(/slug=([^&]+)/);
+    if (slugMatch && slugMatch[1]) {
+      const slugVal = decodeURIComponent(slugMatch[1]).toLowerCase();
+      tags.push(`wp-${baseEndpoint}:${slugVal}`);
+    }
 
     for (let attempt = 0; attempt < 2; attempt++) {
       const headers: Record<string, string> = {
@@ -527,11 +616,11 @@ export class WordPressProvider implements ContentProvider {
           signal: AbortSignal.timeout(10000), // 10-second timeout to prevent hung PHP workers
         };
 
-        // On server-side Next.js, leverage Next.js Data Cache (ISR)
+        // On server-side Next.js, leverage Next.js Data Cache (ISR) with 300-second safety net
         if (typeof window === 'undefined') {
           (fetchOptions as any).next = {
-            revalidate: 3600, // Cache for 1 hour
-            tags: ['wordpress', tag],
+            revalidate: 300, // 300-second (5 minute) safety net
+            tags,
           };
         }
 
@@ -599,15 +688,17 @@ export class WordPressProvider implements ContentProvider {
   // --- ASYNC SERVICES ---
   async asyncGetServiceBySlug(slug: string): Promise<Service | null> {
     if (!slug) return null;
-    // 1. Check direct map
-    if (this.serviceMap.has(slug)) {
-      return this.serviceMap.get(slug)!;
+    const cleanSlug = slug.toLowerCase().trim();
+    // 1. Check direct map with TTL validity
+    if (this.serviceMap.has(cleanSlug) && this.isCacheValid(`service:${cleanSlug}`)) {
+      return this.serviceMap.get(cleanSlug)!;
     }
-    // 2. Check collection cache
-    if (this.servicesCache && this.servicesCache.length > 0) {
-      const found = this.servicesCache.find((s) => s.slug === slug);
+    // 2. Check collection cache with TTL validity
+    if (this.servicesCache && this.servicesCache.length > 0 && this.isCacheValid('services')) {
+      const found = this.servicesCache.find((s) => s.slug === cleanSlug);
       if (found) {
-        this.serviceMap.set(slug, found);
+        this.serviceMap.set(cleanSlug, found);
+        this.cacheExpiry[`service:${cleanSlug}`] = Date.now() + this.CACHE_TTL_MS;
         return found;
       }
     }
@@ -615,18 +706,19 @@ export class WordPressProvider implements ContentProvider {
     if (this.isConfigured()) {
       try {
         const raw = await this.fetchFromWordPress<RawWpServicePost[]>(
-          `services?slug=${encodeURIComponent(slug)}&_embed=true`
+          `services?slug=${encodeURIComponent(cleanSlug)}&_embed=true`
         );
         if (raw && Array.isArray(raw) && raw.length > 0 && raw[0]) {
           const service = normalizeWpService(raw[0]);
           this.serviceMap.set(service.slug, service);
+          this.cacheExpiry[`service:${service.slug}`] = Date.now() + this.CACHE_TTL_MS;
           return service;
         }
       } catch {
         // Fallback to local provider on network interruption
       }
     }
-    return this.getServiceBySlug(slug);
+    return this.getServiceBySlug(cleanSlug);
   }
 
   async asyncGetAllServices(): Promise<Service[]> {
@@ -640,7 +732,10 @@ export class WordPressProvider implements ContentProvider {
           const services = raw.map((post) => normalizeWpService(post));
           this.servicesCache = services;
           this.cacheExpiry['services'] = Date.now() + this.CACHE_TTL_MS;
-          services.forEach((s) => this.serviceMap.set(s.slug, s));
+          services.forEach((s) => {
+            this.serviceMap.set(s.slug, s);
+            this.cacheExpiry[`service:${s.slug}`] = Date.now() + this.CACHE_TTL_MS;
+          });
           return services;
         }
       } catch {
@@ -654,31 +749,34 @@ export class WordPressProvider implements ContentProvider {
   // --- ASYNC INDUSTRIES ---
   async asyncGetIndustryBySlug(slug: string): Promise<Industry | null> {
     if (!slug) return null;
-    if (this.industryMap.has(slug)) {
-      return this.industryMap.get(slug)!;
+    const cleanSlug = slug.toLowerCase().trim();
+    if (this.industryMap.has(cleanSlug) && this.isCacheValid(`industry:${cleanSlug}`)) {
+      return this.industryMap.get(cleanSlug)!;
     }
-    if (this.industriesCache && this.industriesCache.length > 0) {
-      const found = this.industriesCache.find((i) => i.slug === slug);
+    if (this.industriesCache && this.industriesCache.length > 0 && this.isCacheValid('industries')) {
+      const found = this.industriesCache.find((i) => i.slug === cleanSlug);
       if (found) {
-        this.industryMap.set(slug, found);
+        this.industryMap.set(cleanSlug, found);
+        this.cacheExpiry[`industry:${cleanSlug}`] = Date.now() + this.CACHE_TTL_MS;
         return found;
       }
     }
     if (this.isConfigured()) {
       try {
         const raw = await this.fetchFromWordPress<RawWpIndustryPost[]>(
-          `industries?slug=${encodeURIComponent(slug)}&_embed=true`
+          `industries?slug=${encodeURIComponent(cleanSlug)}&_embed=true`
         );
         if (raw && Array.isArray(raw) && raw.length > 0 && raw[0]) {
           const industry = normalizeWpIndustry(raw[0]);
           this.industryMap.set(industry.slug, industry);
+          this.cacheExpiry[`industry:${industry.slug}`] = Date.now() + this.CACHE_TTL_MS;
           return industry;
         }
       } catch {
         // Fallback to local provider on network interruption
       }
     }
-    return this.getIndustryBySlug(slug);
+    return this.getIndustryBySlug(cleanSlug);
   }
 
   async asyncGetAllIndustries(): Promise<Industry[]> {
@@ -692,7 +790,10 @@ export class WordPressProvider implements ContentProvider {
           const industries = raw.map((post) => normalizeWpIndustry(post));
           this.industriesCache = industries;
           this.cacheExpiry['industries'] = Date.now() + this.CACHE_TTL_MS;
-          industries.forEach((i) => this.industryMap.set(i.slug, i));
+          industries.forEach((i) => {
+            this.industryMap.set(i.slug, i);
+            this.cacheExpiry[`industry:${i.slug}`] = Date.now() + this.CACHE_TTL_MS;
+          });
           return industries;
         }
       } catch {
@@ -706,31 +807,34 @@ export class WordPressProvider implements ContentProvider {
   // --- ASYNC LOCATIONS ---
   async asyncGetLocationBySlug(slug: string): Promise<Location | null> {
     if (!slug) return null;
-    if (this.locationMap.has(slug)) {
-      return this.locationMap.get(slug)!;
+    const cleanSlug = slug.toLowerCase().trim();
+    if (this.locationMap.has(cleanSlug) && this.isCacheValid(`location:${cleanSlug}`)) {
+      return this.locationMap.get(cleanSlug)!;
     }
-    if (this.locationsCache && this.locationsCache.length > 0) {
-      const found = this.locationsCache.find((l) => l.slug === slug);
+    if (this.locationsCache && this.locationsCache.length > 0 && this.isCacheValid('locations')) {
+      const found = this.locationsCache.find((l) => l.slug === cleanSlug);
       if (found) {
-        this.locationMap.set(slug, found);
+        this.locationMap.set(cleanSlug, found);
+        this.cacheExpiry[`location:${cleanSlug}`] = Date.now() + this.CACHE_TTL_MS;
         return found;
       }
     }
     if (this.isConfigured()) {
       try {
         const raw = await this.fetchFromWordPress<RawWpLocationPost[]>(
-          `locations?slug=${encodeURIComponent(slug)}&_embed=true`
+          `locations?slug=${encodeURIComponent(cleanSlug)}&_embed=true`
         );
         if (raw && Array.isArray(raw) && raw.length > 0 && raw[0]) {
           const location = normalizeWpLocation(raw[0]);
           this.locationMap.set(location.slug, location);
+          this.cacheExpiry[`location:${location.slug}`] = Date.now() + this.CACHE_TTL_MS;
           return location;
         }
       } catch {
         // Fallback to local provider on network interruption
       }
     }
-    return this.getLocationBySlug(slug);
+    return this.getLocationBySlug(cleanSlug);
   }
 
   async asyncGetAllLocations(): Promise<Location[]> {
@@ -744,7 +848,10 @@ export class WordPressProvider implements ContentProvider {
           const locations = raw.map((post) => normalizeWpLocation(post));
           this.locationsCache = locations;
           this.cacheExpiry['locations'] = Date.now() + this.CACHE_TTL_MS;
-          locations.forEach((l) => this.locationMap.set(l.slug, l));
+          locations.forEach((l) => {
+            this.locationMap.set(l.slug, l);
+            this.cacheExpiry[`location:${l.slug}`] = Date.now() + this.CACHE_TTL_MS;
+          });
           return locations;
         }
       } catch {
@@ -758,13 +865,15 @@ export class WordPressProvider implements ContentProvider {
   // --- ASYNC CASE STUDIES ---
   async asyncGetCaseStudyBySlug(slug: string): Promise<CaseStudy | null> {
     if (!slug) return null;
-    if (this.caseStudyMap.has(slug)) {
-      return this.caseStudyMap.get(slug)!;
+    const cleanSlug = slug.toLowerCase().trim();
+    if (this.caseStudyMap.has(cleanSlug) && this.isCacheValid(`case_study:${cleanSlug}`)) {
+      return this.caseStudyMap.get(cleanSlug)!;
     }
-    if (this.caseStudiesCache && this.caseStudiesCache.length > 0) {
-      const found = this.caseStudiesCache.find((c) => c.slug === slug);
+    if (this.caseStudiesCache && this.caseStudiesCache.length > 0 && this.isCacheValid('case_studies')) {
+      const found = this.caseStudiesCache.find((c) => c.slug === cleanSlug);
       if (found) {
-        this.caseStudyMap.set(slug, found);
+        this.caseStudyMap.set(cleanSlug, found);
+        this.cacheExpiry[`case_study:${cleanSlug}`] = Date.now() + this.CACHE_TTL_MS;
         return found;
       }
     }
@@ -772,11 +881,11 @@ export class WordPressProvider implements ContentProvider {
       try {
         const endpoint = this.workingCaseStudyEndpoint || 'case_studies';
         let raw = await this.fetchFromWordPress<RawWpCaseStudyPost[]>(
-          `${endpoint}?slug=${encodeURIComponent(slug)}&_embed=true`
+          `${endpoint}?slug=${encodeURIComponent(cleanSlug)}&_embed=true`
         );
         if (!Array.isArray(raw) && !this.workingCaseStudyEndpoint) {
           raw = await this.fetchFromWordPress<RawWpCaseStudyPost[]>(
-            `case-studies?slug=${encodeURIComponent(slug)}&_embed=true`
+            `case-studies?slug=${encodeURIComponent(cleanSlug)}&_embed=true`
           );
           if (Array.isArray(raw)) {
             this.workingCaseStudyEndpoint = 'case-studies';
@@ -787,13 +896,14 @@ export class WordPressProvider implements ContentProvider {
         if (raw && Array.isArray(raw) && raw.length > 0 && raw[0]) {
           const caseStudy = normalizeWpCaseStudy(raw[0]);
           this.caseStudyMap.set(caseStudy.slug, caseStudy);
+          this.cacheExpiry[`case_study:${caseStudy.slug}`] = Date.now() + this.CACHE_TTL_MS;
           return caseStudy;
         }
       } catch {
         // Fallback to local provider on network interruption
       }
     }
-    return this.getCaseStudyBySlug(slug);
+    return this.getCaseStudyBySlug(cleanSlug);
   }
 
   async asyncGetAllCaseStudies(): Promise<CaseStudy[]> {
@@ -816,7 +926,10 @@ export class WordPressProvider implements ContentProvider {
           const caseStudies = raw.map((post) => normalizeWpCaseStudy(post));
           this.caseStudiesCache = caseStudies;
           this.cacheExpiry['case_studies'] = Date.now() + this.CACHE_TTL_MS;
-          caseStudies.forEach((c) => this.caseStudyMap.set(c.slug, c));
+          caseStudies.forEach((c) => {
+            this.caseStudyMap.set(c.slug, c);
+            this.cacheExpiry[`case_study:${c.slug}`] = Date.now() + this.CACHE_TTL_MS;
+          });
           return caseStudies;
         }
       } catch {
@@ -830,31 +943,34 @@ export class WordPressProvider implements ContentProvider {
   // --- ASYNC INSIGHTS ---
   async asyncGetInsightBySlug(slug: string): Promise<Insight | null> {
     if (!slug) return null;
-    if (this.insightMap.has(slug)) {
-      return this.insightMap.get(slug)!;
+    const cleanSlug = slug.toLowerCase().trim();
+    if (this.insightMap.has(cleanSlug) && this.isCacheValid(`insight:${cleanSlug}`)) {
+      return this.insightMap.get(cleanSlug)!;
     }
-    if (this.insightsCache && this.insightsCache.length > 0) {
-      const found = this.insightsCache.find((ins) => ins.slug === slug);
+    if (this.insightsCache && this.insightsCache.length > 0 && this.isCacheValid('insights')) {
+      const found = this.insightsCache.find((ins) => ins.slug === cleanSlug);
       if (found) {
-        this.insightMap.set(slug, found);
+        this.insightMap.set(cleanSlug, found);
+        this.cacheExpiry[`insight:${cleanSlug}`] = Date.now() + this.CACHE_TTL_MS;
         return found;
       }
     }
     if (this.isConfigured()) {
       try {
         const raw = await this.fetchFromWordPress<RawWpInsightPost[]>(
-          `posts?slug=${encodeURIComponent(slug)}&_embed=true`
+          `posts?slug=${encodeURIComponent(cleanSlug)}&_embed=true`
         );
         if (raw && Array.isArray(raw) && raw.length > 0 && raw[0]) {
           const insight = normalizeWpInsight(raw[0]);
           this.insightMap.set(insight.slug, insight);
+          this.cacheExpiry[`insight:${insight.slug}`] = Date.now() + this.CACHE_TTL_MS;
           return insight;
         }
       } catch {
         // Fallback to local provider on network interruption
       }
     }
-    return this.getInsightBySlug(slug);
+    return this.getInsightBySlug(cleanSlug);
   }
 
   async asyncGetAllInsights(): Promise<Insight[]> {
@@ -868,7 +984,10 @@ export class WordPressProvider implements ContentProvider {
           const insights = raw.map((post) => normalizeWpInsight(post));
           this.insightsCache = insights;
           this.cacheExpiry['insights'] = Date.now() + this.CACHE_TTL_MS;
-          insights.forEach((ins) => this.insightMap.set(ins.slug, ins));
+          insights.forEach((ins) => {
+            this.insightMap.set(ins.slug, ins);
+            this.cacheExpiry[`insight:${ins.slug}`] = Date.now() + this.CACHE_TTL_MS;
+          });
           return insights;
         }
       } catch {
@@ -882,31 +1001,34 @@ export class WordPressProvider implements ContentProvider {
   // --- ASYNC PAGES ---
   async asyncGetPageBySlug(slug: string): Promise<Page | null> {
     if (!slug) return null;
-    if (this.pageMap.has(slug)) {
-      return this.pageMap.get(slug)!;
+    const cleanSlug = slug.toLowerCase().trim();
+    if (this.pageMap.has(cleanSlug) && this.isCacheValid(`page:${cleanSlug}`)) {
+      return this.pageMap.get(cleanSlug)!;
     }
-    if (this.pagesCache && this.pagesCache.length > 0) {
-      const found = this.pagesCache.find((p) => p.slug === slug);
+    if (this.pagesCache && this.pagesCache.length > 0 && this.isCacheValid('pages')) {
+      const found = this.pagesCache.find((p) => p.slug === cleanSlug);
       if (found) {
-        this.pageMap.set(slug, found);
+        this.pageMap.set(cleanSlug, found);
+        this.cacheExpiry[`page:${cleanSlug}`] = Date.now() + this.CACHE_TTL_MS;
         return found;
       }
     }
     if (this.isConfigured()) {
       try {
         const raw = await this.fetchFromWordPress<RawWpBasePost[]>(
-          `pages?slug=${encodeURIComponent(slug)}&_embed=true`
+          `pages?slug=${encodeURIComponent(cleanSlug)}&_embed=true`
         );
         if (raw && Array.isArray(raw) && raw.length > 0 && raw[0]) {
           const page = normalizeWpPage(raw[0]);
           this.pageMap.set(page.slug, page);
+          this.cacheExpiry[`page:${page.slug}`] = Date.now() + this.CACHE_TTL_MS;
           return page;
         }
       } catch {
         // Fallback to local provider on network interruption
       }
     }
-    return this.getPageBySlug(slug);
+    return this.getPageBySlug(cleanSlug);
   }
 
   async asyncGetAllPages(): Promise<Page[]> {
@@ -920,7 +1042,10 @@ export class WordPressProvider implements ContentProvider {
           const pages = raw.map((post) => normalizeWpPage(post));
           this.pagesCache = pages;
           this.cacheExpiry['pages'] = Date.now() + this.CACHE_TTL_MS;
-          pages.forEach((p) => this.pageMap.set(p.slug, p));
+          pages.forEach((p) => {
+            this.pageMap.set(p.slug, p);
+            this.cacheExpiry[`page:${p.slug}`] = Date.now() + this.CACHE_TTL_MS;
+          });
           return pages;
         }
       } catch {

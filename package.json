@@ -11,7 +11,8 @@
     "lint": "tsc --noEmit",
     "test:contract": "tsx src/tests/cmsContractTest.ts",
     "test:acceptance": "tsx src/tests/productionAcceptanceTest.ts",
-    "test": "tsx src/tests/cmsContractTest.ts && tsx src/tests/productionAcceptanceTest.ts"
+    "test:sync": "tsx src/tests/cmsSyncTest.ts",
+    "test": "tsx src/tests/cmsContractTest.ts && tsx src/tests/productionAcceptanceTest.ts && tsx src/tests/cmsSyncTest.ts"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",
