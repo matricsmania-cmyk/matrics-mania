@@ -32,9 +32,9 @@ export const DEFAULT_FAVICON_LIGHT = '/matrics-mania-logo-light.webp';
 export const DEFAULT_THEME_COLOR = '#0136BD';
 
 export const DEFAULT_TITLE =
-  "MatricsMania - India's #1 Performance Digital Marketing Agency | SEO, PPC & Growth";
+  '#1 Best Digital Marketing Agency in India | Matrics Mania';
 export const DEFAULT_DESCRIPTION =
-  "MatricsMania is India's leading performance digital marketing agency specializing in 100% On-Page SEO, high-ROAS PPC advertising, CRO web development, and real-time revenue attribution engines.";
+  'Metrics Mania is a results-driven digital marketing agency in India helping businesses grow with SEO, PPC, social media, content, and data-driven strategies.';
 export const DEFAULT_KEYWORDS = [
   'digital marketing agency india',
   'performance marketing agency',
@@ -488,8 +488,9 @@ export function getStaticRouteSeo(routeId: string, pathname: string = '/'): SEOR
   switch (routeId) {
     case 'home':
       return resolveSeoMetadata({
-        title: "MatricsMania - India's #1 Performance Digital Marketing Agency | SEO, PPC & Growth",
-        description: "MatricsMania is India's leading performance digital marketing agency specializing in 100% On-Page SEO, high-ROAS PPC advertising, CRO web development, and real-time revenue attribution engines.",
+        title: '#1 Best Digital Marketing Agency in India | Matrics Mania',
+        description:
+          'Metrics Mania is a results-driven digital marketing agency in India helping businesses grow with SEO, PPC, social media, content, and data-driven strategies.',
         routePath: '/',
       });
     case 'about':

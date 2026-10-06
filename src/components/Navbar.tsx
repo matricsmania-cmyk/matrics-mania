@@ -192,7 +192,7 @@ export const Navbar: React.FC<NavbarProps> = ({
       title: feat.title,
       description: feat.shortDescription || feat.tagline || 'Pioneering organic and algorithmic search architectures.',
       href: `/services/${feat.slug}/`,
-      badge: feat.serviceCode || 'CMS VERIFIED',
+      badge: feat.category || 'FEATURED CAPABILITY',
     };
   }, [services]);
 
@@ -490,7 +490,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 href="/about/"
                 onClick={(e) => handleLinkClick(e, '/about/')}
                 className={`flex items-center gap-1.5 px-3 py-2 text-xs font-semibold uppercase tracking-wider rounded-md transition-colors ${
-                  isLinkActive('/about/') || isLinkActive('/work/') || isLinkActive('/case-studies/') || isLinkActive('/insights/') || isLinkActive('/process/') || isLinkActive('/careers/') || isLinkActive('/faq/') || isLinkActive('/contact/')
+                  isLinkActive('/about/') || isLinkActive('/work/') || isLinkActive('/case-studies/') || isLinkActive('/careers/') || isLinkActive('/faq/') || isLinkActive('/contact/')
                     ? 'text-[#60A5FA] bg-[#131D33]'
                     : 'text-[#94A3B8] hover:text-white hover:bg-[#0D1424]'
                 }`}

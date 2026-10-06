@@ -371,7 +371,12 @@ export const LocationTemplate: React.FC<LocationTemplateProps> = ({
                     <div>
                       <div className="text-xs font-mono text-[#64748B] uppercase">Regional Routing</div>
                       <div className="text-sm font-bold text-white mt-1">
-                        {location.officeNode?.email}
+                        <a
+                          href={`mailto:${location.officeNode?.email || 'info@matricsmania.com'}`}
+                          className="hover:text-[#60A5FA] transition-colors"
+                        >
+                          {location.officeNode?.email || 'info@matricsmania.com'}
+                        </a>
                       </div>
                     </div>
                   </div>

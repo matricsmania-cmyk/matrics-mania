@@ -14,12 +14,10 @@ import { generateMetadata as generateServiceMetadata } from '../app/services/[sl
 import { generateMetadata as generateIndustryMetadata } from '../app/industries/[slug]/page';
 import { generateMetadata as generateLocationMetadata } from '../app/locations/[slug]/page';
 import { generateMetadata as generateCaseStudyMetadata } from '../app/case-studies/[slug]/page';
-import { generateMetadata as generateInsightMetadata } from '../app/insights/[slug]/page';
 import { generateStaticParams as getServiceStaticParams } from '../app/services/[slug]/page';
 import { generateStaticParams as getIndustryStaticParams } from '../app/industries/[slug]/page';
 import { generateStaticParams as getLocationStaticParams } from '../app/locations/[slug]/page';
 import { generateStaticParams as getCaseStudyStaticParams } from '../app/case-studies/[slug]/page';
-import { generateStaticParams as getInsightStaticParams } from '../app/insights/[slug]/page';
 import { resolveEntityRef, filterExistingEntities } from '../utils/internalLinking';
 
 interface TestResult {
@@ -199,19 +197,6 @@ export async function runProductionAcceptanceTests(): Promise<{
           (missingCaseStudyMeta.robots as any)?.index === false),
       `robots=${JSON.stringify(missingCaseStudyMeta?.robots)}`
     );
-
-    // 3.5 Non-existent insight metadata
-    const missingInsightMeta = await generateInsightMetadata({
-      params: Promise.resolve({ slug: 'non-existent-insight' }),
-    });
-    record(
-      'Metadata & 404 Guards',
-      'Missing insight generates noindex/nofollow robots metadata',
-      missingInsightMeta?.robots === 'noindex, nofollow' ||
-        (typeof missingInsightMeta?.robots === 'object' &&
-          (missingInsightMeta.robots as any)?.index === false),
-      `robots=${JSON.stringify(missingInsightMeta?.robots)}`
-    );
   } catch (err: any) {
     record('Metadata & 404 Guards', 'Suite execution', false, undefined, err.message);
   }
@@ -248,14 +233,6 @@ export async function runProductionAcceptanceTests(): Promise<{
       'Case study generateStaticParams returns an array of slug objects',
       Array.isArray(caseStudyParams),
       `count=${caseStudyParams.length}`
-    );
-
-    const insightParams = await getInsightStaticParams();
-    record(
-      'Static Params Contract',
-      'Insight generateStaticParams returns an array of slug objects',
-      Array.isArray(insightParams),
-      `count=${insightParams.length}`
     );
   } catch (err: any) {
     record('Static Params Contract', 'Suite execution', false, undefined, err.message);

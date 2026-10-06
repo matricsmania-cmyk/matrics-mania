@@ -8,7 +8,6 @@ import {
   CoreServicesSection,
   IndustriesSection,
   CaseStudyEvidenceSection,
-  InsightsSection,
   ConversionCTASection,
 } from '../components/sections';
 import { useRouter } from 'next/navigation';
@@ -57,7 +56,7 @@ export const HomeTemplate: React.FC<HomeTemplateProps> = ({
     url: canonicalUrl,
     description:
       page?.seo?.metaDescription ||
-      'Full-Funnel Growth Engineering & AI Search Optimization for ambitious tech and enterprise brands.',
+      'Metrics Mania is a results-driven digital marketing agency in India helping businesses grow with SEO, PPC, social media, content, and data-driven strategies.',
     publisher: {
       '@type': 'Organization',
       name: 'MatricsMania',
@@ -101,13 +100,6 @@ export const HomeTemplate: React.FC<HomeTemplateProps> = ({
       <CaseStudyEvidenceSection
         caseStudies={caseStudies}
         onNavigate={onNavigate}
-      />
-
-      {/* 9. INSIGHTS / THOUGHT LEADERSHIP: Research Papers & Protocols */}
-      <InsightsSection
-        insights={insights}
-        onNavigate={onNavigate}
-        onNavigateToBlogSlug={onNavigateToBlogSlug}
       />
 
       {/* 10. HIGH-INTENT CTA: Advisory Diagnostic Booking */}

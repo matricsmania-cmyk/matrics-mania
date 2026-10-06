@@ -55,7 +55,7 @@ export function ClientShell({
           onOpenBooking={handleOpenBooking}
         />
         <main className="flex-grow">{children}</main>
-        <Footer onNavigate={handleNavigate} />
+        <Footer onNavigate={handleNavigate} showIntelBanner={pathname !== '/' && pathname !== ''} />
         <ToastContainer toasts={toasts} onDismiss={handleDismissToast} />
         <CookieConsent />
         <BookingModal

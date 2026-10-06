@@ -11,8 +11,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     '/services/',
     '/industries/',
     '/locations/',
-    '/insights/',
-    '/process/',
     '/careers/',
     '/faq/',
     '/contact/',
@@ -70,17 +68,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: cs.updatedAt || now,
       changeFrequency: 'monthly',
       priority: 0.8,
-    });
-  }
-
-  // Add insights from WordPress
-  const insights = await wordPressProvider.asyncGetAllInsights();
-  for (const ins of insights) {
-    routes.push({
-      url: `${PUBLIC_DOMAIN}/insights/${ins.slug}/`,
-      lastModified: ins.updatedAt || now,
-      changeFrequency: 'weekly',
-      priority: 0.75,
     });
   }
 

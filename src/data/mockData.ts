@@ -241,7 +241,7 @@ export const TEAM_MEMBERS_DATA: TeamMember[] = [
     role: 'Founder & CEO',
     bio: 'Former Tech Lead & Growth Strategist with 12+ years of experience scaling tech startups from zero to multi-million ARR.',
     avatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400&q=80',
-    socials: { linkedin: '#', twitter: '#', email: 'marcus@matricsmania.com' },
+    socials: { linkedin: '#', twitter: '#', email: 'info@matricsmania.com' },
     specialties: ['Growth Architecture', 'Enterprise Marketing', 'PPC Strategy']
   },
   {
@@ -250,7 +250,7 @@ export const TEAM_MEMBERS_DATA: TeamMember[] = [
     role: 'VP of Paid Media',
     bio: 'Managed over $35M in global media spend across Meta, Google, TikTok, and LinkedIn with an average 4.8x ROAS across accounts.',
     avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80',
-    socials: { linkedin: '#', twitter: '#', email: 'sarah@matricsmania.com' },
+    socials: { linkedin: '#', twitter: '#', email: 'info@matricsmania.com' },
     specialties: ['Omnichannel Ads', 'Algorithmic Bidding', 'Conversion Funnels']
   },
   {
@@ -259,7 +259,7 @@ export const TEAM_MEMBERS_DATA: TeamMember[] = [
     role: 'Head of Technical SEO',
     bio: 'Organic search specialist behind top 3 search rankings for enterprise software, e-commerce, and financial institutions.',
     avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
-    socials: { linkedin: '#', twitter: '#', email: 'alex@matricsmania.com' },
+    socials: { linkedin: '#', twitter: '#', email: 'info@matricsmania.com' },
     specialties: ['Semantic Search', 'Programmatic SEO', 'Core Web Vitals']
   },
   {
@@ -268,7 +268,7 @@ export const TEAM_MEMBERS_DATA: TeamMember[] = [
     role: 'Lead CRO & Web Engineer',
     bio: 'Passionate about lightning-fast UI performance and conversion engineering. Created high-converting web apps for top YC founders.',
     avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80',
-    socials: { linkedin: '#', twitter: '#', email: 'michael@matricsmania.com' },
+    socials: { linkedin: '#', twitter: '#', email: 'info@matricsmania.com' },
     specialties: ['Full-Stack Dev', 'UX Heatmap Testing', 'Behavioral Science']
   },
   {
@@ -277,7 +277,7 @@ export const TEAM_MEMBERS_DATA: TeamMember[] = [
     role: 'Director of Brand Content',
     bio: 'Award-winning copywriter and editorial director skilled in transforming corporate messaging into irresistible storytelling.',
     avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=400&q=80',
-    socials: { linkedin: '#', twitter: '#', email: 'jessica@matricsmania.com' },
+    socials: { linkedin: '#', twitter: '#', email: 'info@matricsmania.com' },
     specialties: ['Executive Ghostwriting', 'Lead Magnets', 'Brand Identity']
   }
 ];
@@ -374,7 +374,7 @@ export const TEAM_DATA: TeamMember[] = [
     specialties: ['Technical SEO', 'GEO Systems', 'Conversion Engineering'],
     socials: {
       linkedin: 'https://linkedin.com',
-      email: 'marcus@matricsmania.com',
+      email: 'info@matricsmania.com',
     },
   },
   {
@@ -386,7 +386,7 @@ export const TEAM_DATA: TeamMember[] = [
     specialties: ['Knowledge Graphs', 'Core Web Vitals', 'Search Indexing'],
     socials: {
       linkedin: 'https://linkedin.com',
-      email: 'aarav@matricsmania.com',
+      email: 'info@matricsmania.com',
     },
   },
   {
@@ -398,7 +398,7 @@ export const TEAM_DATA: TeamMember[] = [
     specialties: ['Meta & Google Ads', 'CAPI Integration', 'Attribution Modeling'],
     socials: {
       linkedin: 'https://linkedin.com',
-      email: 'elena@matricsmania.com',
+      email: 'info@matricsmania.com',
     },
   },
 ];

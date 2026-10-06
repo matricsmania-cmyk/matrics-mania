@@ -120,12 +120,9 @@ export const ServicesIndexTemplate: React.FC<ServicesIndexTemplateProps> = ({
                             {getServiceIcon(service.iconName)}
                           </div>
                           <div>
-                            <span className="text-[11px] font-mono font-bold text-[#60A5FA] bg-[#2563EB]/10 px-2 py-0.5 rounded border border-[#2563EB]/20">
-                              {service.serviceCode || `SRV-0${idx + 1}`}
+                            <span className="text-[11px] font-mono font-semibold text-[#60A5FA] bg-[#2563EB]/10 px-2.5 py-1 rounded border border-[#2563EB]/20 uppercase tracking-wider">
+                              {service.category || 'Capability'}
                             </span>
-                            <div className="text-[10px] font-mono text-[#64748B] uppercase tracking-wider mt-1">
-                              {service.category}
-                            </div>
                           </div>
                         </div>
 

@@ -138,7 +138,7 @@ export function generateOrganizationSchema(options?: OrganizationSchemaOptions):
   // Contact Points (from verified contact channels)
   const contactPoints: SchemaContactPoint[] = [];
   const primaryPhone = contact?.primaryPhone || hq?.phone || '+91-80-4567-8900';
-  const corporateEmail = contact?.corporateEmail || hq?.email || 'growth@matricsmania.com';
+  const corporateEmail = contact?.corporateEmail || hq?.email || 'info@matricsmania.com';
 
   contactPoints.push({
     '@type': 'ContactPoint' as const,
@@ -212,7 +212,7 @@ export function generateLocalBusinessSchema(
     name: nodeName,
     url: canonicalUrl,
     telephone: node.phone || '+91-80-4567-8900',
-    email: node.email || 'growth@matricsmania.com',
+    email: node.email || 'info@matricsmania.com',
     priceRange: '₹₹₹₹',
     address: {
       '@type': 'PostalAddress',

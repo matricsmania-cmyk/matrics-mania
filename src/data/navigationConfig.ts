@@ -343,16 +343,6 @@ export const NAVIGATION_CONFIG: NavigationConfig = {
         href: '/case-studies/',
       },
       {
-        id: 'insights',
-        label: 'Insights',
-        href: '/insights/',
-      },
-      {
-        id: 'process',
-        label: 'Process',
-        href: '/process/',
-      },
-      {
         id: 'careers',
         label: 'Careers',
         href: '/careers/',

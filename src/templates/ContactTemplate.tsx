@@ -1338,7 +1338,12 @@ export const ContactTemplate: React.FC<ContactTemplateProps> = ({
 
                   <div className="flex items-center gap-2.5 border-t border-[#1E293B] pt-3">
                     <Mail className="w-4 h-4 text-[#3B82F6] shrink-0" />
-                    <span className="text-white font-mono">{contact.headquarters.email}</span>
+                    <a
+                      href={`mailto:${contact?.headquarters?.email || 'info@matricsmania.com'}`}
+                      className="text-white font-mono hover:text-[#60A5FA] transition-colors"
+                    >
+                      {contact?.headquarters?.email || 'info@matricsmania.com'}
+                    </a>
                   </div>
                 </div>
 

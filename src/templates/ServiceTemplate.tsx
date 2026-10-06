@@ -128,14 +128,9 @@ export const ServiceTemplate: React.FC<ServiceTemplateProps> = ({
           <ScrollReveal className="max-w-4xl space-y-5">
             {/* Top Badges */}
             <div className="flex flex-wrap items-center gap-3">
-              {service.serviceCode && (
-                <span className="px-2.5 py-1 rounded-md bg-[#0D1424] border border-[#1E293B] text-[11px] font-mono font-bold text-[#60A5FA] tracking-wider uppercase">
-                  {service.serviceCode}
-                </span>
-              )}
               {service.category && (
-                <span className="px-2.5 py-1 rounded-md bg-[#0D1424] border border-[#1E293B] text-[11px] font-mono text-[#94A3B8]">
-                  // {service.category}
+                <span className="px-2.5 py-1 rounded-md bg-[#0D1424] border border-[#1E293B] text-[11px] font-mono font-medium text-[#60A5FA]">
+                  {service.category}
                 </span>
               )}
               {service.priceStartingMonthly && (
@@ -164,7 +159,7 @@ export const ServiceTemplate: React.FC<ServiceTemplateProps> = ({
             {/* CTAs */}
             <div className="flex flex-wrap gap-4 pt-2">
               <button
-                onClick={() => onOpenBooking({ service: serviceTitle, serviceCode: service.serviceCode })}
+                onClick={() => onOpenBooking({ service: serviceTitle })}
                 className="px-6 py-3.5 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white text-xs sm:text-sm font-bold transition-all shadow-lg shadow-[#2563EB]/25 flex items-center gap-2 cursor-pointer"
               >
                 <span>Schedule Diagnostic Strategy Call</span>
@@ -848,12 +843,6 @@ export const ServiceTemplate: React.FC<ServiceTemplateProps> = ({
             <div className="absolute top-0 right-1/4 w-96 h-96 bg-[#2563EB]/10 blur-[120px] pointer-events-none rounded-full" />
 
             <div className="max-w-2xl mx-auto space-y-4 relative z-10">
-              {service.serviceCode && (
-                <span className="text-xs font-mono font-bold text-[#60A5FA] bg-[#2563EB]/10 px-3 py-1 rounded border border-[#2563EB]/20 uppercase">
-                  {service.serviceCode}
-                </span>
-              )}
-
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-white">
                 Deploy {serviceTitle} for Your Organization
               </h2>
@@ -868,7 +857,6 @@ export const ServiceTemplate: React.FC<ServiceTemplateProps> = ({
                 onClick={() =>
                   onOpenBooking({
                     service: serviceTitle,
-                    serviceCode: service.serviceCode,
                   })
                 }
                 className="w-full sm:w-auto px-8 py-4 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white text-sm font-bold transition-all shadow-lg shadow-[#2563EB]/25 flex items-center justify-center gap-2 cursor-pointer"

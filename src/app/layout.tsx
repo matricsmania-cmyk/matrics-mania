@@ -19,11 +19,11 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 export const metadata: Metadata = {
   metadataBase: new URL('https://matricsmania.com'),
   title: {
-    default: "MatricsMania - India's #1 Performance Digital Marketing Agency | SEO, PPC & Growth",
+    default: '#1 Best Digital Marketing Agency in India | Matrics Mania',
     template: '%s',
   },
   description:
-    "MatricsMania is India's leading performance digital marketing agency specializing in 100% On-Page SEO, high-ROAS PPC advertising, CRO web development, and real-time revenue attribution engines.",
+    'Metrics Mania is a results-driven digital marketing agency in India helping businesses grow with SEO, PPC, social media, content, and data-driven strategies.',
   robots: {
     index: true,
     follow: true,

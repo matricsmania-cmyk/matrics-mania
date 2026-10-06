@@ -150,7 +150,7 @@ export const LOCATIONS_DATA: Record<string, LocationDetailData> = {
       postalCode: '560038',
       country: 'IN',
       phone: '+91 (80) 4567-8900',
-      email: 'hello@matricsmania.com',
+      email: 'info@matricsmania.com',
       hours: 'Mon – Fri: 9:00 AM – 7:00 PM IST',
       geo: {
         lat: 12.9716,

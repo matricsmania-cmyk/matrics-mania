@@ -62,7 +62,7 @@ export const CoreServicesSection: React.FC<CoreServicesSectionProps> = ({
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-mono px-2.5 py-1 rounded bg-[#070B14] text-[#60A5FA] border border-[#1E293B]">
-                      {service.serviceCode || 'SERVICE'}
+                      {service.category || 'SERVICE'}
                     </span>
                     <ArrowUpRight className="w-4 h-4 text-[#64748B] group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
                   </div>

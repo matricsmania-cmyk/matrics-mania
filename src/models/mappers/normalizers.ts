@@ -497,7 +497,7 @@ export function normalizeWpLocation(raw: RawWpLocationPost): Location {
         longitude: acf.longitude || 77.5946,
       },
       phone: acf.phone || '+91 80 4123 4567',
-      email: acf.email || 'bangalore@matricsmania.com',
+      email: acf.email || 'info@matricsmania.com',
       businessHours: acf.business_hours || 'Mon-Fri 09:00 - 18:30 IST',
       isHeadquarters: city.toLowerCase() === 'bangalore',
     },
