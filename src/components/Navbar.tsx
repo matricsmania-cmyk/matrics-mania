@@ -586,7 +586,13 @@ export const Navbar: React.FC<NavbarProps> = ({
             <Button
               variant="primary"
               size="sm"
-              onClick={() => onOpenBooking({ intent: 'Header CTA' })}
+              onClick={() => {
+                if (onNavigate) {
+                  onNavigate('/contact/');
+                } else {
+                  window.location.href = '/contact/';
+                }
+              }}
               iconTrailing={<ArrowRight className="w-3.5 h-3.5" />}
               className="hidden sm:inline-flex"
             >
@@ -766,7 +772,11 @@ export const Navbar: React.FC<NavbarProps> = ({
                 fullWidth
                 onClick={() => {
                   setMobileMenuOpen(false);
-                  onOpenBooking?.({ intent: 'Mobile Menu' });
+                  if (onNavigate) {
+                    onNavigate('/contact/');
+                  } else {
+                    window.location.href = '/contact/';
+                  }
                 }}
                 iconTrailing={<ArrowRight className="w-4 h-4" />}
               >

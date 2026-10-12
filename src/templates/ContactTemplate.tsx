@@ -30,6 +30,7 @@ import {
   HelpCircle,
   FileText,
   ChevronRight,
+  ChevronDown,
   Check,
   Layers,
   BarChart3,
@@ -51,18 +52,185 @@ export interface ContactTemplateProps {
   onShowToast?: (title: string, description?: string, type?: 'success' | 'error' | 'info') => void;
 }
 
-const INDUSTRY_OPTIONS = [
-  'B2B SaaS & Cloud Software',
-  'FinTech, Payments & Banking',
-  'HealthTech & Life Sciences',
-  'High-Growth E-Commerce & D2C',
-  'AI, DeepTech & Machine Learning',
-  'Enterprise Marketplaces',
-  'EdTech & Professional Learning',
-  'Industrial & Supply Chain Tech',
-  'Professional & Legal Services',
-  'Other Enterprise Sector',
+export const CATEGORIZED_INDUSTRIES = [
+  {
+    category: 'Software, SaaS & AI',
+    options: [
+      'B2B SaaS & Cloud Enterprise Software',
+      'Artificial Intelligence, Machine Learning & LLMs',
+      'Developer Tools, APIs & Infrastructure',
+      'Cybersecurity & Identity Management',
+      'Data Analytics, BI & Data Warehousing',
+      'IT Services & Managed Cloud Consulting',
+      'Web3, Blockchain & Crypto Infrastructure',
+    ],
+  },
+  {
+    category: 'Finance, Banking & Fintech',
+    options: [
+      'Fintech, Payments & Neobanking',
+      'Investment Banking, VC & Private Equity',
+      'InsurTech & Risk Management',
+      'Wealth Management & Personal Finance',
+      'DeFi & Digital Asset Services',
+    ],
+  },
+  {
+    category: 'E-Commerce, Retail & D2C',
+    options: [
+      'D2C Brand & High-Growth E-Commerce',
+      'Retail Tech & Omnichannel Commerce',
+      'Enterprise Marketplaces & B2B Platforms',
+      'Consumer Goods & FMCG',
+      'Fashion, Apparel & Luxury Retail',
+    ],
+  },
+  {
+    category: 'Healthcare, Biotech & Life Sciences',
+    options: [
+      'HealthTech & Digital Health Platforms',
+      'Biotechnology & Pharmaceutical Manufacturing',
+      'Medical Devices & Diagnostics',
+      'Telemedicine & Clinical Operations',
+    ],
+  },
+  {
+    category: 'Industrial, Logistics & Supply Chain',
+    options: [
+      'Supply Chain Tech & Logistics Automation',
+      'Manufacturing & Industrial IoT',
+      'Automotive, EV & Clean Mobility',
+      'Aerospace, Defense & DeepTech',
+      'Construction & Building Infrastructure',
+    ],
+  },
+  {
+    category: 'Professional, Legal & Corporate Services',
+    options: [
+      'Management & Strategy Consulting',
+      'Legal Services & LegalTech',
+      'Accounting, Tax & Financial Advisory',
+      'Human Resources & RecruiterTech',
+      'Marketing, Advertising & PR Agencies',
+    ],
+  },
+  {
+    category: 'Real Estate, PropTech & Hospitality',
+    options: [
+      'PropTech & Commercial Real Estate',
+      'Hospitality, Travel & Leisure',
+      'Residential Real Estate & Property Management',
+    ],
+  },
+  {
+    category: 'Media, Entertainment & Gaming',
+    options: [
+      'AdTech, MarTech & Digital Media',
+      'Gaming, Esports & Interactive Media',
+      'Streaming, Content Creation & Publishing',
+    ],
+  },
+  {
+    category: 'Education, EdTech & Non-Profit',
+    options: [
+      'EdTech & Online Learning Platforms',
+      'Higher Education & Research Institutes',
+      'Non-Profit & Social Impact Organizations',
+    ],
+  },
+  {
+    category: 'Energy, CleanTech & Public Sector',
+    options: [
+      'CleanTech, Solar & Renewable Energy',
+      'Government, Public Policy & Defense',
+      'Agriculture & AgTech Systems',
+    ],
+  },
+  {
+    category: 'Other Sector',
+    options: ['Other Industry / Custom Sector'],
+  },
 ];
+
+export const CATEGORIZED_COUNTRIES = [
+  {
+    region: 'Primary Markets',
+    options: [
+      'India',
+      'United States',
+      'United Kingdom',
+      'United Arab Emirates',
+      'Canada',
+      'Australia',
+      'Germany',
+      'Singapore',
+    ],
+  },
+  {
+    region: 'Asia-Pacific',
+    options: [
+      'India',
+      'Singapore',
+      'Japan',
+      'Australia',
+      'New Zealand',
+      'Hong Kong',
+      'South Korea',
+      'Malaysia',
+      'Indonesia',
+      'Thailand',
+      'Vietnam',
+      'Philippines',
+    ],
+  },
+  {
+    region: 'North America',
+    options: ['United States', 'Canada', 'Mexico'],
+  },
+  {
+    region: 'Europe',
+    options: [
+      'United Kingdom',
+      'Germany',
+      'France',
+      'Netherlands',
+      'Switzerland',
+      'Sweden',
+      'Ireland',
+      'Spain',
+      'Italy',
+      'Belgium',
+      'Denmark',
+      'Norway',
+      'Finland',
+      'Poland',
+      'Austria',
+    ],
+  },
+  {
+    region: 'Middle East & Africa',
+    options: [
+      'United Arab Emirates',
+      'Saudi Arabia',
+      'Qatar',
+      'Israel',
+      'Egypt',
+      'South Africa',
+      'Nigeria',
+      'Kenya',
+    ],
+  },
+  {
+    region: 'Latin America',
+    options: ['Brazil', 'Argentina', 'Chile', 'Colombia', 'Peru'],
+  },
+  {
+    region: 'Other Global Region',
+    options: ['Other Country / Global Region'],
+  },
+];
+
+const INDUSTRY_OPTIONS = CATEGORIZED_INDUSTRIES.flatMap((c) => c.options);
 
 const COUNTRY_OPTIONS = [
   { code: 'US', name: 'United States' },
@@ -240,8 +408,8 @@ export const ContactTemplate: React.FC<ContactTemplateProps> = ({
     return digits.length >= 7 && digits.length <= 15 && validChars;
   };
 
-  const showEmailError = (emailTouched || workEmail.trim().length > 0) && !isValidEmail(workEmail);
-  const showPhoneError = (phoneTouched || phone.trim().length > 0) && !isValidPhone(phone);
+  const showEmailError = workEmail.trim().length > 0 && !isValidEmail(workEmail);
+  const showPhoneError = phone.trim().length > 0 && !isValidPhone(phone);
   const annualRevenue = '$10M - $50M ARR';
   const marketingBudget = '$30k - $100k / mo';
   const serviceInterest = selectedServices[0] || 'Technical SEO & Organic Search';
@@ -450,6 +618,8 @@ export const ContactTemplate: React.FC<ContactTemplateProps> = ({
                           setCountry('India');
                           setNote('');
                           setSelectedServices(['Technical SEO & Organic Search', 'Performance Marketing & Paid Acquisition']);
+                          setEmailTouched(false);
+                          setPhoneTouched(false);
                         }}
                         className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white text-xs font-mono font-bold cursor-pointer transition-all shadow-lg shadow-blue-500/20"
                       >
@@ -543,14 +713,30 @@ export const ContactTemplate: React.FC<ContactTemplateProps> = ({
                         <label htmlFor="form-industry" className="block text-xs font-mono font-bold text-white">
                           3. Industry <span className="text-[#64748B] font-normal">(Optional)</span>
                         </label>
-                        <input
-                          type="text"
-                          id="form-industry"
-                          value={industry}
-                          onChange={(e) => setIndustry(e.target.value)}
-                          placeholder="e.g. SaaS, E-Commerce, FinTech..."
-                          className="w-full px-4 py-3 bg-[#070B14] border border-[#1E293B] focus:border-[#2563EB] rounded-xl text-sm text-white placeholder-[#475569] outline-none transition-all focus:ring-1 focus:ring-[#2563EB]"
-                        />
+                        <div className="relative">
+                          <select
+                            id="form-industry"
+                            value={industry}
+                            onChange={(e) => setIndustry(e.target.value)}
+                            className="w-full px-4 py-3 bg-[#070B14] border border-[#1E293B] focus:border-[#2563EB] rounded-xl text-sm text-white outline-none transition-all focus:ring-1 focus:ring-[#2563EB] appearance-none cursor-pointer font-sans"
+                          >
+                            <option value="" className="bg-[#070B14] text-[#94A3B8]">
+                              Select Your Industry / Sector...
+                            </option>
+                            {CATEGORIZED_INDUSTRIES.map((cat) => (
+                              <optgroup key={cat.category} label={cat.category} className="bg-[#0D1424] text-[#60A5FA] font-bold">
+                                {cat.options.map((opt) => (
+                                  <option key={opt} value={opt} className="bg-[#070B14] text-white font-normal py-1">
+                                    {opt}
+                                  </option>
+                                ))}
+                              </optgroup>
+                            ))}
+                          </select>
+                          <div className="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none text-[#64748B]">
+                            <ChevronDown className="w-4 h-4" />
+                          </div>
+                        </div>
                       </div>
 
                       {/* 4. Corporate Work Email */}
@@ -651,15 +837,31 @@ export const ContactTemplate: React.FC<ContactTemplateProps> = ({
                         <label htmlFor="form-country" className="block text-xs font-mono font-bold text-white">
                           6. Country / Region <span className="text-[#3B82F6]">*</span>
                         </label>
-                        <input
-                          type="text"
-                          id="form-country"
-                          required
-                          value={country}
-                          onChange={(e) => setCountry(e.target.value)}
-                          placeholder="e.g. India, United States, UK, UAE..."
-                          className="w-full px-4 py-3 bg-[#070B14] border border-[#1E293B] focus:border-[#2563EB] rounded-xl text-sm text-white placeholder-[#475569] outline-none transition-all focus:ring-1 focus:ring-[#2563EB]"
-                        />
+                        <div className="relative">
+                          <select
+                            id="form-country"
+                            required
+                            value={country}
+                            onChange={(e) => setCountry(e.target.value)}
+                            className="w-full px-4 py-3 bg-[#070B14] border border-[#1E293B] focus:border-[#2563EB] rounded-xl text-sm text-white outline-none transition-all focus:ring-1 focus:ring-[#2563EB] appearance-none cursor-pointer font-sans"
+                          >
+                            <option value="" className="bg-[#070B14] text-[#94A3B8]">
+                              Select Country / Region...
+                            </option>
+                            {CATEGORIZED_COUNTRIES.map((reg) => (
+                              <optgroup key={reg.region} label={reg.region} className="bg-[#0D1424] text-[#60A5FA] font-bold">
+                                {reg.options.map((c) => (
+                                  <option key={`${reg.region}-${c}`} value={c} className="bg-[#070B14] text-white font-normal py-1">
+                                    {c}
+                                  </option>
+                                ))}
+                              </optgroup>
+                            ))}
+                          </select>
+                          <div className="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none text-[#64748B]">
+                            <ChevronDown className="w-4 h-4" />
+                          </div>
+                        </div>
                       </div>
                     </div>
 
