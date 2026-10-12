@@ -41,6 +41,7 @@ import {
   Mail,
   Sliders,
   AlertCircle,
+  RefreshCw,
   UserCheck,
   User,
   Terminal,
@@ -420,6 +421,11 @@ export const ContactTemplate: React.FC<ContactTemplateProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [submissionResult, setSubmissionResult] = useState<ContactSubmissionResult | null>(null);
+  const [retryStatus, setRetryStatus] = useState<{
+    isRetrying: boolean;
+    attempt: number;
+    maxRetries: number;
+  } | null>(null);
 
   // Auto-extract company name from domain if empty
   const handleWebsiteBlur = () => {
@@ -459,10 +465,11 @@ export const ContactTemplate: React.FC<ContactTemplateProps> = ({
     );
   }, [name, workEmail, phone, country, selectedServices, ndaAccepted]);
 
-  // Final Submission Handler using abstracted Provider
+  // Final Submission Handler using abstracted Provider with graceful transient retries
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormError(null);
+    setRetryStatus(null);
 
     if (!name.trim()) {
       const msg = 'Please provide your full name.';
@@ -524,7 +531,21 @@ export const ContactTemplate: React.FC<ContactTemplateProps> = ({
 
     try {
       const providerService = getContactSubmissionProvider();
-      const result = await providerService.submitQualification(submissionPayload);
+      const result = await providerService.submitQualification(submissionPayload, {
+        maxRetries: 2,
+        initialDelayMs: 600,
+        backoffFactor: 1.5,
+        onRetry: (attempt, maxRetries) => {
+          setRetryStatus({ isRetrying: true, attempt, maxRetries });
+          if (onShowToast) {
+            onShowToast(
+              'Connectivity Blip Detected',
+              `Re-establishing server connection (attempt ${attempt} of ${maxRetries})...`,
+              'info'
+            );
+          }
+        },
+      });
       setSubmissionResult(result);
       setFormError(null);
       if (onShowToast) {
@@ -545,6 +566,7 @@ export const ContactTemplate: React.FC<ContactTemplateProps> = ({
       }
     } finally {
       setIsSubmitting(false);
+      setRetryStatus(null);
     }
   };
 
@@ -912,6 +934,16 @@ export const ContactTemplate: React.FC<ContactTemplateProps> = ({
                       aria-hidden="true"
                     />
 
+                    {/* Automatic Retry / Connectivity Status Notification */}
+                    {retryStatus?.isRetrying && (
+                      <div className="p-3.5 rounded-xl bg-[#0D1424] border border-[#60A5FA]/40 text-xs font-mono text-[#60A5FA] flex items-center gap-2.5 shadow-lg animate-pulse">
+                        <RefreshCw className="w-4 h-4 animate-spin shrink-0 text-[#60A5FA]" />
+                        <span>
+                          Network blip detected. Automatically retrying submission (attempt {retryStatus.attempt} of {retryStatus.maxRetries})...
+                        </span>
+                      </div>
+                    )}
+
                     {/* Inline Form Error Notification */}
                     {formError && (
                       <div className="p-3.5 rounded-xl bg-red-500/10 border border-red-500/30 text-xs font-mono text-red-400 flex items-center gap-2.5">
@@ -927,7 +959,12 @@ export const ContactTemplate: React.FC<ContactTemplateProps> = ({
                         disabled={isSubmitting || !isFormValid}
                         className="w-full sm:w-auto px-8 py-4 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#1D4ED8] hover:from-[#1D4ED8] hover:to-[#1E40AF] disabled:opacity-50 text-white text-xs font-mono font-bold flex items-center justify-center gap-2.5 shadow-xl shadow-blue-500/25 cursor-pointer transition-all"
                       >
-                        {isSubmitting ? (
+                        {retryStatus?.isRetrying ? (
+                          <>
+                            <RefreshCw className="w-4 h-4 animate-spin" />
+                            <span>Retrying ({retryStatus.attempt}/{retryStatus.maxRetries})...</span>
+                          </>
+                        ) : isSubmitting ? (
                           <>
                             <Zap className="w-4 h-4 animate-spin" />
                             <span>Submitting...</span>

@@ -58,8 +58,53 @@ export interface ContactSubmissionResult {
   data: ContactQualificationData;
 }
 
+export interface RetryOptions {
+  maxRetries?: number;
+  initialDelayMs?: number;
+  backoffFactor?: number;
+  onRetry?: (attempt: number, maxRetries: number, error: Error) => void;
+}
+
 export interface ContactSubmissionProvider {
-  submitQualification(data: ContactQualificationData): Promise<ContactSubmissionResult>;
+  submitQualification(
+    data: ContactQualificationData,
+    retryOptions?: RetryOptions
+  ): Promise<ContactSubmissionResult>;
+}
+
+export class TransientSubmissionError extends Error {
+  public status?: number;
+  constructor(message: string, status?: number) {
+    super(message);
+    this.name = 'TransientSubmissionError';
+    this.status = status;
+  }
+}
+
+export function isTransientError(err: unknown): boolean {
+  if (!err) return false;
+  if (err instanceof TransientSubmissionError) return true;
+
+  if (err instanceof Error) {
+    const msg = err.message.toLowerCase();
+    if (
+      err.name === 'AbortError' ||
+      err.name === 'TimeoutError' ||
+      msg.includes('failed to fetch') ||
+      msg.includes('network error') ||
+      msg.includes('networkerror') ||
+      msg.includes('connection reset') ||
+      msg.includes('econnreset') ||
+      msg.includes('etimedout') ||
+      msg.includes('temporary') ||
+      msg.includes('gateway timeout') ||
+      msg.includes('service unavailable') ||
+      msg.includes('bad gateway')
+    ) {
+      return true;
+    }
+  }
+  return false;
 }
 
 /**
@@ -68,7 +113,39 @@ export interface ContactSubmissionProvider {
  * to Google Sheets via authenticated Google Apps Script.
  */
 export class ApiContactSubmissionProvider implements ContactSubmissionProvider {
-  async submitQualification(data: ContactQualificationData): Promise<ContactSubmissionResult> {
+  async submitQualification(
+    data: ContactQualificationData,
+    retryOptions?: RetryOptions
+  ): Promise<ContactSubmissionResult> {
+    const maxRetries = retryOptions?.maxRetries ?? 2;
+    let delayMs = retryOptions?.initialDelayMs ?? 600;
+    const backoff = retryOptions?.backoffFactor ?? 1.5;
+
+    let attempt = 0;
+
+    while (true) {
+      attempt++;
+      try {
+        return await this.executeSingleSubmission(data);
+      } catch (err: any) {
+        const transient = isTransientError(err);
+        const canRetry = transient && attempt <= maxRetries;
+
+        if (canRetry) {
+          if (retryOptions?.onRetry) {
+            retryOptions.onRetry(attempt, maxRetries, err);
+          }
+          await new Promise((resolve) => setTimeout(resolve, delayMs));
+          delayMs = Math.round(delayMs * backoff);
+          continue;
+        }
+
+        throw err;
+      }
+    }
+  }
+
+  private async executeSingleSubmission(data: ContactQualificationData): Promise<ContactSubmissionResult> {
     const payload = {
       name: data.name.trim(),
       email: (data.email || data.workEmail || '').trim(),
@@ -83,19 +160,36 @@ export class ApiContactSubmissionProvider implements ContactSubmissionProvider {
       note: (data.note || data.additionalContext || '').trim(),
     };
 
-    const res = await fetch('/api/contact', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      },
-      body: JSON.stringify(payload),
-    });
+    let res: Response;
+    try {
+      res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+    } catch (fetchErr: any) {
+      throw new TransientSubmissionError(
+        'Network connectivity error while submitting form: ' + (fetchErr.message || 'Failed to fetch')
+      );
+    }
+
+    if ([408, 502, 503, 504].includes(res.status)) {
+      throw new TransientSubmissionError(
+        `Temporary server gateway issue (HTTP ${res.status}). Retrying...`,
+        res.status
+      );
+    }
 
     let resData: { success?: boolean; message?: string; referenceId?: string };
     try {
       resData = await res.json();
     } catch {
+      if (res.status >= 500) {
+        throw new TransientSubmissionError('Temporary server response parsing error (HTTP ' + res.status + ').');
+      }
       throw new Error('Received an unexpected response from the submission server.');
     }
 
