@@ -323,15 +323,17 @@ export const Navbar: React.FC<NavbarProps> = ({
       role="banner"
     >
       {/* Main Navigation Bar */}
-      <div
-        className={`pointer-events-auto mx-auto transition-all duration-300 ease-out ${
+      <motion.div
+        layout
+        transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+        className={`pointer-events-auto mx-auto transition-all duration-350 ease-[cubic-bezier(0.16,1,0.3,1)] ${
           shouldFloat
-            ? 'mt-3.5 w-[94%] max-w-[1080px] rounded-xl bg-[#0D1424]/95 backdrop-blur-xl border border-[#334155] ring-1 ring-white/10 shadow-[0_12px_40px_rgba(0,0,0,0.85)] px-4 sm:px-6'
-            : 'mt-0 w-full rounded-none bg-[#070B14]/95 backdrop-blur-md border-b border-[#1E293B] shadow-none px-4 sm:px-6 lg:px-8'
+            ? 'mt-3.5 w-[94%] max-w-[1080px] rounded-xl bg-[#0D1424]/90 backdrop-blur-xl border border-[#334155]/80 ring-1 ring-white/10 shadow-[0_12px_40px_rgba(0,0,0,0.85)] px-4 sm:px-6'
+            : 'mt-0 w-full rounded-none bg-[#070B14]/90 backdrop-blur-md border-b border-[#1E293B] shadow-none px-4 sm:px-6 lg:px-8'
         }`}
       >
         <div
-          className={`w-full max-w-[1080px] mx-auto flex items-center justify-between gap-4 transition-all duration-300 ease-out ${
+          className={`w-full max-w-[1080px] mx-auto flex items-center justify-between gap-4 transition-all duration-350 ease-[cubic-bezier(0.16,1,0.3,1)] ${
             shouldFloat ? 'h-14' : 'h-16'
           }`}
         >
@@ -340,7 +342,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <a
               href="/"
               onClick={(e) => handleLinkClick(e, '/')}
-              className="flex items-center gap-2 group cursor-pointer focus:outline-none focus:ring-1 focus:ring-[#2563EB] rounded py-1"
+              className="flex items-center gap-2 group cursor-pointer focus:outline-none focus:ring-1 focus:ring-[#2563EB] rounded py-1 transition-transform active:scale-95 duration-150"
               aria-label="MatricsMania Home"
             >
               <Logo />
@@ -348,7 +350,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden xl:flex items-center gap-1" aria-label="Main Navigation">
+          <nav className="hidden xl:flex items-center gap-1.5" aria-label="Main Navigation">
             {/* 1. Services Menu */}
             <div
               className="relative"
@@ -359,11 +361,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                 type="button"
                 onClick={(e) => {
                   e.preventDefault();
-                  // Non-clickable: only dropdown reveals on hover
                 }}
-                className={`flex items-center gap-1.5 px-3 py-2 text-xs font-semibold uppercase tracking-wider rounded-md transition-colors cursor-default select-none ${
+                className={`flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold uppercase tracking-wider rounded-lg transition-all duration-200 cursor-default select-none ${
                   activeDropdown === 'services'
-                    ? 'text-[#60A5FA] bg-[#131D33]'
+                    ? 'text-[#60A5FA] bg-[#131D33] ring-1 ring-[#60A5FA]/20'
                     : 'text-[#94A3B8] hover:text-white hover:bg-[#0D1424]'
                 }`}
                 aria-expanded={activeDropdown === 'services'}
@@ -371,7 +372,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               >
                 <span>Services</span>
                 <ChevronDown
-                  className={`w-3.5 h-3.5 transition-transform duration-200 ${
+                  className={`w-3.5 h-3.5 transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
                     activeDropdown === 'services' ? 'rotate-180 text-[#60A5FA]' : ''
                   }`}
                 />
@@ -381,51 +382,55 @@ export const Navbar: React.FC<NavbarProps> = ({
               <AnimatePresence>
                 {activeDropdown === 'services' && (
                   <motion.div
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 4 }}
-                    transition={{ duration: 0.15 }}
-                    className="absolute top-full left-0 w-[580px] mt-1 bg-[#0D1424] border border-[#1E293B] rounded-xl shadow-xl shadow-black/60 p-6 z-50"
+                    initial={{ opacity: 0, y: 8, scale: 0.98 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 4, scale: 0.98 }}
+                    transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+                    className="absolute top-full left-0 w-[580px] pt-2 z-50"
                   >
-                    {/* Service Groups */}
-                    <div className={serviceGroups.length > 1 ? 'grid grid-cols-2 gap-6' : 'space-y-6'}>
-                      {serviceGroups.map((group) => (
-                        <div key={group.id} className="space-y-3">
-                          <div className="border-b border-[#1E293B] pb-1.5 flex items-center justify-between">
-                            <h4 className="text-[11px] font-mono font-bold text-[#60A5FA] uppercase tracking-wider">
-                              {group.title}
-                            </h4>
-                            <span className="text-[10px] font-mono text-[#64748B]">
-                              {group.items.length} {group.items.length === 1 ? 'service' : 'services'}
-                            </span>
+                    <div className="bg-[#0D1424]/95 backdrop-blur-2xl border border-[#1E293B] rounded-2xl shadow-2xl shadow-black/80 p-6 ring-1 ring-white/10">
+                      {/* Service Groups */}
+                      <div className={serviceGroups.length > 1 ? 'grid grid-cols-2 gap-6' : 'space-y-6'}>
+                        {serviceGroups.map((group) => (
+                          <div key={group.id} className="space-y-3">
+                            <div className="border-b border-[#1E293B] pb-2 flex items-center justify-between">
+                              <h4 className="text-[11px] font-mono font-bold text-[#60A5FA] uppercase tracking-wider flex items-center gap-1.5">
+                                <span className="w-1.5 h-1.5 rounded-full bg-[#60A5FA]" />
+                                {group.title}
+                              </h4>
+                              <span className="text-[10px] font-mono text-[#64748B]">
+                                {group.items.length} {group.items.length === 1 ? 'service' : 'services'}
+                              </span>
+                            </div>
+                            <ul className="space-y-1.5">
+                              {group.items.map((item) => (
+                                <li key={item.id}>
+                                  <a
+                                    href={item.href}
+                                    onClick={(e) => handleLinkClick(e, item.href)}
+                                    className="group block p-2.5 rounded-xl hover:bg-[#131D33] transition-all duration-200 border border-transparent hover:border-[#1E293B] hover:translate-x-1"
+                                  >
+                                    <span className="text-xs font-semibold text-white group-hover:text-[#60A5FA] transition-colors flex items-center justify-between">
+                                      <span>{item.label}</span>
+                                      <ArrowRight className="w-3 h-3 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-[#60A5FA]" />
+                                    </span>
+                                    {item.description && (
+                                      <p className="text-[11px] text-[#94A3B8] line-clamp-1 mt-0.5 group-hover:text-[#CBD5E1] transition-colors">
+                                        {item.description}
+                                      </p>
+                                    )}
+                                  </a>
+                                </li>
+                              ))}
+                            </ul>
                           </div>
-                          <ul className="space-y-2">
-                            {group.items.map((item) => (
-                              <li key={item.id}>
-                                <a
-                                  href={item.href}
-                                  onClick={(e) => handleLinkClick(e, item.href)}
-                                  className="group block p-2 rounded-lg hover:bg-[#131D33] transition-colors border border-transparent hover:border-[#1E293B]"
-                                >
-                                  <span className="text-xs font-semibold text-white group-hover:text-[#60A5FA] transition-colors block">
-                                    {item.label}
-                                  </span>
-                                  {item.description && (
-                                    <p className="text-[11px] text-[#94A3B8] line-clamp-1 mt-0.5">
-                                      {item.description}
-                                    </p>
-                                  )}
-                                </a>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      ))}
-                      {serviceGroups.length === 0 && (
-                        <div className="py-8 text-center text-xs text-[#94A3B8]">
-                          No services published in CMS yet.
-                        </div>
-                      )}
+                        ))}
+                        {serviceGroups.length === 0 && (
+                          <div className="py-8 text-center text-xs text-[#94A3B8]">
+                            No services published in CMS yet.
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </motion.div>
                 )}
@@ -441,9 +446,9 @@ export const Navbar: React.FC<NavbarProps> = ({
               <a
                 href={NAVIGATION_CONFIG.industries.href}
                 onClick={(e) => handleLinkClick(e, NAVIGATION_CONFIG.industries.href)}
-                className={`flex items-center gap-1.5 px-3 py-2 text-xs font-semibold uppercase tracking-wider rounded-md transition-colors ${
-                  isLinkActive('/industries/')
-                    ? 'text-[#60A5FA] bg-[#131D33]'
+                className={`flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold uppercase tracking-wider rounded-lg transition-all duration-200 ${
+                  isLinkActive('/industries/') || activeDropdown === 'industries'
+                    ? 'text-[#60A5FA] bg-[#131D33] ring-1 ring-[#60A5FA]/20'
                     : 'text-[#94A3B8] hover:text-white hover:bg-[#0D1424]'
                 }`}
                 aria-expanded={activeDropdown === 'industries'}
@@ -451,7 +456,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               >
                 <span>Industries</span>
                 <ChevronDown
-                  className={`w-3.5 h-3.5 transition-transform duration-200 ${
+                  className={`w-3.5 h-3.5 transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
                     activeDropdown === 'industries' ? 'rotate-180 text-[#60A5FA]' : ''
                   }`}
                 />
@@ -461,21 +466,22 @@ export const Navbar: React.FC<NavbarProps> = ({
               <AnimatePresence>
                 {activeDropdown === 'industries' && (
                   <motion.div
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 4 }}
-                    transition={{ duration: 0.15 }}
-                    className="absolute top-full left-0 w-[540px] mt-1 bg-[#0D1424] border border-[#1E293B] rounded-xl shadow-xl shadow-black/60 p-6 z-50"
+                    initial={{ opacity: 0, y: 8, scale: 0.98 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 4, scale: 0.98 }}
+                    transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+                    className="absolute top-full left-0 w-[540px] pt-2 z-50"
                   >
-                    <div className="space-y-4">
+                    <div className="bg-[#0D1424]/95 backdrop-blur-2xl border border-[#1E293B] rounded-2xl shadow-2xl shadow-black/80 p-6 ring-1 ring-white/10 space-y-4">
                       <div className="flex items-center justify-between border-b border-[#1E293B] pb-2">
-                        <span className="text-[11px] font-mono font-bold text-[#60A5FA] uppercase tracking-wider">
+                        <span className="text-[11px] font-mono font-bold text-[#60A5FA] uppercase tracking-wider flex items-center gap-1.5">
+                          <span className="w-1.5 h-1.5 rounded-full bg-[#60A5FA]" />
                           Industry Growth Playbooks
                         </span>
                         <a
                           href="/industries/"
                           onClick={(e) => handleLinkClick(e, '/industries/')}
-                          className="text-[11px] font-mono text-[#94A3B8] hover:text-white"
+                          className="text-[11px] font-mono text-[#94A3B8] hover:text-white transition-colors"
                         >
                           View All Industries ({liveIndustryItems.length}) →
                         </a>
@@ -486,12 +492,13 @@ export const Navbar: React.FC<NavbarProps> = ({
                             key={item.id}
                             href={item.href}
                             onClick={(e) => handleLinkClick(e, item.href)}
-                            className="group p-2.5 rounded-lg hover:bg-[#131D33] border border-transparent hover:border-[#1E293B] transition-colors block"
+                            className="group p-2.5 rounded-xl hover:bg-[#131D33] border border-transparent hover:border-[#1E293B] transition-all duration-200 block hover:translate-x-1"
                           >
-                            <span className="text-xs font-semibold text-white group-hover:text-[#60A5FA] transition-colors block">
-                              {item.label}
+                            <span className="text-xs font-semibold text-white group-hover:text-[#60A5FA] transition-colors flex items-center justify-between">
+                              <span>{item.label}</span>
+                              <ArrowRight className="w-3 h-3 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-[#60A5FA]" />
                             </span>
-                            <span className="text-[10px] text-[#94A3B8] line-clamp-1">
+                            <span className="text-[10px] text-[#94A3B8] line-clamp-1 mt-0.5 group-hover:text-[#CBD5E1] transition-colors">
                               {item.description}
                             </span>
                           </a>
@@ -512,9 +519,9 @@ export const Navbar: React.FC<NavbarProps> = ({
             <a
               href="/case-studies/"
               onClick={(e) => handleLinkClick(e, '/case-studies/')}
-              className={`flex items-center gap-1.5 px-3 py-2 text-xs font-semibold uppercase tracking-wider rounded-md transition-colors ${
+              className={`flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold uppercase tracking-wider rounded-lg transition-all duration-200 ${
                 isLinkActive('/case-studies/')
-                  ? 'text-[#60A5FA] bg-[#131D33]'
+                  ? 'text-[#60A5FA] bg-[#131D33] ring-1 ring-[#60A5FA]/20'
                   : 'text-[#94A3B8] hover:text-white hover:bg-[#0D1424]'
               }`}
             >
@@ -530,9 +537,9 @@ export const Navbar: React.FC<NavbarProps> = ({
               <a
                 href="/about/"
                 onClick={(e) => handleLinkClick(e, '/about/')}
-                className={`flex items-center gap-1.5 px-3 py-2 text-xs font-semibold uppercase tracking-wider rounded-md transition-colors ${
-                  isLinkActive('/about/') || isLinkActive('/work/') || isLinkActive('/case-studies/') || isLinkActive('/careers/') || isLinkActive('/faq/') || isLinkActive('/contact/')
-                    ? 'text-[#60A5FA] bg-[#131D33]'
+                className={`flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold uppercase tracking-wider rounded-lg transition-all duration-200 ${
+                  isLinkActive('/about/') || isLinkActive('/work/') || isLinkActive('/case-studies/') || isLinkActive('/careers/') || isLinkActive('/faq/') || isLinkActive('/contact/') || activeDropdown === 'company'
+                    ? 'text-[#60A5FA] bg-[#131D33] ring-1 ring-[#60A5FA]/20'
                     : 'text-[#94A3B8] hover:text-white hover:bg-[#0D1424]'
                 }`}
                 aria-expanded={activeDropdown === 'company'}
@@ -540,7 +547,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               >
                 <span>Agency</span>
                 <ChevronDown
-                  className={`w-3.5 h-3.5 transition-transform duration-200 ${
+                  className={`w-3.5 h-3.5 transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
                     activeDropdown === 'company' ? 'rotate-180 text-[#60A5FA]' : ''
                   }`}
                 />
@@ -550,30 +557,32 @@ export const Navbar: React.FC<NavbarProps> = ({
               <AnimatePresence>
                 {activeDropdown === 'company' && (
                   <motion.div
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 4 }}
-                    transition={{ duration: 0.15 }}
-                    className="absolute top-full right-0 w-[360px] mt-1 bg-[#0D1424] border border-[#1E293B] rounded-xl shadow-xl shadow-black/60 p-3 z-50"
+                    initial={{ opacity: 0, y: 8, scale: 0.98 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 4, scale: 0.98 }}
+                    transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+                    className="absolute top-full right-0 w-[360px] pt-2 z-50"
                   >
-                    <div className="grid grid-cols-2 grid-rows-4 gap-1">
-                      {NAVIGATION_CONFIG.company.items.map((item) => (
-                        <a
-                          key={item.id}
-                          href={item.href}
-                          onClick={(e) => handleLinkClick(e, item.href)}
-                          className="group flex items-center justify-between px-3 py-2 rounded-lg hover:bg-[#131D33] transition-colors"
-                        >
-                          <span className="text-xs font-medium text-slate-200 group-hover:text-[#60A5FA] transition-colors">
-                            {item.label}
-                          </span>
-                          {item.badge && (
-                            <Badge variant="mono" size="sm">
-                              {item.badge}
-                            </Badge>
-                          )}
-                        </a>
-                      ))}
+                    <div className="bg-[#0D1424]/95 backdrop-blur-2xl border border-[#1E293B] rounded-2xl shadow-2xl shadow-black/80 p-3 ring-1 ring-white/10">
+                      <div className="grid grid-cols-2 grid-rows-4 gap-1">
+                        {NAVIGATION_CONFIG.company.items.map((item) => (
+                          <a
+                            key={item.id}
+                            href={item.href}
+                            onClick={(e) => handleLinkClick(e, item.href)}
+                            className="group flex items-center justify-between px-3 py-2.5 rounded-xl hover:bg-[#131D33] transition-all duration-200"
+                          >
+                            <span className="text-xs font-medium text-slate-200 group-hover:text-[#60A5FA] transition-colors">
+                              {item.label}
+                            </span>
+                            {item.badge && (
+                              <Badge variant="mono" size="sm">
+                                {item.badge}
+                              </Badge>
+                            )}
+                          </a>
+                        ))}
+                      </div>
                     </div>
                   </motion.div>
                 )}
@@ -583,50 +592,64 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           {/* Right Action: Consultation Launcher & Mobile Toggle */}
           <div className="flex items-center gap-3">
-            <Button
-              variant="primary"
-              size="sm"
-              onClick={() => {
-                if (onNavigate) {
-                  onNavigate('/contact/');
-                } else {
-                  window.location.href = '/contact/';
-                }
-              }}
-              iconTrailing={<ArrowRight className="w-3.5 h-3.5" />}
-              className="hidden sm:inline-flex"
-            >
-              Let&apos;s Talk
-            </Button>
+            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}>
+              <Button
+                variant="primary"
+                size="sm"
+                onClick={() => {
+                  if (onNavigate) {
+                    onNavigate('/contact/');
+                  } else {
+                    window.location.href = '/contact/';
+                  }
+                }}
+                iconTrailing={<ArrowRight className="w-3.5 h-3.5" />}
+                className="hidden sm:inline-flex shadow-lg shadow-[#2563EB]/25"
+              >
+                Let&apos;s Talk
+              </Button>
+            </motion.div>
 
-            <button
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="xl:hidden p-2 rounded-lg bg-[#0D1424] border border-[#1E293B] text-[#94A3B8] hover:text-white focus:outline-none focus:ring-2 focus:ring-[#2563EB]"
+              className="xl:hidden p-2 rounded-xl bg-[#0D1424] border border-[#1E293B] text-[#94A3B8] hover:text-white focus:outline-none focus:ring-2 focus:ring-[#2563EB] transition-colors"
               aria-label={mobileMenuOpen ? 'Close Navigation Menu' : 'Open Navigation Menu'}
               aria-expanded={mobileMenuOpen}
             >
-              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-            </button>
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.div
+                  key={mobileMenuOpen ? 'close' : 'open'}
+                  initial={{ opacity: 0, rotate: -90, scale: 0.8 }}
+                  animate={{ opacity: 1, rotate: 0, scale: 1 }}
+                  exit={{ opacity: 0, rotate: 90, scale: 0.8 }}
+                  transition={{ duration: 0.15 }}
+                >
+                  {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+                </motion.div>
+              </AnimatePresence>
+            </motion.button>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Responsive Mobile Navigation Drawer */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'calc(100vh - 64px)' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.2 }}
-            className="xl:hidden fixed top-16 inset-x-0 bg-[#070B14] border-b border-[#1E293B] overflow-y-auto z-40 flex flex-col justify-between pointer-events-auto"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+            className="xl:hidden fixed top-16 inset-x-0 bottom-0 bg-[#070B14]/98 backdrop-blur-2xl border-b border-[#1E293B] overflow-y-auto z-40 flex flex-col justify-between pointer-events-auto"
           >
             <div className="p-6 space-y-6">
               {/* Telemetry Indicator */}
-              <div className="p-3 bg-[#0D1424] border border-[#1E293B] rounded-lg flex items-center justify-between text-xs font-mono text-[#94A3B8]">
+              <div className="p-3 bg-[#0D1424] border border-[#1E293B] rounded-xl flex items-center justify-between text-xs font-mono text-[#94A3B8]">
                 <span className="flex items-center gap-2 text-[#10B981]">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#10B981]" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#10B981] animate-pulse" />
                   NODE: IN-BLR-01 (HQ)
                 </span>
                 <span>UPTIME: 99.98%</span>
@@ -635,131 +658,161 @@ export const Navbar: React.FC<NavbarProps> = ({
               {/* Mobile Navigation Links */}
               <div className="space-y-3">
                 {/* 1. Services Section */}
-                <div className="border border-[#1E293B] rounded-lg bg-[#0D1424] overflow-hidden">
+                <div className="border border-[#1E293B] rounded-xl bg-[#0D1424] overflow-hidden transition-colors">
                   <button
                     type="button"
                     onClick={() =>
                       setMobileSectionOpen(mobileSectionOpen === 'services' ? null : 'services')
                     }
-                    className="w-full p-4 flex items-center justify-between text-sm font-bold text-white uppercase tracking-wider"
+                    className="w-full p-4 flex items-center justify-between text-sm font-bold text-white uppercase tracking-wider hover:bg-[#131D33] transition-colors"
                   >
                     <span>Services ({services.length})</span>
                     <ChevronDown
-                      className={`w-4 h-4 transition-transform duration-200 ${
+                      className={`w-4 h-4 transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
                         mobileSectionOpen === 'services' ? 'rotate-180 text-[#60A5FA]' : ''
                       }`}
                     />
                   </button>
 
-                  {mobileSectionOpen === 'services' && (
-                    <div className="px-4 pb-4 space-y-2 border-t border-[#1E293B] pt-3">
-                      {services.map((s) => (
-                        <a
-                          key={s.slug}
-                          href={`/services/${s.slug}/`}
-                          onClick={(e) => handleLinkClick(e, `/services/${s.slug}/`)}
-                          className="block p-2 text-xs font-medium text-[#CBD5E1] hover:text-white rounded hover:bg-[#131D33]"
-                        >
-                          {s.title}
-                        </a>
-                      ))}
-                      {services.length === 0 && (
-                        <p className="text-xs text-[#94A3B8] p-2">No services published in CMS yet.</p>
-                      )}
-                    </div>
-                  )}
+                  <AnimatePresence>
+                    {mobileSectionOpen === 'services' && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+                        className="overflow-hidden"
+                      >
+                        <div className="px-4 pb-4 space-y-2 border-t border-[#1E293B] pt-3">
+                          {services.map((s) => (
+                            <a
+                              key={s.slug}
+                              href={`/services/${s.slug}/`}
+                              onClick={(e) => handleLinkClick(e, `/services/${s.slug}/`)}
+                              className="block p-2 text-xs font-medium text-[#CBD5E1] hover:text-white rounded-lg hover:bg-[#131D33] transition-colors"
+                            >
+                              {s.title}
+                            </a>
+                          ))}
+                          {services.length === 0 && (
+                            <p className="text-xs text-[#94A3B8] p-2">No services published in CMS yet.</p>
+                          )}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
 
                 {/* 2. Industries Section */}
-                <div className="border border-[#1E293B] rounded-lg bg-[#0D1424] overflow-hidden">
+                <div className="border border-[#1E293B] rounded-xl bg-[#0D1424] overflow-hidden transition-colors">
                   <button
                     type="button"
                     onClick={() =>
                       setMobileSectionOpen(mobileSectionOpen === 'industries' ? null : 'industries')
                     }
-                    className="w-full p-4 flex items-center justify-between text-sm font-bold text-white uppercase tracking-wider"
+                    className="w-full p-4 flex items-center justify-between text-sm font-bold text-white uppercase tracking-wider hover:bg-[#131D33] transition-colors"
                   >
                     <span>Industries ({industries.length})</span>
                     <ChevronDown
-                      className={`w-4 h-4 transition-transform duration-200 ${
+                      className={`w-4 h-4 transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
                         mobileSectionOpen === 'industries' ? 'rotate-180 text-[#60A5FA]' : ''
                       }`}
                     />
                   </button>
 
-                  {mobileSectionOpen === 'industries' && (
-                    <div className="px-4 pb-4 space-y-2 border-t border-[#1E293B] pt-3">
-                      {industries.map((ind) => (
-                        <a
-                          key={ind.slug}
-                          href={`/industries/${ind.slug}/`}
-                          onClick={(e) => handleLinkClick(e, `/industries/${ind.slug}/`)}
-                          className="block p-2 text-xs font-medium text-[#CBD5E1] hover:text-white rounded hover:bg-[#131D33]"
-                        >
-                          {ind.title}
-                        </a>
-                      ))}
-                      {industries.length === 0 && (
-                        <p className="text-xs text-[#94A3B8] p-2">No industries published in CMS yet.</p>
-                      )}
-                      <div className="pt-2 border-t border-[#1E293B]">
-                        <a
-                          href="/industries/"
-                          onClick={(e) => handleLinkClick(e, '/industries/')}
-                          className="text-xs font-mono text-[#60A5FA] font-bold block p-2"
-                        >
-                          View All Industry Playbooks →
-                        </a>
-                      </div>
-                    </div>
-                  )}
+                  <AnimatePresence>
+                    {mobileSectionOpen === 'industries' && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+                        className="overflow-hidden"
+                      >
+                        <div className="px-4 pb-4 space-y-2 border-t border-[#1E293B] pt-3">
+                          {industries.map((ind) => (
+                            <a
+                              key={ind.slug}
+                              href={`/industries/${ind.slug}/`}
+                              onClick={(e) => handleLinkClick(e, `/industries/${ind.slug}/`)}
+                              className="block p-2 text-xs font-medium text-[#CBD5E1] hover:text-white rounded-lg hover:bg-[#131D33] transition-colors"
+                            >
+                              {ind.title}
+                            </a>
+                          ))}
+                          {industries.length === 0 && (
+                            <p className="text-xs text-[#94A3B8] p-2">No industries published in CMS yet.</p>
+                          )}
+                          <div className="pt-2 border-t border-[#1E293B]">
+                            <a
+                              href="/industries/"
+                              onClick={(e) => handleLinkClick(e, '/industries/')}
+                              className="text-xs font-mono text-[#60A5FA] font-bold block p-2 hover:underline"
+                            >
+                              View All Industry Playbooks →
+                            </a>
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
 
                 {/* 3. Work */}
                 <a
                   href="/case-studies/"
                   onClick={(e) => handleLinkClick(e, '/case-studies/')}
-                  className="p-4 border border-[#1E293B] rounded-lg bg-[#0D1424] flex items-center justify-between text-sm font-bold text-white uppercase tracking-wider"
+                  className="p-4 border border-[#1E293B] rounded-xl bg-[#0D1424] flex items-center justify-between text-sm font-bold text-white uppercase tracking-wider hover:bg-[#131D33] transition-colors"
                 >
                   <span>Work</span>
                 </a>
 
                 {/* 4. Company Hubs */}
-                <div className="border border-[#1E293B] rounded-lg bg-[#0D1424] overflow-hidden">
+                <div className="border border-[#1E293B] rounded-xl bg-[#0D1424] overflow-hidden transition-colors">
                   <button
                     type="button"
                     onClick={() =>
                       setMobileSectionOpen(mobileSectionOpen === 'company' ? null : 'company')
                     }
-                    className="w-full p-4 flex items-center justify-between text-sm font-bold text-white uppercase tracking-wider"
+                    className="w-full p-4 flex items-center justify-between text-sm font-bold text-white uppercase tracking-wider hover:bg-[#131D33] transition-colors"
                   >
                     <span>Agency</span>
                     <ChevronDown
-                      className={`w-4 h-4 transition-transform duration-200 ${
+                      className={`w-4 h-4 transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
                         mobileSectionOpen === 'company' ? 'rotate-180 text-[#60A5FA]' : ''
                       }`}
                     />
                   </button>
 
-                  {mobileSectionOpen === 'company' && (
-                    <div className="px-4 pb-4 grid grid-cols-2 gap-1 border-t border-[#1E293B] pt-3">
-                      {NAVIGATION_CONFIG.company.items.map((item) => (
-                        <a
-                          key={item.id}
-                          href={item.href}
-                          onClick={(e) => handleLinkClick(e, item.href)}
-                          className="flex items-center justify-between p-2 text-xs font-medium text-[#CBD5E1] hover:text-white rounded hover:bg-[#131D33]"
-                        >
-                          <span>{item.label}</span>
-                          {item.badge && (
-                            <Badge variant="mono" size="sm">
-                              {item.badge}
-                            </Badge>
-                          )}
-                        </a>
-                      ))}
-                    </div>
-                  )}
+                  <AnimatePresence>
+                    {mobileSectionOpen === 'company' && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+                        className="overflow-hidden"
+                      >
+                        <div className="px-4 pb-4 grid grid-cols-2 gap-1 border-t border-[#1E293B] pt-3">
+                          {NAVIGATION_CONFIG.company.items.map((item) => (
+                            <a
+                              key={item.id}
+                              href={item.href}
+                              onClick={(e) => handleLinkClick(e, item.href)}
+                              className="flex items-center justify-between p-2 text-xs font-medium text-[#CBD5E1] hover:text-white rounded-lg hover:bg-[#131D33] transition-colors"
+                            >
+                              <span>{item.label}</span>
+                              {item.badge && (
+                                <Badge variant="mono" size="sm">
+                                  {item.badge}
+                                </Badge>
+                              )}
+                            </a>
+                          ))}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               </div>
             </div>
