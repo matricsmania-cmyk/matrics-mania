@@ -241,49 +241,49 @@ export interface CountryDialInfo {
 }
 
 export const COUNTRY_DIAL_MAP: Record<string, CountryDialInfo> = {
-  'India': { code: 'IN', dialCode: '+91', placeholder: '+91 98765 43210', flag: '🇮🇳' },
-  'Brazil': { code: 'BR', dialCode: '+55', placeholder: '+55 11 99999-9999', flag: '🇧🇷' },
-  'United States': { code: 'US', dialCode: '+1', placeholder: '+1 (555) 012-3456', flag: '🇺🇸' },
-  'United Kingdom': { code: 'GB', dialCode: '+44', placeholder: '+44 7700 900000', flag: '🇬🇧' },
-  'United Arab Emirates': { code: 'AE', dialCode: '+971', placeholder: '+971 50 123 4567', flag: '🇦🇪' },
-  'Canada': { code: 'CA', dialCode: '+1', placeholder: '+1 (555) 012-3456', flag: '🇨🇦' },
-  'Australia': { code: 'AU', dialCode: '+61', placeholder: '+61 400 123 456', flag: '🇦🇺' },
-  'Germany': { code: 'DE', dialCode: '+49', placeholder: '+49 151 23456789', flag: '🇩🇪' },
-  'Singapore': { code: 'SG', dialCode: '+65', placeholder: '+65 8123 4567', flag: '🇸🇬' },
-  'Japan': { code: 'JP', dialCode: '+81', placeholder: '+81 90 1234 5678', flag: '🇯🇵' },
-  'New Zealand': { code: 'NZ', dialCode: '+64', placeholder: '+64 21 123 4567', flag: '🇳🇿' },
-  'Hong Kong': { code: 'HK', dialCode: '+852', placeholder: '+852 9123 4567', flag: '🇭🇰' },
-  'South Korea': { code: 'KR', dialCode: '+82', placeholder: '+82 10 1234 5678', flag: '🇰🇷' },
-  'Malaysia': { code: 'MY', dialCode: '+60', placeholder: '+60 12-345 6789', flag: '🇲🇾' },
-  'Indonesia': { code: 'ID', dialCode: '+62', placeholder: '+62 812 3456 7890', flag: '🇮🇩' },
-  'Thailand': { code: 'TH', dialCode: '+66', placeholder: '+66 81 234 5678', flag: '🇹🇭' },
-  'Vietnam': { code: 'VN', dialCode: '+84', placeholder: '+84 90 123 4567', flag: '🇻🇳' },
-  'Philippines': { code: 'PH', dialCode: '+63', placeholder: '+63 917 123 4567', flag: '🇵🇭' },
-  'Mexico': { code: 'MX', dialCode: '+52', placeholder: '+52 55 1234 5678', flag: '🇲🇽' },
-  'France': { code: 'FR', dialCode: '+33', placeholder: '+33 6 12 34 56 78', flag: '🇫🇷' },
-  'Netherlands': { code: 'NL', dialCode: '+31', placeholder: '+31 6 12345678', flag: '🇳🇱' },
-  'Switzerland': { code: 'CH', dialCode: '+41', placeholder: '+41 79 123 45 67', flag: '🇨🇭' },
-  'Sweden': { code: 'SE', dialCode: '+46', placeholder: '+46 70 123 45 67', flag: '🇸🇪' },
-  'Ireland': { code: 'IE', dialCode: '+353', placeholder: '+353 87 123 4567', flag: '🇮🇪' },
-  'Spain': { code: 'ES', dialCode: '+34', placeholder: '+34 612 34 56 78', flag: '🇪🇸' },
-  'Italy': { code: 'IT', dialCode: '+39', placeholder: '+39 312 345 6789', flag: '🇮🇹' },
-  'Belgium': { code: 'BE', dialCode: '+32', placeholder: '+32 470 12 34 56', flag: '🇧🇪' },
-  'Denmark': { code: 'DK', dialCode: '+45', placeholder: '+45 20 12 34 56', flag: '🇩🇰' },
-  'Norway': { code: 'NO', dialCode: '+47', placeholder: '+47 412 34 567', flag: '🇳🇴' },
-  'Finland': { code: 'FI', dialCode: '+358', placeholder: '+358 40 123 4567', flag: '🇫🇮' },
-  'Poland': { code: 'PL', dialCode: '+48', placeholder: '+48 512 345 678', flag: '🇵🇱' },
-  'Austria': { code: 'AT', dialCode: '+43', placeholder: '+43 664 1234567', flag: '🇦🇹' },
-  'Saudi Arabia': { code: 'SA', dialCode: '+966', placeholder: '+966 50 123 4567', flag: '🇸🇦' },
-  'Qatar': { code: 'QA', dialCode: '+974', placeholder: '+974 5012 3456', flag: '🇶🇦' },
-  'Israel': { code: 'IL', dialCode: '+972', placeholder: '+972 50 123 4567', flag: '🇮🇱' },
-  'Egypt': { code: 'EG', dialCode: '+20', placeholder: '+20 100 123 4567', flag: '🇪🇬' },
-  'South Africa': { code: 'ZA', dialCode: '+27', placeholder: '+27 82 123 4567', flag: '🇿🇦' },
-  'Nigeria': { code: 'NG', dialCode: '+234', placeholder: '+234 802 123 4567', flag: '🇳🇬' },
-  'Kenya': { code: 'KE', dialCode: '+254', placeholder: '+254 712 345678', flag: '🇰🇪' },
-  'Argentina': { code: 'AR', dialCode: '+54', placeholder: '+54 9 11 1234-5678', flag: '🇦🇷' },
-  'Chile': { code: 'CL', dialCode: '+56', placeholder: '+56 9 1234 5678', flag: '🇨🇱' },
-  'Colombia': { code: 'CO', dialCode: '+57', placeholder: '+57 300 123 4567', flag: '🇨🇴' },
-  'Peru': { code: 'PE', dialCode: '+51', placeholder: '+51 912 345 678', flag: '🇵🇪' },
+  'India': { code: 'IN', dialCode: '+91', placeholder: '98765 43210', flag: '🇮🇳' },
+  'Brazil': { code: 'BR', dialCode: '+55', placeholder: '11 99999-9999', flag: '🇧🇷' },
+  'United States': { code: 'US', dialCode: '+1', placeholder: '(555) 012-3456', flag: '🇺🇸' },
+  'United Kingdom': { code: 'GB', dialCode: '+44', placeholder: '7700 900000', flag: '🇬🇧' },
+  'United Arab Emirates': { code: 'AE', dialCode: '+971', placeholder: '50 123 4567', flag: '🇦🇪' },
+  'Canada': { code: 'CA', dialCode: '+1', placeholder: '(555) 012-3456', flag: '🇨🇦' },
+  'Australia': { code: 'AU', dialCode: '+61', placeholder: '400 123 456', flag: '🇦🇺' },
+  'Germany': { code: 'DE', dialCode: '+49', placeholder: '151 23456789', flag: '🇩🇪' },
+  'Singapore': { code: 'SG', dialCode: '+65', placeholder: '8123 4567', flag: '🇸🇬' },
+  'Japan': { code: 'JP', dialCode: '+81', placeholder: '90 1234 5678', flag: '🇯🇵' },
+  'New Zealand': { code: 'NZ', dialCode: '+64', placeholder: '21 123 4567', flag: '🇳🇿' },
+  'Hong Kong': { code: 'HK', dialCode: '+852', placeholder: '9123 4567', flag: '🇭🇰' },
+  'South Korea': { code: 'KR', dialCode: '+82', placeholder: '10 1234 5678', flag: '🇰🇷' },
+  'Malaysia': { code: 'MY', dialCode: '+60', placeholder: '12-345 6789', flag: '🇲🇾' },
+  'Indonesia': { code: 'ID', dialCode: '+62', placeholder: '812 3456 7890', flag: '🇮🇩' },
+  'Thailand': { code: 'TH', dialCode: '+66', placeholder: '81 234 5678', flag: '🇹🇭' },
+  'Vietnam': { code: 'VN', dialCode: '+84', placeholder: '90 123 4567', flag: '🇻🇳' },
+  'Philippines': { code: 'PH', dialCode: '+63', placeholder: '917 123 4567', flag: '🇵🇭' },
+  'Mexico': { code: 'MX', dialCode: '+52', placeholder: '55 1234 5678', flag: '🇲🇽' },
+  'France': { code: 'FR', dialCode: '+33', placeholder: '6 12 34 56 78', flag: '🇫🇷' },
+  'Netherlands': { code: 'NL', dialCode: '+31', placeholder: '6 12345678', flag: '🇳🇱' },
+  'Switzerland': { code: 'CH', dialCode: '+41', placeholder: '79 123 45 67', flag: '🇨🇭' },
+  'Sweden': { code: 'SE', dialCode: '+46', placeholder: '70 123 45 67', flag: '🇸🇪' },
+  'Ireland': { code: 'IE', dialCode: '+353', placeholder: '87 123 4567', flag: '🇮🇪' },
+  'Spain': { code: 'ES', dialCode: '+34', placeholder: '612 34 56 78', flag: '🇪🇸' },
+  'Italy': { code: 'IT', dialCode: '+39', placeholder: '312 345 6789', flag: '🇮🇹' },
+  'Belgium': { code: 'BE', dialCode: '+32', placeholder: '470 12 34 56', flag: '🇧🇪' },
+  'Denmark': { code: 'DK', dialCode: '+45', placeholder: '20 12 34 56', flag: '🇩🇰' },
+  'Norway': { code: 'NO', dialCode: '+47', placeholder: '412 34 567', flag: '🇳🇴' },
+  'Finland': { code: 'FI', dialCode: '+358', placeholder: '40 123 4567', flag: '🇫🇮' },
+  'Poland': { code: 'PL', dialCode: '+48', placeholder: '512 345 678', flag: '🇵🇱' },
+  'Austria': { code: 'AT', dialCode: '+43', placeholder: '664 1234567', flag: '🇦🇹' },
+  'Saudi Arabia': { code: 'SA', dialCode: '+966', placeholder: '50 123 4567', flag: '🇸🇦' },
+  'Qatar': { code: 'QA', dialCode: '+974', placeholder: '5012 3456', flag: '🇶🇦' },
+  'Israel': { code: 'IL', dialCode: '+972', placeholder: '50 123 4567', flag: '🇮🇱' },
+  'Egypt': { code: 'EG', dialCode: '+20', placeholder: '100 123 4567', flag: '🇪🇬' },
+  'South Africa': { code: 'ZA', dialCode: '+27', placeholder: '82 123 4567', flag: '🇿🇦' },
+  'Nigeria': { code: 'NG', dialCode: '+234', placeholder: '802 123 4567', flag: '🇳🇬' },
+  'Kenya': { code: 'KE', dialCode: '+254', placeholder: '712 345678', flag: '🇰🇪' },
+  'Argentina': { code: 'AR', dialCode: '+54', placeholder: '9 11 1234-5678', flag: '🇦🇷' },
+  'Chile': { code: 'CL', dialCode: '+56', placeholder: '9 1234 5678', flag: '🇨🇱' },
+  'Colombia': { code: 'CO', dialCode: '+57', placeholder: '300 123 4567', flag: '🇨🇴' },
+  'Peru': { code: 'PE', dialCode: '+51', placeholder: '912 345 678', flag: '🇵🇪' },
 };
 
 export function getCountryDialInfo(countryName: string): CountryDialInfo {
@@ -468,19 +468,13 @@ export const ContactTemplate: React.FC<ContactTemplateProps> = ({
     return getCountryDialInfo(country);
   }, [country]);
 
-  const [prevDialCode, setPrevDialCode] = useState(currentDialInfo.dialCode);
-
+  // Strip any leading +dialCode from phone when country changes so input value stays clean digits
   useEffect(() => {
-    if (prevDialCode !== currentDialInfo.dialCode) {
-      if (!phone.trim() || phone.trim() === prevDialCode || /^(\+\d{1,4}\s?)$/.test(phone.trim())) {
-        setPhone(`${currentDialInfo.dialCode} `);
-      } else if (phone.startsWith('+')) {
-        const digits = phone.replace(/^\+\d{1,4}\s?/, '');
-        setPhone(`${currentDialInfo.dialCode} ${digits}`);
-      }
-      setPrevDialCode(currentDialInfo.dialCode);
+    if (phone.startsWith('+')) {
+      const localDigits = phone.replace(/^\+\d{1,4}\s?/, '');
+      setPhone(localDigits);
     }
-  }, [country, currentDialInfo, phone, prevDialCode]);
+  }, [country]);
 
   // State & Validation for Email / Phone popup
   const [emailTouched, setEmailTouched] = useState(false);
@@ -491,13 +485,17 @@ export const ContactTemplate: React.FC<ContactTemplateProps> = ({
   };
 
   const isValidPhone = (pVal: string) => {
-    const digits = pVal.replace(/\D/g, '');
-    const validChars = /^[\d\s\+\-\(\)]{5,25}$/.test(pVal.trim());
+    if (!pVal.trim()) return false;
+    const fullPhone = pVal.trim().startsWith('+')
+      ? pVal.trim()
+      : `${currentDialInfo.dialCode} ${pVal.trim()}`;
+    const digits = fullPhone.replace(/\D/g, '');
+    const validChars = /^[\d\s\+\-\(\)]{5,25}$/.test(fullPhone);
     return digits.length >= 7 && digits.length <= 15 && validChars;
   };
 
-  const showEmailError = workEmail.trim().length > 0 && !isValidEmail(workEmail);
-  const showPhoneError = phone.trim().length > 0 && !isValidPhone(phone);
+  const showEmailError = emailTouched && workEmail.trim().length > 0 && !isValidEmail(workEmail);
+  const showPhoneError = phoneTouched && phone.trim().length > 0 && !isValidPhone(phone);
   const annualRevenue = '$10M - $50M ARR';
   const marketingBudget = '$30k - $100k / mo';
   const serviceInterest = selectedServices[0] || 'Technical SEO & Organic Search';
@@ -591,11 +589,15 @@ export const ContactTemplate: React.FC<ContactTemplateProps> = ({
 
     setIsSubmitting(true);
 
+    const formattedPhone = phone.trim().startsWith('+')
+      ? phone.trim()
+      : `${currentDialInfo.dialCode} ${phone.trim()}`;
+
     const submissionPayload: ContactQualificationData = {
       name: name.trim(),
       email: workEmail.trim(),
       workEmail: workEmail.trim(),
-      phone: phone.trim(),
+      phone: formattedPhone,
       country: country.trim(),
       services: selectedServices,
       currentAcquisitionChannels: selectedServices,
@@ -913,7 +915,13 @@ export const ContactTemplate: React.FC<ContactTemplateProps> = ({
                             required
                             value={phone}
                             onChange={(e) => {
-                              setPhone(e.target.value);
+                              let raw = e.target.value;
+                              if (raw.startsWith(currentDialInfo.dialCode)) {
+                                raw = raw.slice(currentDialInfo.dialCode.length).trimStart();
+                              } else if (raw.startsWith('+')) {
+                                raw = raw.replace(/^\+\d{1,4}\s?/, '');
+                              }
+                              setPhone(raw);
                               setPhoneTouched(true);
                             }}
                             onBlur={() => setPhoneTouched(true)}
