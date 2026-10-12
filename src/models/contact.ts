@@ -50,6 +50,7 @@ export interface ContactInformation {
   securityEmail: string;
   pressEmail: string;
   primaryPhone: string;
+  phoneNumbers?: string[];
   tollFreePhone?: string;
   headquarters: OfficeNode;
   regionalNodes: OfficeNode[];

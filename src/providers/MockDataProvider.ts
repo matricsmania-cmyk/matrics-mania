@@ -89,7 +89,8 @@ export const MOCK_CONTACT_INFO: ContactInformation = {
   admissionsEmail: 'info@matricsmania.com',
   securityEmail: 'info@matricsmania.com',
   pressEmail: 'info@matricsmania.com',
-  primaryPhone: '+91 80 4920 8800',
+  primaryPhone: '+91 83183 56338',
+  phoneNumbers: ['+91 83183 56338', '+91 91960 68917', '+91 79059 91037'],
   headquarters: {
     id: 'hq-sf',
     nodeCode: 'BLR-HQ',
@@ -108,7 +109,7 @@ export const MOCK_CONTACT_INFO: ContactInformation = {
       latitude: 12.9716,
       longitude: 77.6412,
     },
-    phone: '+91 80 4920 8800',
+    phone: '+91 83183 56338',
     email: 'info@matricsmania.com',
     businessHours: '09:00 - 19:00 IST (Mon - Fri)',
     isHeadquarters: true,

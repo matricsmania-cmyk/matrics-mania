@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { usePathname } from 'next/navigation';
-import { Mail, ArrowUpRight } from 'lucide-react';
+import { Mail, ArrowUpRight, Phone } from 'lucide-react';
 import { Logo } from './Logo';
 import { Container } from '../design-system/primitives/Container';
 
@@ -25,7 +25,7 @@ const QUICK_LINKS: QuickLinkItem[] = [
   { id: 'work', label: 'Work', href: '/work/', targetId: 'case-study-evidence-section' },
   { id: 'industries', label: 'Industries', href: '/industries/', targetId: 'industries-served-section' },
   { id: 'locations', label: 'Locations', href: '/locations/' },
-  { id: 'privacy-policy', label: 'Privacy policy', href: '/privacy/' },
+  { id: 'contact', label: 'Contact Us', href: '/contact/' },
   { id: 'about', label: 'About', href: '/about/' },
 ];
 
@@ -90,15 +90,45 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
             <p className="text-sm text-[#94A3B8] max-w-md leading-relaxed">
               Your digital marketing partner for smarter strategies and bigger growth. Helping businesses grow with SEO, PPC, social media, content, and data-driven strategies.
             </p>
-            <div className="pt-2 flex items-center gap-2 text-xs font-mono text-[#94A3B8]">
-              <Mail className="w-4 h-4 text-[#60A5FA]" />
-              <span>Contact:</span>
-              <a
-                href="mailto:info@matricsmania.com"
-                className="text-white hover:text-[#60A5FA] underline decoration-[#1E293B] hover:decoration-[#60A5FA] transition-colors"
-              >
-                info@matricsmania.com
-              </a>
+            <div className="pt-2 space-y-2 text-xs font-mono text-[#94A3B8]">
+              <div className="flex items-center gap-2">
+                <Mail className="w-4 h-4 text-[#60A5FA] shrink-0" />
+                <span>Email:</span>
+                <a
+                  href="mailto:info@matricsmania.com"
+                  className="text-white hover:text-[#60A5FA] underline decoration-[#1E293B] hover:decoration-[#60A5FA] transition-colors"
+                >
+                  info@matricsmania.com
+                </a>
+              </div>
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2 pt-1">
+                <div className="flex items-center gap-2 shrink-0">
+                  <Phone className="w-4 h-4 text-[#60A5FA] shrink-0" />
+                  <span>Contact:</span>
+                </div>
+                <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1">
+                  <a
+                    href="tel:+918318356338"
+                    className="text-white hover:text-[#60A5FA] transition-colors underline decoration-[#1E293B] hover:decoration-[#60A5FA]"
+                  >
+                    +91 83183 56338
+                  </a>
+                  <span className="text-[#334155]">•</span>
+                  <a
+                    href="tel:+919196068917"
+                    className="text-white hover:text-[#60A5FA] transition-colors underline decoration-[#1E293B] hover:decoration-[#60A5FA]"
+                  >
+                    +91 91960 68917
+                  </a>
+                  <span className="text-[#334155]">•</span>
+                  <a
+                    href="tel:+917905991037"
+                    className="text-white hover:text-[#60A5FA] transition-colors underline decoration-[#1E293B] hover:decoration-[#60A5FA]"
+                  >
+                    +91 79059 91037
+                  </a>
+                </div>
+              </div>
             </div>
           </div>
 

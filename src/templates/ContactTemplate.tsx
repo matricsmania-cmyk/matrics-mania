@@ -39,6 +39,9 @@ import {
   Sliders,
   AlertCircle,
   UserCheck,
+  User,
+  Terminal,
+  Globe,
 } from 'lucide-react';
 
 export interface ContactTemplateProps {
@@ -173,6 +176,26 @@ const TIMELINE_OPTIONS = [
   { value: 'Exploratory / RFI', label: 'Exploratory / Budget Planning', tag: 'Planning' },
 ];
 
+export const SERVICES_OPTIONS = [
+  'Technical SEO & Organic Search',
+  'Google / Bing Paid Search',
+  'Meta & Instagram Ads',
+  'LinkedIn Ads & B2B ABM',
+  'Programmatic Display & CTV',
+  'YouTube & Video Acquisition',
+  'Content Authority & AI Search (LLM)',
+  'Partner / Affiliate Networks',
+  'Outbound Sales Pipeline',
+  'Technical SEO & Crawl Engineering',
+  'Performance Marketing & Paid Acquisition',
+  'Conversion Rate Engineering & Speed',
+  'AI Search & LLM Visibility Optimization',
+  'CAC Escalation & Ad Fatigue',
+  'Organic Stagnation & AI Overview Loss',
+  'Conversion Funnel',
+  'Custom Engineering',
+];
+
 import { useRouter } from 'next/navigation';
 
 export const ContactTemplate: React.FC<ContactTemplateProps> = ({
@@ -187,40 +210,25 @@ export const ContactTemplate: React.FC<ContactTemplateProps> = ({
   const provider = useContentProvider();
   const contact = propContactInfo || provider.getContactInfo();
 
-  // Form Step State (1: Company, 2: Economics, 3: Scope & Problem, 4: Point of Contact)
-  const [currentStep, setCurrentStep] = useState<number>(1);
-
   // Form Fields
   const [website, setWebsite] = useState('');
   const [company, setCompany] = useState('');
-  const [country, setCountry] = useState('United States');
-  const [industry, setIndustry] = useState('B2B SaaS & Cloud Software');
-
-  const [annualRevenue, setAnnualRevenue] = useState('$10M - $50M ARR');
-  const [marketingBudget, setMarketingBudget] = useState('$30k - $100k / mo');
-  const [selectedChannels, setSelectedChannels] = useState<string[]>([
-    'Technical SEO & Organic Search',
-    'Google / Bing Paid Search',
-  ]);
-
-  const [serviceInterest, setServiceInterest] = useState('Technical SEO & Crawl Engineering');
-  const [primaryGrowthProblem, setPrimaryGrowthProblem] = useState(
-    'Organic Stagnation & AI Overview Loss'
-  );
-  const [timeline, setTimeline] = useState('Immediate (< 30 Days)');
-  const [additionalContext, setAdditionalContext] = useState('');
-
-  // Conditional Sub-telemetry
-  const [crawlScale, setCrawlScale] = useState('10k - 100k URLs');
-  const [monthlyTraffic, setMonthlyTraffic] = useState('50k - 250k Sessions/mo');
-  const [targetRoasGoal, setTargetRoasGoal] = useState('3.5x - 5.0x ROAS');
-
-  // Contact Info
   const [name, setName] = useState('');
+  const [industry, setIndustry] = useState('');
   const [workEmail, setWorkEmail] = useState('');
-  const [role, setRole] = useState('');
   const [phone, setPhone] = useState('');
+  const [country, setCountry] = useState('India');
+  const [selectedServices, setSelectedServices] = useState<string[]>([
+    'Technical SEO & Organic Search',
+    'Performance Marketing & Paid Acquisition',
+  ]);
+  const [note, setNote] = useState('');
   const [ndaAccepted, setNdaAccepted] = useState(true);
+
+  // Fallbacks for telemetry rail
+  const annualRevenue = '$10M - $50M ARR';
+  const marketingBudget = '$30k - $100k / mo';
+  const serviceInterest = selectedServices[0] || 'Technical SEO & Organic Search';
 
   // Submission States
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -242,110 +250,49 @@ export const ContactTemplate: React.FC<ContactTemplateProps> = ({
     }
   };
 
-  // Toggle Channel Selection
-  const toggleChannel = (channel: string) => {
-    if (selectedChannels.includes(channel)) {
-      if (selectedChannels.length > 1) {
-        setSelectedChannels(selectedChannels.filter((c) => c !== channel));
+  const toggleService = (srv: string) => {
+    if (selectedServices.includes(srv)) {
+      if (selectedServices.length > 1) {
+        setSelectedServices(selectedServices.filter((s) => s !== srv));
       }
     } else {
-      setSelectedChannels([...selectedChannels, channel]);
+      setSelectedServices([...selectedServices, srv]);
     }
   };
 
-  // Real-time Qualification Assessment
-  const qualificationScore = useMemo(() => {
-    let score = 50;
-    if (annualRevenue.includes('$10M') || annualRevenue.includes('$50M') || annualRevenue.includes('$250M')) {
-      score += 25;
-    } else if (annualRevenue.includes('$2M')) {
-      score += 15;
-    }
-
-    if (marketingBudget.includes('$100k') || marketingBudget.includes('$30k')) {
-      score += 25;
-    } else if (marketingBudget.includes('$10k')) {
-      score += 15;
-    }
-
-    return Math.min(100, score);
-  }, [annualRevenue, marketingBudget]);
-
-  const qualificationTier = useMemo(() => {
-    if (marketingBudget.includes('$100k') || marketingBudget.includes('$30k') || annualRevenue.includes('$50M')) {
-      return {
-        label: 'Priority Enterprise Tier',
-        badgeColor: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30',
-        sla: '2-Hour Principal Architect SLA',
-        advisoryTeam: 'Senior Growth & Systems Architecture Core',
-      };
-    }
-    if (marketingBudget.includes('$10k') || annualRevenue.includes('$2M')) {
-      return {
-        label: 'Strategic Growth Accelerator',
-        badgeColor: 'bg-[#2563EB]/15 text-[#60A5FA] border-[#2563EB]/40',
-        sla: 'Under 4 Business Hours SLA',
-        advisoryTeam: 'Growth Engineering Discipline Lead',
-      };
-    }
-    return {
-      label: 'Advisory Review Track',
-      badgeColor: 'bg-amber-500/10 text-amber-400 border-amber-500/30',
-      sla: 'Same-Day Scope Evaluation',
-      advisoryTeam: 'Technical Evaluation Team',
-    };
-  }, [marketingBudget, annualRevenue]);
-
-  // Step Validation Checkers
-  const isStep1Valid = website.trim().length > 3 && company.trim().length > 1;
-  const isStep2Valid = annualRevenue.length > 0 && marketingBudget.length > 0 && selectedChannels.length > 0;
-  const isStep3Valid = serviceInterest.length > 0 && primaryGrowthProblem.length > 0 && timeline.length > 0;
-  const isStep4Valid = name.trim().length > 1 && workEmail.includes('@') && workEmail.includes('.');
-
-  // Navigation between steps
-  const handleNextStep = () => {
-    if (currentStep === 1 && !isStep1Valid) {
-      if (onShowToast) {
-        onShowToast('Company & Website Required', 'Please provide a valid company website and organization name.', 'error');
-      }
-      return;
-    }
-    if (currentStep === 2 && !isStep2Valid) {
-      if (onShowToast) {
-        onShowToast('Economics Required', 'Please choose your revenue, growth budget, and at least one channel.', 'error');
-      }
-      return;
-    }
-    if (currentStep === 3 && !isStep3Valid) {
-      if (onShowToast) {
-        onShowToast('Scope Required', 'Please specify your primary service interest and growth bottleneck.', 'error');
-      }
-      return;
-    }
-
-    if (currentStep < 4) {
-      setCurrentStep((prev) => prev + 1);
-      // Smooth scroll to top of form
-      const el = document.getElementById('qualification-form-header');
-      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  };
-
-  const handlePrevStep = () => {
-    if (currentStep > 1) {
-      setCurrentStep((prev) => prev - 1);
-      const el = document.getElementById('qualification-form-header');
-      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  };
+  const isFormValid = useMemo(() => {
+    return (
+      name.trim().length > 0 &&
+      workEmail.includes('@') &&
+      workEmail.includes('.') &&
+      phone.trim().length > 5 &&
+      country.trim().length > 0 &&
+      selectedServices.length > 0 &&
+      ndaAccepted
+    );
+  }, [name, workEmail, phone, country, selectedServices, ndaAccepted]);
 
   // Final Submission Handler using abstracted Provider
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!isStep4Valid) {
-      if (onShowToast) {
-        onShowToast('Work Email Required', 'Please enter your corporate name and work email address.', 'error');
-      }
+    if (!name.trim()) {
+      if (onShowToast) onShowToast('Your Name Required', 'Please provide your full name.', 'error');
+      return;
+    }
+    if (!workEmail.trim() || !workEmail.includes('@')) {
+      if (onShowToast) onShowToast('Valid Work Email Required', 'Please enter your corporate email address.', 'error');
+      return;
+    }
+    if (!phone.trim()) {
+      if (onShowToast) onShowToast('Phone Number Required', 'Please provide your direct contact number.', 'error');
+      return;
+    }
+    if (selectedServices.length === 0) {
+      if (onShowToast) onShowToast('Select Services', 'Please choose at least one service.', 'error');
+      return;
+    }
+    if (!ndaAccepted) {
+      if (onShowToast) onShowToast('Agreement Required', 'Please acknowledge the confidentiality protocol.', 'error');
       return;
     }
 
@@ -354,25 +301,23 @@ export const ContactTemplate: React.FC<ContactTemplateProps> = ({
     const submissionPayload: ContactQualificationData = {
       name,
       workEmail,
-      role: role || undefined,
       phone: phone || undefined,
-      company,
-      website: website.startsWith('http') ? website : `https://${website}`,
+      company: company.trim() || 'Confidential / Unspecified',
+      website: website.trim()
+        ? website.startsWith('http')
+          ? website.trim()
+          : `https://${website.trim()}`
+        : 'https://client-portal.internal',
       country,
-      industry,
-      approximateAnnualRevenue: annualRevenue,
-      approximateMarketingBudget: marketingBudget,
-      currentAcquisitionChannels: selectedChannels,
-      serviceInterest,
-      primaryGrowthProblem,
-      timeline,
-      additionalContext: additionalContext.trim() || undefined,
-      specificFocusDetails: {
-        crawlScalePages: serviceInterest.includes('SEO') || serviceInterest.includes('AI') ? crawlScale : undefined,
-        estimatedMonthlyTraffic: serviceInterest.includes('CRO') ? monthlyTraffic : undefined,
-        primaryAdSpendPlatforms: serviceInterest.includes('Paid') ? [targetRoasGoal] : undefined,
-      },
-      source: 'Direct /contact/ Intake Form',
+      industry: industry.trim() || 'Technology',
+      approximateAnnualRevenue: '$10M - $50M ARR',
+      approximateMarketingBudget: '$30k - $100k / mo',
+      currentAcquisitionChannels: selectedServices,
+      serviceInterest: selectedServices[0] || 'Technical SEO & Organic Search',
+      primaryGrowthProblem: selectedServices.find((s) => s.includes('Loss') || s.includes('Fatigue') || s.includes('Funnel')) || 'Conversion Funnel',
+      timeline: 'Immediate (< 30 Days)',
+      additionalContext: note.trim() || undefined,
+      source: 'Direct /contact/ Single Page Intake Form',
     };
 
     try {
@@ -461,65 +406,6 @@ export const ContactTemplate: React.FC<ContactTemplateProps> = ({
                 id="qualification-form-header"
                 className="p-6 sm:p-8 lg:p-10 rounded-3xl bg-[#0D1424] border border-[#1E293B] space-y-8 shadow-2xl relative"
               >
-                {/* Form Progress Bar */}
-                {!submissionResult && (
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between text-xs font-mono">
-                      <span className="text-[#60A5FA] font-bold uppercase tracking-wider flex items-center gap-2">
-                        <span>Step {currentStep} of 4</span>
-                        <span className="text-[#64748B]">•</span>
-                        <span className="text-white">
-                          {currentStep === 1 && 'Domain & Organization Profile'}
-                          {currentStep === 2 && 'Growth Economics & Current Channels'}
-                          {currentStep === 3 && 'Architecture & Growth Bottlenecks'}
-                          {currentStep === 4 && 'Point of Contact & Verification'}
-                        </span>
-                      </span>
-                      <span className="text-[#94A3B8] font-bold">
-                        {currentStep === 1 && '25%'}
-                        {currentStep === 2 && '50%'}
-                        {currentStep === 3 && '75%'}
-                        {currentStep === 4 && '100%'}
-                      </span>
-                    </div>
-
-                    <div className="w-full h-1.5 bg-[#070B14] rounded-full overflow-hidden border border-[#1E293B]">
-                      <div
-                        className="h-full bg-gradient-to-r from-[#2563EB] to-[#60A5FA] transition-all duration-300 rounded-full"
-                        style={{ width: `${(currentStep / 4) * 100}%` }}
-                      />
-                    </div>
-
-                    {/* Step Navigator Chips */}
-                    <div className="grid grid-cols-4 gap-2 pt-2 text-[11px] font-mono">
-                      {[
-                        { step: 1, label: '1. Organization' },
-                        { step: 2, label: '2. Economics' },
-                        { step: 3, label: '3. Technical Scope' },
-                        { step: 4, label: '4. Contact' },
-                      ].map((s) => (
-                        <button
-                          key={s.step}
-                          type="button"
-                          onClick={() => {
-                            if (s.step < currentStep) setCurrentStep(s.step);
-                          }}
-                          disabled={s.step > currentStep}
-                          className={`py-2 px-2.5 rounded-lg text-center transition-all cursor-pointer truncate ${
-                            currentStep === s.step
-                              ? 'bg-[#2563EB]/20 border border-[#2563EB] text-white font-bold'
-                              : s.step < currentStep
-                              ? 'bg-[#070B14] border border-[#1E293B] text-emerald-400 hover:text-white'
-                              : 'bg-[#070B14]/40 border border-[#1E293B]/40 text-[#64748B] cursor-not-allowed'
-                          }`}
-                        >
-                          {s.step < currentStep ? `✓ ${s.label.split(' ')[1]}` : s.label}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
                 {/* =========================================================================
                     SUBMISSION SUCCESS CONFIRMATION VIEW
                    ========================================================================= */}
@@ -622,7 +508,7 @@ export const ContactTemplate: React.FC<ContactTemplateProps> = ({
                         type="button"
                         onClick={() => {
                           setSubmissionResult(null);
-                          setCurrentStep(1);
+                          
                         }}
                         className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-[#0D1424] hover:bg-[#1E293B] border border-[#1E293B] text-xs font-mono text-[#94A3B8] hover:text-white cursor-pointer"
                       >
@@ -632,589 +518,259 @@ export const ContactTemplate: React.FC<ContactTemplateProps> = ({
                   </motion.div>
                 ) : (
                   /* =========================================================================
-                      MULTI-STEP QUALIFICATION FORM
+                      SINGLE-PAGE INTAKE FORM
                      ========================================================================= */
                   <form onSubmit={handleSubmit} className="space-y-6">
-                    <AnimatePresence mode="wait">
-                      {/* STEP 1: ORGANIZATION & DOMAIN */}
-                      {currentStep === 1 && (
-                        <motion.div
-                          key="step1"
-                          initial={{ opacity: 0, x: 20 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          exit={{ opacity: 0, x: -20 }}
-                          transition={{ duration: 0.2 }}
-                          className="space-y-5"
-                        >
-                          <div className="space-y-1">
-                            <h3 className="text-xl font-bold text-white flex items-center gap-2">
-                              <Building2 className="w-5 h-5 text-[#60A5FA]" />
-                              Organization &amp; Domain Telemetry
-                            </h3>
-                            <p className="text-xs text-[#94A3B8]">
-                              Provide your production domain so our architects can inspect live crawl headers and attribution setups.
-                            </p>
+                    <div className="space-y-1 pb-3 border-b border-[#1E293B]">
+                      <h3 className="text-xl font-bold text-white flex items-center gap-2">
+                        <Terminal className="w-5 h-5 text-[#60A5FA]" />
+                        <span>Direct Diagnostic Intake Form</span>
+                      </h3>
+                      <p className="text-xs text-[#94A3B8]">
+                        Complete the specifications below. Our Principal Growth Architects will evaluate your digital infrastructure and respond under strict enterprise NDA.
+                      </p>
+                    </div>
+
+                    {/* Company Website URL (Optional) */}
+                    <div className="space-y-1.5">
+                      <label htmlFor="form-website" className="block text-xs font-mono font-bold text-white">
+                        Company Website URL <span className="text-[#64748B] font-normal">(Optional)</span>
+                      </label>
+                      <div className="relative">
+                        <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#64748B]">
+                          <Globe className="w-4 h-4" />
+                        </div>
+                        <input
+                          type="text"
+                          id="form-website"
+                          value={website}
+                          onChange={(e) => setWebsite(e.target.value)}
+                          onBlur={handleWebsiteBlur}
+                          placeholder="company.com"
+                          className="w-full pl-10 pr-4 py-3 bg-[#070B14] border border-[#1E293B] focus:border-[#2563EB] rounded-xl text-sm text-white placeholder-[#475569] font-mono outline-none transition-all focus:ring-1 focus:ring-[#2563EB]"
+                        />
+                      </div>
+                      <p className="text-[11px] font-mono text-[#64748B]">
+                        e.g. yourcompany.com or app.product.io
+                      </p>
+                    </div>
+
+                    {/* 1. Company Name & 2. Your Name */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {/* 1. Company Name */}
+                      <div className="space-y-1.5">
+                        <label htmlFor="form-company" className="block text-xs font-mono font-bold text-white">
+                          1. Company Name <span className="text-[#64748B] font-normal">(Optional)</span>
+                        </label>
+                        <div className="relative">
+                          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#64748B]">
+                            <Building2 className="w-4 h-4" />
                           </div>
+                          <input
+                            type="text"
+                            id="form-company"
+                            value={company}
+                            onChange={(e) => setCompany(e.target.value)}
+                            placeholder="Acme Inc."
+                            className="w-full pl-10 pr-4 py-3 bg-[#070B14] border border-[#1E293B] focus:border-[#2563EB] rounded-xl text-sm text-white placeholder-[#475569] outline-none transition-all focus:ring-1 focus:ring-[#2563EB]"
+                          />
+                        </div>
+                      </div>
 
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div className="space-y-1.5">
-                              <label htmlFor="form-website" className="block text-xs font-mono text-[#94A3B8]">
-                                Company Website URL <span className="text-rose-400">*</span>
-                              </label>
-                              <div className="relative">
-                                <Globe2 className="w-4 h-4 text-[#64748B] absolute left-3.5 top-3.5" />
-                                <input
-                                  id="form-website"
-                                  type="text"
-                                  required
-                                  value={website}
-                                  onChange={(e) => setWebsite(e.target.value)}
-                                  onBlur={handleWebsiteBlur}
-                                  placeholder="company.com"
-                                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-[#070B14] border border-[#1E293B] text-sm text-white focus:outline-none focus:ring-2 focus:ring-[#2563EB] placeholder-[#475569]"
-                                />
-                              </div>
-                              <p className="text-[11px] text-[#64748B]">e.g. yourcompany.com or app.product.io</p>
-                            </div>
-
-                            <div className="space-y-1.5">
-                              <label htmlFor="form-company" className="block text-xs font-mono text-[#94A3B8]">
-                                Organization Name <span className="text-rose-400">*</span>
-                              </label>
-                              <input
-                                id="form-company"
-                                type="text"
-                                required
-                                value={company}
-                                onChange={(e) => setCompany(e.target.value)}
-                                placeholder="e.g. Acme Corp"
-                                className="w-full px-4 py-3 rounded-xl bg-[#070B14] border border-[#1E293B] text-sm text-white focus:outline-none focus:ring-2 focus:ring-[#2563EB] placeholder-[#475569]"
-                              />
-                            </div>
+                      {/* 2. Your Name */}
+                      <div className="space-y-1.5">
+                        <label htmlFor="form-name" className="block text-xs font-mono font-bold text-white">
+                          2. Your Name <span className="text-[#3B82F6]">*</span>
+                        </label>
+                        <div className="relative">
+                          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#64748B]">
+                            <User className="w-4 h-4" />
                           </div>
+                          <input
+                            type="text"
+                            id="form-name"
+                            required
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            placeholder="Jane Doe"
+                            className="w-full pl-10 pr-4 py-3 bg-[#070B14] border border-[#1E293B] focus:border-[#2563EB] rounded-xl text-sm text-white placeholder-[#475569] outline-none transition-all focus:ring-1 focus:ring-[#2563EB]"
+                          />
+                        </div>
+                      </div>
+                    </div>
 
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div className="space-y-1.5">
-                              <label htmlFor="form-industry" className="block text-xs font-mono text-[#94A3B8]">
-                                Industry Vertical <span className="text-rose-400">*</span>
-                              </label>
-                              <select
-                                id="form-industry"
-                                value={industry}
-                                onChange={(e) => setIndustry(e.target.value)}
-                                className="w-full px-4 py-3 rounded-xl bg-[#070B14] border border-[#1E293B] text-xs text-white focus:outline-none focus:ring-2 focus:ring-[#2563EB] cursor-pointer"
+                    {/* 3. Industry (Optional) & 4. Corporate Work Email */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {/* 3. Industry (Optional) */}
+                      <div className="space-y-1.5">
+                        <label htmlFor="form-industry" className="block text-xs font-mono font-bold text-white">
+                          3. Industry <span className="text-[#64748B] font-normal">(Optional)</span>
+                        </label>
+                        <input
+                          type="text"
+                          id="form-industry"
+                          value={industry}
+                          onChange={(e) => setIndustry(e.target.value)}
+                          placeholder="e.g. SaaS, E-Commerce, FinTech..."
+                          className="w-full px-4 py-3 bg-[#070B14] border border-[#1E293B] focus:border-[#2563EB] rounded-xl text-sm text-white placeholder-[#475569] outline-none transition-all focus:ring-1 focus:ring-[#2563EB]"
+                        />
+                      </div>
+
+                      {/* 4. Corporate Work Email */}
+                      <div className="space-y-1.5">
+                        <label htmlFor="form-email" className="block text-xs font-mono font-bold text-white">
+                          4. Corporate Work Email <span className="text-[#3B82F6]">*</span>
+                        </label>
+                        <div className="relative">
+                          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#64748B]">
+                            <Mail className="w-4 h-4" />
+                          </div>
+                          <input
+                            type="email"
+                            id="form-email"
+                            required
+                            value={workEmail}
+                            onChange={(e) => setWorkEmail(e.target.value)}
+                            placeholder="jane@company.com"
+                            className="w-full pl-10 pr-4 py-3 bg-[#070B14] border border-[#1E293B] focus:border-[#2563EB] rounded-xl text-sm text-white placeholder-[#475569] font-mono outline-none transition-all focus:ring-1 focus:ring-[#2563EB]"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* 5. Phone Number & 6. Country / Region */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {/* 5. Phone Number */}
+                      <div className="space-y-1.5">
+                        <label htmlFor="form-phone" className="block text-xs font-mono font-bold text-white">
+                          5. Phone Number <span className="text-[#3B82F6]">*</span>
+                        </label>
+                        <div className="relative">
+                          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#64748B]">
+                            <Phone className="w-4 h-4" />
+                          </div>
+                          <input
+                            type="tel"
+                            id="form-phone"
+                            required
+                            value={phone}
+                            onChange={(e) => setPhone(e.target.value)}
+                            placeholder="+91 83183 56338"
+                            className="w-full pl-10 pr-4 py-3 bg-[#070B14] border border-[#1E293B] focus:border-[#2563EB] rounded-xl text-sm text-white placeholder-[#475569] font-mono outline-none transition-all focus:ring-1 focus:ring-[#2563EB]"
+                          />
+                        </div>
+                      </div>
+
+                      {/* 6. Country / Region */}
+                      <div className="space-y-1.5">
+                        <label htmlFor="form-country" className="block text-xs font-mono font-bold text-white">
+                          6. Country / Region <span className="text-[#3B82F6]">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          id="form-country"
+                          required
+                          value={country}
+                          onChange={(e) => setCountry(e.target.value)}
+                          placeholder="e.g. India, United States, UK, UAE..."
+                          className="w-full px-4 py-3 bg-[#070B14] border border-[#1E293B] focus:border-[#2563EB] rounded-xl text-sm text-white placeholder-[#475569] outline-none transition-all focus:ring-1 focus:ring-[#2563EB]"
+                        />
+                      </div>
+                    </div>
+
+                    {/* 7. Services */}
+                    <div className="space-y-2 pt-2">
+                      <div className="flex items-center justify-between">
+                        <label className="block text-xs font-mono font-bold text-white">
+                          7. Services <span className="text-[#3B82F6]">*</span>
+                        </label>
+                        <span className="text-[11px] font-mono text-[#60A5FA]">
+                          {selectedServices.length} Selected
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-[#94A3B8]">
+                        Select the growth channels and technical architectures required for your project:
+                      </p>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 max-h-[340px] overflow-y-auto pr-1">
+                        {SERVICES_OPTIONS.map((srv) => {
+                          const isSelected = selectedServices.includes(srv);
+                          return (
+                            <button
+                              key={srv}
+                              type="button"
+                              onClick={() => toggleService(srv)}
+                              className={`p-3 rounded-xl border text-left text-xs transition-all flex items-start gap-2.5 cursor-pointer ${
+                                isSelected
+                                  ? "bg-[#2563EB]/15 border-[#2563EB] text-white shadow-sm shadow-blue-500/10"
+                                  : "bg-[#070B14] border-[#1E293B] text-[#94A3B8] hover:text-white hover:border-[#334155]"
+                              }`}
+                            >
+                              <div
+                                className={`w-4 h-4 rounded mt-0.5 shrink-0 flex items-center justify-center border transition-all ${
+                                  isSelected
+                                    ? "bg-[#2563EB] border-[#2563EB] text-white"
+                                    : "border-[#334155] bg-[#0D1424]"
+                                }`}
                               >
-                                {INDUSTRY_OPTIONS.map((ind) => (
-                                  <option key={ind} value={ind} className="bg-[#070B14]">
-                                    {ind}
-                                  </option>
-                                ))}
-                              </select>
-                            </div>
-
-                            <div className="space-y-1.5">
-                              <label htmlFor="form-country" className="block text-xs font-mono text-[#94A3B8]">
-                                Headquarters Country / Region <span className="text-rose-400">*</span>
-                              </label>
-                              <select
-                                id="form-country"
-                                value={country}
-                                onChange={(e) => setCountry(e.target.value)}
-                                className="w-full px-4 py-3 rounded-xl bg-[#070B14] border border-[#1E293B] text-xs text-white focus:outline-none focus:ring-2 focus:ring-[#2563EB] cursor-pointer"
-                              >
-                                {COUNTRY_OPTIONS.map((c) => (
-                                  <option key={c.name} value={c.name} className="bg-[#070B14]">
-                                    {c.name}
-                                  </option>
-                                ))}
-                              </select>
-                            </div>
-                          </div>
-                        </motion.div>
-                      )}
-
-                      {/* STEP 2: GROWTH ECONOMICS & CHANNELS */}
-                      {currentStep === 2 && (
-                        <motion.div
-                          key="step2"
-                          initial={{ opacity: 0, x: 20 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          exit={{ opacity: 0, x: -20 }}
-                          transition={{ duration: 0.2 }}
-                          className="space-y-6"
-                        >
-                          <div className="space-y-1">
-                            <h3 className="text-xl font-bold text-white flex items-center gap-2">
-                              <DollarSign className="w-5 h-5 text-[#60A5FA]" />
-                              Growth Economics &amp; Scale
-                            </h3>
-                            <p className="text-xs text-[#94A3B8]">
-                              MatricsMania architectures are tailored to businesses with established product-market traction.
-                            </p>
-                          </div>
-
-                          {/* Annual Revenue */}
-                          <div className="space-y-2">
-                            <label className="block text-xs font-mono text-[#94A3B8]">
-                              Approximate Annual Revenue (ARR / Turnover) <span className="text-rose-400">*</span>
-                            </label>
-                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-                              {REVENUE_OPTIONS.map((rev) => (
-                                <button
-                                  key={rev.value}
-                                  type="button"
-                                  onClick={() => setAnnualRevenue(rev.value)}
-                                  className={`p-3.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
-                                    annualRevenue === rev.value
-                                      ? 'bg-[#2563EB]/15 border-[#2563EB] text-white shadow-lg shadow-blue-500/10'
-                                      : 'bg-[#070B14] border-[#1E293B] text-[#94A3B8] hover:border-[#334155] hover:text-white'
-                                  }`}
-                                >
-                                  <div className="font-bold text-xs text-white">{rev.label}</div>
-                                  <div className="text-[11px] text-[#64748B] mt-0.5">{rev.desc}</div>
-                                </button>
-                              ))}
-                            </div>
-                          </div>
-
-                          {/* Monthly Marketing Budget */}
-                          <div className="space-y-2">
-                            <label className="block text-xs font-mono text-[#94A3B8]">
-                              Planned Monthly Growth / Marketing Budget <span className="text-rose-400">*</span>
-                            </label>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                              {BUDGET_OPTIONS.map((bg) => (
-                                <button
-                                  key={bg.value}
-                                  type="button"
-                                  onClick={() => setMarketingBudget(bg.value)}
-                                  className={`p-3.5 rounded-xl border text-left transition-all cursor-pointer flex items-center justify-between ${
-                                    marketingBudget === bg.value
-                                      ? 'bg-[#2563EB]/15 border-[#2563EB] text-white shadow-lg shadow-blue-500/10'
-                                      : 'bg-[#070B14] border-[#1E293B] text-[#94A3B8] hover:border-[#334155] hover:text-white'
-                                  }`}
-                                >
-                                  <div>
-                                    <div className="font-bold text-xs text-white">{bg.label}</div>
-                                    <div className="text-[11px] text-[#64748B]">{bg.desc}</div>
-                                  </div>
-                                  {marketingBudget === bg.value && (
-                                    <Check className="w-4 h-4 text-[#60A5FA] shrink-0" />
-                                  )}
-                                </button>
-                              ))}
-                            </div>
-                          </div>
-
-                          {/* Current Acquisition Channels Multi-Select */}
-                          <div className="space-y-2">
-                            <div className="flex items-center justify-between">
-                              <label className="block text-xs font-mono text-[#94A3B8]">
-                                Active Acquisition Channels (Select all that apply) <span className="text-rose-400">*</span>
-                              </label>
-                              <span className="text-[11px] font-mono text-[#60A5FA]">
-                                {selectedChannels.length} selected
-                              </span>
-                            </div>
-                            <div className="flex flex-wrap gap-2">
-                              {CHANNEL_OPTIONS.map((chan) => {
-                                const isSelected = selectedChannels.includes(chan);
-                                return (
-                                  <button
-                                    key={chan}
-                                    type="button"
-                                    onClick={() => toggleChannel(chan)}
-                                    className={`px-3 py-2 rounded-xl text-xs font-medium border transition-all cursor-pointer flex items-center gap-1.5 ${
-                                      isSelected
-                                        ? 'bg-[#2563EB]/20 border-[#2563EB] text-white font-semibold'
-                                        : 'bg-[#070B14] border-[#1E293B] text-[#94A3B8] hover:text-white hover:border-[#334155]'
-                                    }`}
-                                  >
-                                    <span
-                                      className={`w-2 h-2 rounded-full ${
-                                        isSelected ? 'bg-[#60A5FA]' : 'bg-[#334155]'
-                                      }`}
-                                    />
-                                    <span>{chan}</span>
-                                  </button>
-                                );
-                              })}
-                            </div>
-                          </div>
-                        </motion.div>
-                      )}
-
-                      {/* STEP 3: TECHNICAL SCOPE & BOTTLENECKS */}
-                      {currentStep === 3 && (
-                        <motion.div
-                          key="step3"
-                          initial={{ opacity: 0, x: 20 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          exit={{ opacity: 0, x: -20 }}
-                          transition={{ duration: 0.2 }}
-                          className="space-y-6"
-                        >
-                          <div className="space-y-1">
-                            <h3 className="text-xl font-bold text-white flex items-center gap-2">
-                              <Target className="w-5 h-5 text-[#60A5FA]" />
-                              Engineering Scope &amp; Bottlenecks
-                            </h3>
-                            <p className="text-xs text-[#94A3B8]">
-                              Specify the exact discipline and primary growth friction point you want resolved.
-                            </p>
-                          </div>
-
-                          {/* Primary Service Interest */}
-                          <div className="space-y-2">
-                            <label className="block text-xs font-mono text-[#94A3B8]">
-                              Primary Service Interest <span className="text-rose-400">*</span>
-                            </label>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                              {SERVICE_OPTIONS.map((srv) => (
-                                <button
-                                  key={srv.id}
-                                  type="button"
-                                  onClick={() => setServiceInterest(srv.title)}
-                                  className={`p-3.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
-                                    serviceInterest === srv.title
-                                      ? 'bg-[#2563EB]/15 border-[#2563EB] text-white shadow-lg shadow-blue-500/10'
-                                      : 'bg-[#070B14] border-[#1E293B] text-[#94A3B8] hover:border-[#334155] hover:text-white'
-                                  }`}
-                                >
-                                  <div className="font-bold text-xs text-white">{srv.title}</div>
-                                  <div className="text-[11px] text-[#64748B] mt-1 line-clamp-2">
-                                    {srv.desc}
-                                  </div>
-                                </button>
-                              ))}
-                            </div>
-                          </div>
-
-                          {/* CONDITIONAL SUB-QUESTIONS BASED ON SERVICE INTEREST */}
-                          {(serviceInterest.includes('SEO') || serviceInterest.includes('AI Search')) && (
-                            <motion.div
-                              initial={{ opacity: 0, height: 0 }}
-                              animate={{ opacity: 1, height: 'auto' }}
-                              className="p-4 rounded-xl bg-[#070B14] border border-[#2563EB]/30 space-y-2"
-                            >
-                              <div className="flex items-center gap-2 text-xs font-mono text-[#60A5FA]">
-                                <Sliders className="w-3.5 h-3.5" />
-                                <span>Crawl Architecture Scope (Indexable URLs)</span>
+                                {isSelected && <Check className="w-3 h-3" />}
                               </div>
-                              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                                {['< 10k URLs', '10k - 100k URLs', '100k - 1M URLs', '1M+ Programmatic'].map(
-                                  (opt) => (
-                                    <button
-                                      key={opt}
-                                      type="button"
-                                      onClick={() => setCrawlScale(opt)}
-                                      className={`py-2 px-3 rounded-lg text-xs font-mono text-center border cursor-pointer ${
-                                        crawlScale === opt
-                                          ? 'bg-[#2563EB] text-white border-[#2563EB]'
-                                          : 'bg-[#0D1424] text-[#94A3B8] border-[#1E293B] hover:text-white'
-                                      }`}
-                                    >
-                                      {opt}
-                                    </button>
-                                  )
-                                )}
-                              </div>
-                            </motion.div>
-                          )}
+                              <span className="font-medium leading-snug">{srv}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
 
-                          {serviceInterest.includes('CRO') && (
-                            <motion.div
-                              initial={{ opacity: 0, height: 0 }}
-                              animate={{ opacity: 1, height: 'auto' }}
-                              className="p-4 rounded-xl bg-[#070B14] border border-[#2563EB]/30 space-y-2"
-                            >
-                              <div className="flex items-center gap-2 text-xs font-mono text-[#60A5FA]">
-                                <BarChart3 className="w-3.5 h-3.5" />
-                                <span>Current Monthly Traffic Volume</span>
-                              </div>
-                              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                                {['< 20k Sessions/mo', '20k - 100k Sessions', '100k - 500k Sessions', '500k+ High-Scale'].map(
-                                  (opt) => (
-                                    <button
-                                      key={opt}
-                                      type="button"
-                                      onClick={() => setMonthlyTraffic(opt)}
-                                      className={`py-2 px-3 rounded-lg text-xs font-mono text-center border cursor-pointer ${
-                                        monthlyTraffic === opt
-                                          ? 'bg-[#2563EB] text-white border-[#2563EB]'
-                                          : 'bg-[#0D1424] text-[#94A3B8] border-[#1E293B] hover:text-white'
-                                      }`}
-                                    >
-                                      {opt}
-                                    </button>
-                                  )
-                                )}
-                              </div>
-                            </motion.div>
-                          )}
+                    {/* 8. Note (Optional) */}
+                    <div className="space-y-1.5 pt-2">
+                      <label htmlFor="form-note" className="block text-xs font-mono font-bold text-white">
+                        8. Note <span className="text-[#64748B] font-normal">(Optional)</span>
+                      </label>
+                      <textarea
+                        id="form-note"
+                        rows={3}
+                        value={note}
+                        onChange={(e) => setNote(e.target.value)}
+                        placeholder="Provide any additional context regarding your current technical bottlenecks, stack, monthly acquisition goals, or timeline..."
+                        className="w-full px-4 py-3 bg-[#070B14] border border-[#1E293B] focus:border-[#2563EB] rounded-xl text-sm text-white placeholder-[#475569] outline-none transition-all focus:ring-1 focus:ring-[#2563EB] resize-y"
+                      />
+                    </div>
 
-                          {serviceInterest.includes('Performance') && (
-                            <motion.div
-                              initial={{ opacity: 0, height: 0 }}
-                              animate={{ opacity: 1, height: 'auto' }}
-                              className="p-4 rounded-xl bg-[#070B14] border border-[#2563EB]/30 space-y-2"
-                            >
-                              <div className="flex items-center gap-2 text-xs font-mono text-[#60A5FA]">
-                                <TrendingUp className="w-3.5 h-3.5" />
-                                <span>Primary Paid Growth Target</span>
-                              </div>
-                              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                                {['Lower Blended CAC', 'Scale Spend 2x-5x', 'High-LTV ABM Pipeline', '3.5x+ ROAS Floor'].map(
-                                  (opt) => (
-                                    <button
-                                      key={opt}
-                                      type="button"
-                                      onClick={() => setTargetRoasGoal(opt)}
-                                      className={`py-2 px-3 rounded-lg text-xs font-mono text-center border cursor-pointer ${
-                                        targetRoasGoal === opt
-                                          ? 'bg-[#2563EB] text-white border-[#2563EB]'
-                                          : 'bg-[#0D1424] text-[#94A3B8] border-[#1E293B] hover:text-white'
-                                      }`}
-                                    >
-                                      {opt}
-                                    </button>
-                                  )
-                                )}
-                              </div>
-                            </motion.div>
-                          )}
+                    {/* Confidentiality Protocol Acknowledgment */}
+                    <div className="pt-2 border-t border-[#1E293B]">
+                      <label className="flex items-start gap-3 cursor-pointer group">
+                        <input
+                          type="checkbox"
+                          checked={ndaAccepted}
+                          onChange={(e) => setNdaAccepted(e.target.checked)}
+                          className="mt-1 w-4 h-4 rounded border-[#1E293B] bg-[#070B14] text-[#2563EB] focus:ring-[#2563EB] cursor-pointer"
+                        />
+                        <span className="text-xs text-[#94A3B8] group-hover:text-white transition-colors leading-relaxed">
+                          I acknowledge that telemetry data shared will be handled under MatricsMania's standard Enterprise Mutual Confidentiality Protocol.
+                        </span>
+                      </label>
+                    </div>
 
-                          {/* Primary Growth Problem */}
-                          <div className="space-y-2">
-                            <label className="block text-xs font-mono text-[#94A3B8]">
-                              Primary Growth Bottleneck / Challenge <span className="text-rose-400">*</span>
-                            </label>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                              {GROWTH_PROBLEMS.map((prob) => (
-                                <button
-                                  key={prob.id}
-                                  type="button"
-                                  onClick={() => setPrimaryGrowthProblem(prob.title)}
-                                  className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${
-                                    primaryGrowthProblem === prob.title
-                                      ? 'bg-[#2563EB]/15 border-[#2563EB] text-white shadow-lg shadow-blue-500/10'
-                                      : 'bg-[#070B14] border-[#1E293B] text-[#94A3B8] hover:border-[#334155] hover:text-white'
-                                  }`}
-                                >
-                                  <div className="font-bold text-xs text-white">{prob.title}</div>
-                                  <div className="text-[11px] text-[#64748B] mt-0.5">{prob.desc}</div>
-                                </button>
-                              ))}
-                            </div>
-                          </div>
-
-                          {/* Timeline */}
-                          <div className="space-y-2">
-                            <label className="block text-xs font-mono text-[#94A3B8]">
-                              Target Deployment Timeline <span className="text-rose-400">*</span>
-                            </label>
-                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                              {TIMELINE_OPTIONS.map((tm) => (
-                                <button
-                                  key={tm.value}
-                                  type="button"
-                                  onClick={() => setTimeline(tm.value)}
-                                  className={`p-2.5 rounded-xl border text-center transition-all cursor-pointer ${
-                                    timeline === tm.value
-                                      ? 'bg-[#2563EB]/20 border-[#2563EB] text-white font-bold'
-                                      : 'bg-[#070B14] border-[#1E293B] text-[#94A3B8] hover:text-white'
-                                  }`}
-                                >
-                                  <div className="text-xs">{tm.label}</div>
-                                </button>
-                              ))}
-                            </div>
-                          </div>
-
-                          {/* Additional Context */}
-                          <div className="space-y-1.5">
-                            <label htmlFor="form-context" className="block text-xs font-mono text-[#94A3B8]">
-                              Additional Architectural Context / Stack Details <span className="text-[#64748B]">(Optional)</span>
-                            </label>
-                            <textarea
-                              id="form-context"
-                              rows={3}
-                              value={additionalContext}
-                              onChange={(e) => setAdditionalContext(e.target.value)}
-                              placeholder="e.g. Current stack: Next.js + Headless CMS. Recent 30% organic drop after core algorithm update. Primary KPI: +50 enterprise demo bookings / month."
-                              className="w-full px-4 py-3 rounded-xl bg-[#070B14] border border-[#1E293B] text-xs text-white focus:outline-none focus:ring-2 focus:ring-[#2563EB] placeholder-[#475569]"
-                            />
-                          </div>
-                        </motion.div>
-                      )}
-
-                      {/* STEP 4: CONTACT VERIFICATION */}
-                      {currentStep === 4 && (
-                        <motion.div
-                          key="step4"
-                          initial={{ opacity: 0, x: 20 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          exit={{ opacity: 0, x: -20 }}
-                          transition={{ duration: 0.2 }}
-                          className="space-y-6"
-                        >
-                          <div className="space-y-1">
-                            <h3 className="text-xl font-bold text-white flex items-center gap-2">
-                              <UserCheck className="w-5 h-5 text-[#60A5FA]" />
-                              Lead Point of Contact &amp; Routing
-                            </h3>
-                            <p className="text-xs text-[#94A3B8]">
-                              We do not send generic marketing blasts. Your work email is only used for the Principal Architect diagnostic brief.
-                            </p>
-                          </div>
-
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div className="space-y-1.5">
-                              <label htmlFor="form-name" className="block text-xs font-mono text-[#94A3B8]">
-                                Full Name <span className="text-rose-400">*</span>
-                              </label>
-                              <input
-                                id="form-name"
-                                type="text"
-                                required
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                                placeholder="e.g. Alexander Vance"
-                                className="w-full px-4 py-3 rounded-xl bg-[#070B14] border border-[#1E293B] text-sm text-white focus:outline-none focus:ring-2 focus:ring-[#2563EB]"
-                              />
-                            </div>
-
-                            <div className="space-y-1.5">
-                              <label htmlFor="form-email" className="block text-xs font-mono text-[#94A3B8]">
-                                Corporate Work Email <span className="text-rose-400">*</span>
-                              </label>
-                              <input
-                                id="form-email"
-                                type="email"
-                                required
-                                value={workEmail}
-                                onChange={(e) => setWorkEmail(e.target.value)}
-                                placeholder="alex@company.com"
-                                className="w-full px-4 py-3 rounded-xl bg-[#070B14] border border-[#1E293B] text-sm text-white focus:outline-none focus:ring-2 focus:ring-[#2563EB]"
-                              />
-                            </div>
-                          </div>
-
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div className="space-y-1.5">
-                              <label htmlFor="form-role" className="block text-xs font-mono text-[#94A3B8]">
-                                Job Title / Role <span className="text-[#64748B]">(Optional)</span>
-                              </label>
-                              <input
-                                id="form-role"
-                                type="text"
-                                value={role}
-                                onChange={(e) => setRole(e.target.value)}
-                                placeholder="e.g. VP Growth / CMO / CTO / CEO"
-                                className="w-full px-4 py-3 rounded-xl bg-[#070B14] border border-[#1E293B] text-sm text-white focus:outline-none focus:ring-2 focus:ring-[#2563EB]"
-                              />
-                            </div>
-
-                            <div className="space-y-1.5">
-                              <label htmlFor="form-phone" className="block text-xs font-mono text-[#94A3B8]">
-                                Direct Phone <span className="text-[#64748B]">(Optional for SMS SLA alert)</span>
-                              </label>
-                              <input
-                                id="form-phone"
-                                type="tel"
-                                value={phone}
-                                onChange={(e) => setPhone(e.target.value)}
-                                placeholder="+1 (555) 000-0000"
-                                className="w-full px-4 py-3 rounded-xl bg-[#070B14] border border-[#1E293B] text-sm text-white focus:outline-none focus:ring-2 focus:ring-[#2563EB]"
-                              />
-                            </div>
-                          </div>
-
-                          {/* Intake Summary Review Box */}
-                          <div className="p-5 rounded-2xl bg-[#070B14] border border-[#1E293B] space-y-3">
-                            <div className="flex items-center justify-between text-xs font-mono">
-                              <span className="text-[#60A5FA] font-bold uppercase">Specification Summary</span>
-                              <span className={`px-2 py-0.5 rounded border text-[10px] ${qualificationTier.badgeColor}`}>
-                                {qualificationTier.label}
-                              </span>
-                            </div>
-                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-[11px] font-mono text-[#94A3B8]">
-                              <div>
-                                <span className="text-[#64748B]">Domain:</span> <span className="text-white">{website || 'Not specified'}</span>
-                              </div>
-                              <div>
-                                <span className="text-[#64748B]">Budget:</span> <span className="text-white">{marketingBudget}</span>
-                              </div>
-                              <div>
-                                <span className="text-[#64748B]">Timeline:</span> <span className="text-white">{timeline.split(' ')[0]}</span>
-                              </div>
-                            </div>
-                          </div>
-
-                          {/* Mutual NDA & Privacy Guarantee */}
-                          <div className="flex items-start gap-3 p-4 rounded-xl bg-[#070B14] border border-[#1E293B]">
-                            <input
-                              id="form-nda"
-                              type="checkbox"
-                              checked={ndaAccepted}
-                              onChange={(e) => setNdaAccepted(e.target.checked)}
-                              className="mt-0.5 w-4 h-4 rounded text-[#2563EB] bg-[#0D1424] border-[#1E293B] focus:ring-[#2563EB] cursor-pointer"
-                            />
-                            <label htmlFor="form-nda" className="text-xs text-[#94A3B8] leading-relaxed cursor-pointer">
-                              I acknowledge that telemetry data shared will be handled under MatricsMania&apos;s standard{' '}
-                              <a href="/privacy/" onClick={(e) => { e.preventDefault(); onNavigate('/privacy/'); }} className="text-[#60A5FA] hover:underline">
-                                Enterprise Mutual Confidentiality Protocol
-                              </a>
-                              .
-                            </label>
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-
-                    {/* Step Action Buttons */}
-                    <div className="flex items-center justify-between pt-6 border-t border-[#1E293B]">
-                      {currentStep > 1 ? (
-                        <button
-                          type="button"
-                          onClick={handlePrevStep}
-                          className="px-5 py-3 rounded-xl bg-[#070B14] hover:bg-[#1E293B] border border-[#1E293B] text-xs font-mono text-[#94A3B8] hover:text-white flex items-center gap-2 cursor-pointer transition-all"
-                        >
-                          <ArrowLeft className="w-4 h-4" />
-                          <span>Previous Step</span>
-                        </button>
-                      ) : (
-                        <div />
-                      )}
-
-                      {currentStep < 4 ? (
-                        <button
-                          type="button"
-                          onClick={handleNextStep}
-                          className="px-7 py-3.5 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white text-xs font-mono font-bold flex items-center gap-2 shadow-lg shadow-blue-500/20 cursor-pointer transition-all"
-                        >
-                          <span>Proceed to Step {currentStep + 1}</span>
-                          <ArrowRight className="w-4 h-4" />
-                        </button>
-                      ) : (
-                        <button
-                          type="submit"
-                          disabled={isSubmitting || !isStep4Valid}
-                          className="px-8 py-4 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#1D4ED8] hover:from-[#1D4ED8] hover:to-[#1E40AF] disabled:opacity-50 text-white text-xs font-mono font-bold flex items-center gap-2.5 shadow-xl shadow-blue-500/25 cursor-pointer transition-all"
-                        >
-                          {isSubmitting ? (
-                            <>
-                              <Zap className="w-4 h-4 animate-spin" />
-                              <span>Transmitting Intake Parameters...</span>
-                            </>
-                          ) : (
-                            <>
-                              <Send className="w-4 h-4" />
-                              <span>Submit Diagnostic Specification</span>
-                            </>
-                          )}
-                        </button>
-                      )}
+                    {/* Submit Button */}
+                    <div className="pt-2">
+                      <button
+                        type="submit"
+                        disabled={isSubmitting || !isFormValid}
+                        className="w-full sm:w-auto px-8 py-4 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#1D4ED8] hover:from-[#1D4ED8] hover:to-[#1E40AF] disabled:opacity-50 text-white text-xs font-mono font-bold flex items-center justify-center gap-2.5 shadow-xl shadow-blue-500/25 cursor-pointer transition-all"
+                      >
+                        {isSubmitting ? (
+                          <>
+                            <Zap className="w-4 h-4 animate-spin" />
+                            <span>Transmitting Diagnostic Specification...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Send className="w-4 h-4" />
+                            <span>Submit Diagnostic Intake</span>
+                          </>
+                        )}
+                      </button>
                     </div>
                   </form>
                 )}
@@ -1250,61 +806,6 @@ export const ContactTemplate: React.FC<ContactTemplateProps> = ({
 
             {/* Right Col: Telemetry Rail & Location Info (4 Cols) */}
             <div className="lg:col-span-4 space-y-6 lg:sticky lg:top-24">
-              {/* Dynamic Live Telemetry Card */}
-              <div className="p-6 rounded-3xl bg-[#0D1424] border border-[#1E293B] space-y-5 shadow-xl">
-                <div className="flex items-center justify-between pb-3 border-b border-[#1E293B]">
-                  <span className="text-[10px] font-mono uppercase text-[#60A5FA] tracking-wider font-bold">
-                    Intake Qualification Telemetry
-                  </span>
-                  <span className={`text-[10px] font-mono px-2 py-0.5 rounded border ${qualificationTier.badgeColor}`}>
-                    {qualificationTier.label}
-                  </span>
-                </div>
-
-                <div className="space-y-3.5 text-xs">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[#64748B]">Target SLA:</span>
-                    <span className="font-mono text-emerald-400 font-bold">{qualificationTier.sla}</span>
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <span className="text-[#64748B]">Primary Discipline:</span>
-                    <span className="text-white font-medium text-right line-clamp-1 max-w-[170px]">
-                      {serviceInterest}
-                    </span>
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <span className="text-[#64748B]">Annual Scale:</span>
-                    <span className="text-[#CBD5E1] font-mono">{annualRevenue}</span>
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <span className="text-[#64748B]">Monthly Budget:</span>
-                    <span className="text-[#CBD5E1] font-mono">{marketingBudget}</span>
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <span className="text-[#64748B]">Review Core:</span>
-                    <span className="text-[#93C5FD] text-[11px] text-right">{qualificationTier.advisoryTeam}</span>
-                  </div>
-                </div>
-
-                {/* Score Indicator */}
-                <div className="p-3.5 rounded-xl bg-[#070B14] border border-[#1E293B] space-y-2">
-                  <div className="flex items-center justify-between text-[11px] font-mono">
-                    <span className="text-[#64748B]">Enterprise Fit Index</span>
-                    <span className="text-white font-bold">{qualificationScore}% Fit</span>
-                  </div>
-                  <div className="w-full h-1.5 bg-[#0D1424] rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-gradient-to-r from-blue-500 to-emerald-400 transition-all duration-500"
-                      style={{ width: `${qualificationScore}%` }}
-                    />
-                  </div>
-                </div>
-              </div>
-
               {/* Headquarters Node Card */}
               <div className="p-6 rounded-3xl bg-[#0D1424] border border-[#1E293B] space-y-5">
                 <div className="flex items-center justify-between">
@@ -1331,9 +832,40 @@ export const ContactTemplate: React.FC<ContactTemplateProps> = ({
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2.5 border-t border-[#1E293B] pt-3">
-                    <Phone className="w-4 h-4 text-[#3B82F6] shrink-0" />
-                    <span className="text-white font-mono">{contact.headquarters.phone}</span>
+                  <div className="border-t border-[#1E293B] pt-3 space-y-2">
+                    <div className="flex items-center gap-2.5">
+                      <Phone className="w-4 h-4 text-[#3B82F6] shrink-0" />
+                      <span className="font-mono text-[#60A5FA] font-medium">Direct Phone Lines:</span>
+                    </div>
+                    <div className="pl-6 space-y-1.5 font-mono text-xs">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[#64748B]">Primary:</span>
+                        <a
+                          href="tel:+918318356338"
+                          className="text-white hover:text-[#60A5FA] transition-colors font-medium"
+                        >
+                          +91 83183 56338
+                        </a>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-[#64748B]">Line 2:</span>
+                        <a
+                          href="tel:+919196068917"
+                          className="text-white hover:text-[#60A5FA] transition-colors font-medium"
+                        >
+                          +91 91960 68917
+                        </a>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-[#64748B]">Line 3:</span>
+                        <a
+                          href="tel:+917905991037"
+                          className="text-white hover:text-[#60A5FA] transition-colors font-medium"
+                        >
+                          +91 79059 91037
+                        </a>
+                      </div>
+                    </div>
                   </div>
 
                   <div className="flex items-center gap-2.5 border-t border-[#1E293B] pt-3">
