@@ -4,5 +4,17 @@ dist/
 coverage/
 .DS_Store
 *.log
+
+# Environment variables & secrets (never commit to Git)
+.env
+.env.local
+.env*.local
+.env.development.local
+.env.test.local
+.env.production.local
 .env*
 !.env.example
+
+# Next.js build outputs
+.next/
+out/

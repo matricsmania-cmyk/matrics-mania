@@ -194,6 +194,7 @@ export const SERVICES_OPTIONS = [
   'Organic Stagnation & AI Overview Loss',
   'Conversion Funnel',
   'Custom Engineering',
+  'Other',
 ];
 
 import { useRouter } from 'next/navigation';
@@ -232,6 +233,7 @@ export const ContactTemplate: React.FC<ContactTemplateProps> = ({
 
   // Submission States
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
   const [submissionResult, setSubmissionResult] = useState<ContactSubmissionResult | null>(null);
 
   // Auto-extract company name from domain if empty
@@ -275,48 +277,61 @@ export const ContactTemplate: React.FC<ContactTemplateProps> = ({
   // Final Submission Handler using abstracted Provider
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setFormError(null);
+
     if (!name.trim()) {
-      if (onShowToast) onShowToast('Your Name Required', 'Please provide your full name.', 'error');
+      const msg = 'Please provide your full name.';
+      setFormError(msg);
+      if (onShowToast) onShowToast('Your Name Required', msg, 'error');
       return;
     }
-    if (!workEmail.trim() || !workEmail.includes('@')) {
-      if (onShowToast) onShowToast('Valid Work Email Required', 'Please enter your corporate email address.', 'error');
+    if (!workEmail.trim() || !workEmail.includes('@') || !workEmail.includes('.')) {
+      const msg = 'Please enter a valid corporate email address.';
+      setFormError(msg);
+      if (onShowToast) onShowToast('Valid Work Email Required', msg, 'error');
       return;
     }
-    if (!phone.trim()) {
-      if (onShowToast) onShowToast('Phone Number Required', 'Please provide your direct contact number.', 'error');
+    if (!phone.trim() || phone.trim().length < 5) {
+      const msg = 'Please provide your direct contact number.';
+      setFormError(msg);
+      if (onShowToast) onShowToast('Phone Number Required', msg, 'error');
       return;
     }
     if (selectedServices.length === 0) {
-      if (onShowToast) onShowToast('Select Services', 'Please choose at least one service.', 'error');
+      const msg = 'Please choose at least one service.';
+      setFormError(msg);
+      if (onShowToast) onShowToast('Select Services', msg, 'error');
       return;
     }
     if (!ndaAccepted) {
-      if (onShowToast) onShowToast('Agreement Required', 'Please acknowledge the confidentiality protocol.', 'error');
+      const msg = 'Please acknowledge the confidentiality protocol.';
+      setFormError(msg);
+      if (onShowToast) onShowToast('Agreement Required', msg, 'error');
       return;
     }
 
     setIsSubmitting(true);
 
     const submissionPayload: ContactQualificationData = {
-      name,
-      workEmail,
-      phone: phone || undefined,
-      company: company.trim() || 'Confidential / Unspecified',
-      website: website.trim()
-        ? website.startsWith('http')
-          ? website.trim()
-          : `https://${website.trim()}`
-        : 'https://client-portal.internal',
-      country,
-      industry: industry.trim() || 'Technology',
+      name: name.trim(),
+      email: workEmail.trim(),
+      workEmail: workEmail.trim(),
+      phone: phone.trim(),
+      country: country.trim(),
+      services: selectedServices,
+      currentAcquisitionChannels: selectedServices,
+      company: company.trim(),
+      companyName: company.trim(),
+      website: website.trim(),
+      companyWebsite: website.trim(),
+      industry: industry.trim(),
+      note: note.trim(),
+      additionalContext: note.trim(),
       approximateAnnualRevenue: '$10M - $50M ARR',
       approximateMarketingBudget: '$30k - $100k / mo',
-      currentAcquisitionChannels: selectedServices,
       serviceInterest: selectedServices[0] || 'Technical SEO & Organic Search',
       primaryGrowthProblem: selectedServices.find((s) => s.includes('Loss') || s.includes('Fatigue') || s.includes('Funnel')) || 'Conversion Funnel',
       timeline: 'Immediate (< 30 Days)',
-      additionalContext: note.trim() || undefined,
       source: 'Direct /contact/ Single Page Intake Form',
     };
 
@@ -324,16 +339,22 @@ export const ContactTemplate: React.FC<ContactTemplateProps> = ({
       const providerService = getContactSubmissionProvider();
       const result = await providerService.submitQualification(submissionPayload);
       setSubmissionResult(result);
+      setFormError(null);
       if (onShowToast) {
         onShowToast(
           'Diagnostic Intake Confirmed',
-          `Reference ${result.referenceId} dispatched to ${result.qualificationTier === 'enterprise_priority' ? 'Principal Architect Core' : 'Growth Discipline Team'}.`,
+          `Reference ${result.referenceId} logged to Google Sheets successfully.`,
           'success'
         );
       }
-    } catch (err) {
+    } catch (err: unknown) {
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : 'Unable to record diagnostic intake in Google Sheets. Please retry.';
+      setFormError(errorMessage);
       if (onShowToast) {
-        onShowToast('Transmission Error', 'Unable to record diagnostic intake. Please retry.', 'error');
+        onShowToast('Submission Error', errorMessage, 'error');
       }
     } finally {
       setIsSubmitting(false);
@@ -350,48 +371,14 @@ export const ContactTemplate: React.FC<ContactTemplateProps> = ({
       />
 
       {/* Hero Header */}
-      <section className="relative pt-28 pb-16 md:pt-36 md:pb-20 border-b border-[#1E293B] overflow-hidden bg-gradient-to-b from-[#0B132B]/60 via-[#070B14] to-[#070B14]">
+      <section className="relative pt-28 pb-12 md:pt-36 md:pb-16 border-b border-[#1E293B] overflow-hidden bg-gradient-to-b from-[#0B132B]/60 via-[#070B14] to-[#070B14]">
         {/* Ambient Grid Glow */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#1E293B15_1px,transparent_1px),linear-gradient(to_bottom,#1E293B15_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="max-w-3xl space-y-6">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#0D1424] border border-[#2563EB]/40 text-xs font-mono font-semibold tracking-wider text-[#60A5FA] uppercase shadow-lg shadow-blue-500/10">
-              <Sparkles className="w-3.5 h-3.5 text-[#3B82F6]" />
-              <span>Architectural Diagnostic &amp; Qualification</span>
-            </div>
-
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-[1.15]">
-              Qualify for a MatricsMania <br className="hidden sm:inline" />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-[#93C5FD] to-[#3B82F6]">
-                Growth Engineering Retainer
-              </span>
-            </h1>
-
-            <p className="text-sm sm:text-base text-[#94A3B8] leading-relaxed max-w-2xl">
-              We partner with a disciplined cohort of enterprise brands and scaleups. Complete our structured qualification intake to receive a direct diagnostic evaluation from our Principal Growth Architects with zero sales scripts.
-            </p>
-
-            {/* Value Guarantees Banner */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 border-t border-[#1E293B]/80 text-xs font-mono">
-              <div className="p-3 rounded-xl bg-[#0D1424]/80 border border-[#1E293B] flex items-center gap-2.5">
-                <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span className="text-[#CBD5E1]">Mutual NDA Protected</span>
-              </div>
-              <div className="p-3 rounded-xl bg-[#0D1424]/80 border border-[#1E293B] flex items-center gap-2.5">
-                <Clock className="w-4 h-4 text-[#60A5FA] shrink-0" />
-                <span className="text-[#CBD5E1]">2-Hour Review SLA</span>
-              </div>
-              <div className="p-3 rounded-xl bg-[#0D1424]/80 border border-[#1E293B] flex items-center gap-2.5">
-                <UserCheck className="w-4 h-4 text-[#60A5FA] shrink-0" />
-                <span className="text-[#CBD5E1]">Direct Architect Intake</span>
-              </div>
-              <div className="p-3 rounded-xl bg-[#0D1424]/80 border border-[#1E293B] flex items-center gap-2.5">
-                <Target className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span className="text-[#CBD5E1]">Zero Sales Pitching</span>
-              </div>
-            </div>
-          </div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 flex flex-col items-center justify-center text-center">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-tight">
+            Contact Us
+          </h1>
         </div>
       </section>
 
@@ -508,7 +495,16 @@ export const ContactTemplate: React.FC<ContactTemplateProps> = ({
                         type="button"
                         onClick={() => {
                           setSubmissionResult(null);
-                          
+                          setFormError(null);
+                          setWebsite('');
+                          setCompany('');
+                          setName('');
+                          setIndustry('');
+                          setWorkEmail('');
+                          setPhone('');
+                          setCountry('India');
+                          setNote('');
+                          setSelectedServices(['Technical SEO & Organic Search', 'Performance Marketing & Paid Acquisition']);
                         }}
                         className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-[#0D1424] hover:bg-[#1E293B] border border-[#1E293B] text-xs font-mono text-[#94A3B8] hover:text-white cursor-pointer"
                       >
@@ -521,13 +517,9 @@ export const ContactTemplate: React.FC<ContactTemplateProps> = ({
                       SINGLE-PAGE INTAKE FORM
                      ========================================================================= */
                   <form onSubmit={handleSubmit} className="space-y-6">
-                    <div className="space-y-1 pb-3 border-b border-[#1E293B]">
-                      <h3 className="text-xl font-bold text-white flex items-center gap-2">
-                        <Terminal className="w-5 h-5 text-[#60A5FA]" />
-                        <span>Direct Diagnostic Intake Form</span>
-                      </h3>
-                      <p className="text-xs text-[#94A3B8]">
-                        Complete the specifications below. Our Principal Growth Architects will evaluate your digital infrastructure and respond under strict enterprise NDA.
+                    <div className="pb-3 border-b border-[#1E293B]">
+                      <p className="text-sm text-[#94A3B8] leading-relaxed">
+                        Tell us a little about your business and marketing needs. We&apos;ll get back to you soon.
                       </p>
                     </div>
 
@@ -752,6 +744,24 @@ export const ContactTemplate: React.FC<ContactTemplateProps> = ({
                       </label>
                     </div>
 
+                    {/* Honeypot field for bot spam prevention */}
+                    <input
+                      type="text"
+                      name="_gotcha"
+                      tabIndex={-1}
+                      autoComplete="off"
+                      className="hidden"
+                      aria-hidden="true"
+                    />
+
+                    {/* Inline Form Error Notification */}
+                    {formError && (
+                      <div className="p-3.5 rounded-xl bg-red-500/10 border border-red-500/30 text-xs font-mono text-red-400 flex items-center gap-2.5">
+                        <AlertCircle className="w-4 h-4 shrink-0" />
+                        <span>{formError}</span>
+                      </div>
+                    )}
+
                     {/* Submit Button */}
                     <div className="pt-2">
                       <button
@@ -837,34 +847,27 @@ export const ContactTemplate: React.FC<ContactTemplateProps> = ({
                       <Phone className="w-4 h-4 text-[#3B82F6] shrink-0" />
                       <span className="font-mono text-[#60A5FA] font-medium">Direct Phone Lines:</span>
                     </div>
-                    <div className="pl-6 space-y-1.5 font-mono text-xs">
-                      <div className="flex items-center justify-between">
-                        <span className="text-[#64748B]">Primary:</span>
-                        <a
-                          href="tel:+918318356338"
-                          className="text-white hover:text-[#60A5FA] transition-colors font-medium"
-                        >
-                          +91 83183 56338
-                        </a>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-[#64748B]">Line 2:</span>
-                        <a
-                          href="tel:+919196068917"
-                          className="text-white hover:text-[#60A5FA] transition-colors font-medium"
-                        >
-                          +91 91960 68917
-                        </a>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-[#64748B]">Line 3:</span>
-                        <a
-                          href="tel:+917905991037"
-                          className="text-white hover:text-[#60A5FA] transition-colors font-medium"
-                        >
-                          +91 79059 91037
-                        </a>
-                      </div>
+                    <div className="flex items-center flex-wrap gap-x-2.5 gap-y-1.5 font-mono text-xs pl-6">
+                      <a
+                        href="tel:+918318356338"
+                        className="text-white hover:text-[#60A5FA] transition-colors font-medium inline-flex items-center gap-1.5"
+                      >
+                        +91 83183 56338
+                      </a>
+                      <span className="text-[#334155]">•</span>
+                      <a
+                        href="tel:+919196068917"
+                        className="text-white hover:text-[#60A5FA] transition-colors font-medium inline-flex items-center gap-1.5"
+                      >
+                        +91 91960 68917
+                      </a>
+                      <span className="text-[#334155]">•</span>
+                      <a
+                        href="tel:+917905991037"
+                        className="text-white hover:text-[#60A5FA] transition-colors font-medium inline-flex items-center gap-1.5"
+                      >
+                        +91 79059 91037
+                      </a>
                     </div>
                   </div>
 

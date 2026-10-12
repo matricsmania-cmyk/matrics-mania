@@ -101,12 +101,12 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
                   info@matricsmania.com
                 </a>
               </div>
-              <div className="flex flex-col sm:flex-row sm:items-center gap-2 pt-1">
-                <div className="flex items-center gap-2 shrink-0">
+              <div className="flex items-center flex-wrap gap-x-2.5 gap-y-1.5 pt-1">
+                <div className="flex items-center gap-1.5 shrink-0 text-[#94A3B8]">
                   <Phone className="w-4 h-4 text-[#60A5FA] shrink-0" />
                   <span>Contact:</span>
                 </div>
-                <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1">
+                <div className="flex items-center flex-wrap gap-x-2.5 gap-y-1">
                   <a
                     href="tel:+918318356338"
                     className="text-white hover:text-[#60A5FA] transition-colors underline decoration-[#1E293B] hover:decoration-[#60A5FA]"
