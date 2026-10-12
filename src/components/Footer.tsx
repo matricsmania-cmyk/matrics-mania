@@ -41,19 +41,16 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
         const targetElement = document.getElementById('core-services-section');
         if (targetElement) {
           targetElement.scrollIntoView({ behavior: 'smooth' });
-          if (typeof window !== 'undefined' && window.location.hash) {
-            window.history.replaceState(null, '', window.location.pathname);
-          }
           return;
         }
       } else {
         if (typeof window !== 'undefined') {
           sessionStorage.setItem('scroll_to_section', 'core-services-section');
-          if (onNavigate) {
-            onNavigate('/');
-          } else {
-            window.location.href = '/';
-          }
+        }
+        if (onNavigate) {
+          onNavigate('/');
+        } else if (typeof window !== 'undefined') {
+          window.location.href = '/';
         }
         return;
       }
@@ -63,9 +60,6 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
       const targetElement = document.getElementById(item.targetId);
       if (targetElement) {
         targetElement.scrollIntoView({ behavior: 'smooth' });
-        if (typeof window !== 'undefined' && window.location.hash) {
-          window.history.replaceState(null, '', window.location.pathname);
-        }
         return;
       }
     }

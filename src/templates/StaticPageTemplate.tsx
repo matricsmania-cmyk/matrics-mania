@@ -75,7 +75,7 @@ export const StaticPageTemplate: React.FC<StaticPageTemplateProps> = ({
         primaryCtaLabel="Schedule Diagnostic Strategy Session"
         onPrimaryCta={() => onOpenBooking({ page: page.title })}
         secondaryCtaLabel="View Engineering Services"
-        onSecondaryCta={() => onNavigate('/#core-services-section')}
+        onSecondaryCta={() => onNavigate('/services/')}
       />
 
       {/* Main Content Area */}

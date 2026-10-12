@@ -83,7 +83,7 @@ export const NAVIGATION_CONFIG: NavigationConfig = {
   // 1. SERVICES NAVIGATION (Grouped by Growth Disciplines)
   services: {
     title: 'Services',
-    href: '/#core-services-section',
+    href: '/',
     featured: {
       title: 'Generative Engine Optimization (GEO)',
       description: 'Pioneering LLM citation indexing, semantic vector tuning, and Perplexity/ChatGPT brand visibility architectures.',
@@ -365,7 +365,7 @@ export const NAVIGATION_CONFIG: NavigationConfig = {
     {
       id: 'services',
       label: 'Services',
-      href: '/#core-services-section',
+      href: '/',
     },
     {
       id: 'industries',

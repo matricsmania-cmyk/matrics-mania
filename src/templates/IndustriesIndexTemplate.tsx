@@ -122,7 +122,7 @@ export const IndustriesIndexTemplate: React.FC<IndustriesIndexTemplateProps> = (
                 No industry playbooks published in CMS yet.
               </p>
               <a
-                href="/#core-services-section"
+                href="/services/"
                 className="inline-flex items-center gap-2 text-xs font-mono text-[#60A5FA] font-bold"
               >
                 Explore Growth Services →

@@ -54,12 +54,14 @@ export const HomeTemplate: React.FC<HomeTemplateProps> = ({
       const scrollTarget = sessionStorage.getItem('scroll_to_section');
       if (scrollTarget) {
         sessionStorage.removeItem('scroll_to_section');
-        setTimeout(() => {
+        const doScroll = () => {
           const el = document.getElementById(scrollTarget);
           if (el) {
             el.scrollIntoView({ behavior: 'smooth' });
           }
-        }, 150);
+        };
+        setTimeout(doScroll, 100);
+        setTimeout(doScroll, 350);
       }
     }
   }, []);

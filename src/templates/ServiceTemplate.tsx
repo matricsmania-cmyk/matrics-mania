@@ -866,7 +866,7 @@ export const ServiceTemplate: React.FC<ServiceTemplateProps> = ({
               </button>
 
               <button
-                onClick={() => onNavigate('/#core-services-section')}
+                onClick={() => onNavigate('/services/')}
                 className="w-full sm:w-auto px-6 py-4 rounded-xl bg-[#0D1424] hover:bg-[#1E293B] border border-[#1E293B] text-sm font-semibold text-[#CBD5E1] hover:text-white transition-all cursor-pointer"
               >
                 Browse All Services

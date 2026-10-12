@@ -930,12 +930,12 @@ export const ContactTemplate: React.FC<ContactTemplateProps> = ({
                         {isSubmitting ? (
                           <>
                             <Zap className="w-4 h-4 animate-spin" />
-                            <span>Transmitting Diagnostic Specification...</span>
+                            <span>Submitting...</span>
                           </>
                         ) : (
                           <>
                             <Send className="w-4 h-4" />
-                            <span>Submit Diagnostic Intake</span>
+                            <span>Submit</span>
                           </>
                         )}
                       </button>
