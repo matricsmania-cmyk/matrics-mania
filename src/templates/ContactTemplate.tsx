@@ -11,6 +11,7 @@ import {
   ContactQualificationData,
   ContactSubmissionResult,
 } from '../services/contactSubmissionService';
+import { MinimalCustomSelect } from '../components/MinimalCustomSelect';
 import {
   ShieldCheck,
   CheckCircle2,
@@ -19,6 +20,7 @@ import {
   ArrowRight,
   ArrowLeft,
   Building2,
+  Briefcase,
   Globe2,
   DollarSign,
   TrendingUp,
@@ -709,35 +711,16 @@ export const ContactTemplate: React.FC<ContactTemplateProps> = ({
                     {/* 3. Industry (Optional) & 4. Corporate Work Email */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       {/* 3. Industry (Optional) */}
-                      <div className="space-y-1.5">
-                        <label htmlFor="form-industry" className="block text-xs font-mono font-bold text-white">
-                          3. Industry <span className="text-[#64748B] font-normal">(Optional)</span>
-                        </label>
-                        <div className="relative">
-                          <select
-                            id="form-industry"
-                            value={industry}
-                            onChange={(e) => setIndustry(e.target.value)}
-                            className="w-full px-4 py-3 bg-[#070B14] border border-[#1E293B] focus:border-[#2563EB] rounded-xl text-sm text-white outline-none transition-all focus:ring-1 focus:ring-[#2563EB] appearance-none cursor-pointer font-sans"
-                          >
-                            <option value="" className="bg-[#070B14] text-[#94A3B8]">
-                              Select Your Industry / Sector...
-                            </option>
-                            {CATEGORIZED_INDUSTRIES.map((cat) => (
-                              <optgroup key={cat.category} label={cat.category} className="bg-[#0D1424] text-[#60A5FA] font-bold">
-                                {cat.options.map((opt) => (
-                                  <option key={opt} value={opt} className="bg-[#070B14] text-white font-normal py-1">
-                                    {opt}
-                                  </option>
-                                ))}
-                              </optgroup>
-                            ))}
-                          </select>
-                          <div className="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none text-[#64748B]">
-                            <ChevronDown className="w-4 h-4" />
-                          </div>
-                        </div>
-                      </div>
+                      <MinimalCustomSelect
+                        id="form-industry"
+                        label="3. Industry"
+                        optional
+                        value={industry}
+                        onChange={(val) => setIndustry(val)}
+                        placeholder="Select Your Industry / Sector..."
+                        icon={<Briefcase className="w-4 h-4" />}
+                        categories={CATEGORIZED_INDUSTRIES}
+                      />
 
                       {/* 4. Corporate Work Email */}
                       <div className="space-y-1.5 relative">
@@ -833,36 +816,16 @@ export const ContactTemplate: React.FC<ContactTemplateProps> = ({
                       </div>
 
                       {/* 6. Country / Region */}
-                      <div className="space-y-1.5">
-                        <label htmlFor="form-country" className="block text-xs font-mono font-bold text-white">
-                          6. Country / Region <span className="text-[#3B82F6]">*</span>
-                        </label>
-                        <div className="relative">
-                          <select
-                            id="form-country"
-                            required
-                            value={country}
-                            onChange={(e) => setCountry(e.target.value)}
-                            className="w-full px-4 py-3 bg-[#070B14] border border-[#1E293B] focus:border-[#2563EB] rounded-xl text-sm text-white outline-none transition-all focus:ring-1 focus:ring-[#2563EB] appearance-none cursor-pointer font-sans"
-                          >
-                            <option value="" className="bg-[#070B14] text-[#94A3B8]">
-                              Select Country / Region...
-                            </option>
-                            {CATEGORIZED_COUNTRIES.map((reg) => (
-                              <optgroup key={reg.region} label={reg.region} className="bg-[#0D1424] text-[#60A5FA] font-bold">
-                                {reg.options.map((c) => (
-                                  <option key={`${reg.region}-${c}`} value={c} className="bg-[#070B14] text-white font-normal py-1">
-                                    {c}
-                                  </option>
-                                ))}
-                              </optgroup>
-                            ))}
-                          </select>
-                          <div className="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none text-[#64748B]">
-                            <ChevronDown className="w-4 h-4" />
-                          </div>
-                        </div>
-                      </div>
+                      <MinimalCustomSelect
+                        id="form-country"
+                        label="6. Country / Region"
+                        required
+                        value={country}
+                        onChange={(val) => setCountry(val)}
+                        placeholder="Select Country / Region..."
+                        icon={<Globe className="w-4 h-4" />}
+                        categories={CATEGORIZED_COUNTRIES}
+                      />
                     </div>
 
                     {/* 7. Services */}
