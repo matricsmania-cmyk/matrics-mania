@@ -400,97 +400,25 @@ export const ContactTemplate: React.FC<ContactTemplateProps> = ({
                   <motion.div
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="p-8 sm:p-10 rounded-2xl bg-[#070B14] border border-emerald-500/30 text-center space-y-6"
+                    className="p-8 sm:p-12 rounded-2xl bg-[#070B14] border border-emerald-500/30 text-center space-y-6"
                   >
                     <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center mx-auto text-emerald-400 shadow-xl shadow-emerald-500/10">
                       <CheckCircle2 className="w-8 h-8" />
                     </div>
 
-                    <div className="space-y-2 max-w-xl mx-auto">
+                    <div className="space-y-3 max-w-xl mx-auto">
                       <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-mono border border-emerald-500/20">
-                        <span>Intake Verified &amp; Routed</span>
+                        <span>Submission Successful</span>
                       </div>
                       <h2 className="text-2xl sm:text-3xl font-bold text-white">
-                        Diagnostic Specification Logged
+                        Thank You for Reaching Out
                       </h2>
-                      <p className="text-xs sm:text-sm text-[#94A3B8] leading-relaxed">
-                        Your technical parameters have been routed to our Senior Growth Architects. We have dispatched automated telemetry checks against <span className="text-white font-mono">{submissionResult.data.website}</span>.
+                      <p className="text-sm text-[#94A3B8] leading-relaxed">
+                        We have received your message. Our team will review your business needs and get back to you shortly.
                       </p>
                     </div>
 
-                    {/* Receipt Card */}
-                    <div className="p-6 rounded-2xl bg-[#0D1424] border border-[#1E293B] text-left space-y-4 max-w-lg mx-auto font-mono text-xs">
-                      <div className="flex items-center justify-between pb-3 border-b border-[#1E293B]">
-                        <span className="text-[#64748B]">Reference Token:</span>
-                        <span className="font-bold text-[#60A5FA] bg-[#070B14] px-2.5 py-1 rounded border border-[#1E293B]">
-                          {submissionResult.referenceId}
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-between pb-3 border-b border-[#1E293B]">
-                        <span className="text-[#64748B]">Account Qualification:</span>
-                        <span className="font-bold text-emerald-400 uppercase">
-                          {submissionResult.qualificationTier.replace('_', ' ')}
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-between pb-3 border-b border-[#1E293B]">
-                        <span className="text-[#64748B]">Response SLA:</span>
-                        <span className="text-white font-bold">{submissionResult.estimatedResponseTime}</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-[#64748B]">Assigned Dispatch Node:</span>
-                        <span className="text-[#CBD5E1]">Bangalore Core Lab &amp; Global Lead</span>
-                      </div>
-                    </div>
-
-                    {/* Next Steps Timeline */}
-                    <div className="p-6 rounded-2xl bg-[#0D1424] border border-[#1E293B] text-left space-y-4 max-w-lg mx-auto">
-                      <div className="text-xs font-mono font-bold text-[#60A5FA] uppercase tracking-wider">
-                        Next Protocol Steps
-                      </div>
-                      <ol className="space-y-3 text-xs text-[#94A3B8]">
-                        <li className="flex items-start gap-3">
-                          <span className="w-5 h-5 rounded-full bg-[#2563EB]/20 border border-[#2563EB] text-[#60A5FA] flex items-center justify-center shrink-0 font-mono text-[10px] font-bold mt-0.5">
-                            1
-                          </span>
-                          <div>
-                            <span className="font-bold text-white">Domain &amp; Crawl Telemetry Ingestion:</span> Initial server header checks, indexation volume, and ad footprint analysis.
-                          </div>
-                        </li>
-                        <li className="flex items-start gap-3">
-                          <span className="w-5 h-5 rounded-full bg-[#2563EB]/20 border border-[#2563EB] text-[#60A5FA] flex items-center justify-center shrink-0 font-mono text-[10px] font-bold mt-0.5">
-                            2
-                          </span>
-                          <div>
-                            <span className="font-bold text-white">Architectural Brief Dispatch:</span> A structured summary with specific bottleneck hypotheses delivered to <span className="text-white">{submissionResult.data.workEmail}</span>.
-                          </div>
-                        </li>
-                        <li className="flex items-start gap-3">
-                          <span className="w-5 h-5 rounded-full bg-[#2563EB]/20 border border-[#2563EB] text-[#60A5FA] flex items-center justify-center shrink-0 font-mono text-[10px] font-bold mt-0.5">
-                            3
-                          </span>
-                          <div>
-                            <span className="font-bold text-white">Executive Technical Walkthrough:</span> Optional 30-minute diagnostic session with the Principal Architect.
-                          </div>
-                        </li>
-                      </ol>
-                    </div>
-
-                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
-                      <button
-                        type="button"
-                        onClick={() =>
-                          onOpenBooking({
-                            domain: submissionResult.data.website,
-                            monthlyBudget: submissionResult.data.approximateMarketingBudget,
-                            industry: submissionResult.data.industry,
-                            referenceId: submissionResult.referenceId,
-                          })
-                        }
-                        className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white text-xs font-mono font-bold flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20 cursor-pointer"
-                      >
-                        <Calendar className="w-4 h-4" />
-                        <span>Schedule Priority Strategy Call Now</span>
-                      </button>
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
                       <button
                         type="button"
                         onClick={() => {
@@ -506,9 +434,9 @@ export const ContactTemplate: React.FC<ContactTemplateProps> = ({
                           setNote('');
                           setSelectedServices(['Technical SEO & Organic Search', 'Performance Marketing & Paid Acquisition']);
                         }}
-                        className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-[#0D1424] hover:bg-[#1E293B] border border-[#1E293B] text-xs font-mono text-[#94A3B8] hover:text-white cursor-pointer"
+                        className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white text-xs font-mono font-bold cursor-pointer transition-all shadow-lg shadow-blue-500/20"
                       >
-                        Submit Another Domain
+                        Submit Another Inquiry
                       </button>
                     </div>
                   </motion.div>
