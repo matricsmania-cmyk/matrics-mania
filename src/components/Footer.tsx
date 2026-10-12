@@ -21,12 +21,12 @@ interface QuickLinkItem {
 }
 
 const QUICK_LINKS: QuickLinkItem[] = [
-  { id: 'service-section', label: 'Service section', href: '/services/', targetId: 'core-services-section' },
-  { id: 'case-studies-section', label: 'Case studies section', href: '/case-studies/', targetId: 'case-study-evidence-section' },
-  { id: 'industries-section', label: 'Industries', href: '/industries/', targetId: 'industries-served-section' },
-  { id: 'locations-section', label: 'Locations', href: '/locations/' },
+  { id: 'services', label: 'Services', href: '/', targetId: 'core-services-section' },
+  { id: 'work', label: 'Work', href: '/work/', targetId: 'case-study-evidence-section' },
+  { id: 'industries', label: 'Industries', href: '/industries/', targetId: 'industries-served-section' },
+  { id: 'locations', label: 'Locations', href: '/locations/' },
   { id: 'privacy-policy', label: 'Privacy policy', href: '/privacy/' },
-  { id: 'about-section', label: 'About section', href: '/about/' },
+  { id: 'about', label: 'About', href: '/about/' },
 ];
 
 export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
@@ -35,10 +35,37 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
 
   const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, item: QuickLinkItem) => {
     e.preventDefault();
+
+    if (item.id === 'services') {
+      if (isHome) {
+        const targetElement = document.getElementById('core-services-section');
+        if (targetElement) {
+          targetElement.scrollIntoView({ behavior: 'smooth' });
+          if (typeof window !== 'undefined' && window.location.hash) {
+            window.history.replaceState(null, '', window.location.pathname);
+          }
+          return;
+        }
+      } else {
+        if (typeof window !== 'undefined') {
+          sessionStorage.setItem('scroll_to_section', 'core-services-section');
+          if (onNavigate) {
+            onNavigate('/');
+          } else {
+            window.location.href = '/';
+          }
+        }
+        return;
+      }
+    }
+
     if (isHome && item.targetId) {
       const targetElement = document.getElementById(item.targetId);
       if (targetElement) {
         targetElement.scrollIntoView({ behavior: 'smooth' });
+        if (typeof window !== 'undefined' && window.location.hash) {
+          window.history.replaceState(null, '', window.location.pathname);
+        }
         return;
       }
     }

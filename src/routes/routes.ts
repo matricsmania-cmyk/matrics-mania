@@ -50,12 +50,6 @@ export const ROUTES: RouteDefinition[] = [
     getCanonical: (p) => `${BASE_URL}/case-studies/${p.slug}/`,
   },
   {
-    id: 'services-index',
-    pattern: /^\/services\/?$/,
-    template: 'static',
-    getCanonical: () => `${BASE_URL}/services/`,
-  },
-  {
     id: 'service-detail',
     pattern: /^\/services\/([a-zA-Z0-9_-]+)\/?$/,
     template: 'service',

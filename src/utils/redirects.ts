@@ -58,12 +58,6 @@ export const STATIC_REDIRECT_RULES: RedirectRule[] = [
     description: 'Singular case-study alias redirected to plural case-studies hub',
   },
   {
-    source: /^\/service\/?$/,
-    destination: '/services/',
-    statusCode: 301,
-    description: 'Singular service alias redirected to plural services hub',
-  },
-  {
     source: /^\/industry\/?$/,
     destination: '/industries/',
     statusCode: 301,

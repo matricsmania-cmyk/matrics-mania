@@ -49,6 +49,21 @@ export const HomeTemplate: React.FC<HomeTemplateProps> = ({
   const insights = propInsights && propInsights.length > 0 ? propInsights : provider.getAllInsights();
   const canonicalUrl = page?.seo?.canonicalUrl || 'https://matricsmania.com/';
 
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const scrollTarget = sessionStorage.getItem('scroll_to_section');
+      if (scrollTarget) {
+        sessionStorage.removeItem('scroll_to_section');
+        setTimeout(() => {
+          const el = document.getElementById(scrollTarget);
+          if (el) {
+            el.scrollIntoView({ behavior: 'smooth' });
+          }
+        }, 150);
+      }
+    }
+  }, []);
+
   const schemaData = {
     '@context': 'https://schema.org',
     '@type': 'WebSite',

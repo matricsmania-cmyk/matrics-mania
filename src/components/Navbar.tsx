@@ -314,11 +314,14 @@ export const Navbar: React.FC<NavbarProps> = ({
               onMouseEnter={() => handleDropdownEnter('services')}
               onMouseLeave={handleDropdownLeave}
             >
-              <a
-                href={NAVIGATION_CONFIG.services.href}
-                onClick={(e) => handleLinkClick(e, NAVIGATION_CONFIG.services.href)}
-                className={`flex items-center gap-1.5 px-3 py-2 text-xs font-semibold uppercase tracking-wider rounded-md transition-colors ${
-                  isLinkActive('/services/')
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  // Non-clickable: only dropdown reveals on hover
+                }}
+                className={`flex items-center gap-1.5 px-3 py-2 text-xs font-semibold uppercase tracking-wider rounded-md transition-colors cursor-default select-none ${
+                  activeDropdown === 'services'
                     ? 'text-[#60A5FA] bg-[#131D33]'
                     : 'text-[#94A3B8] hover:text-white hover:bg-[#0D1424]'
                 }`}
@@ -331,7 +334,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     activeDropdown === 'services' ? 'rotate-180 text-[#60A5FA]' : ''
                   }`}
                 />
-              </a>
+              </button>
 
               {/* Services Mega Panel */}
               <AnimatePresence>
@@ -619,15 +622,6 @@ export const Navbar: React.FC<NavbarProps> = ({
                       {services.length === 0 && (
                         <p className="text-xs text-[#94A3B8] p-2">No services published in CMS yet.</p>
                       )}
-                      <div className="pt-2 border-t border-[#1E293B]">
-                        <a
-                          href="/services/"
-                          onClick={(e) => handleLinkClick(e, '/services/')}
-                          className="text-xs font-mono text-[#60A5FA] font-bold block p-2"
-                        >
-                          View All Services Overview →
-                        </a>
-                      </div>
                     </div>
                   )}
                 </div>

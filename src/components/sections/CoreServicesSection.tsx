@@ -40,24 +40,19 @@ export const CoreServicesSection: React.FC<CoreServicesSectionProps> = ({
               {subtitle}
             </p>
           </div>
-
-          <button
-            id="view-all-services-btn"
-            onClick={() => handleNav('/services/')}
-            className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[#60A5FA] hover:text-white transition-colors group cursor-pointer"
-          >
-            <span>View All Services</span>
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-          </button>
         </ScrollReveal>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {services.map((service, idx) => (
-            <ScrollReveal key={service.id} delay={idx * 0.07}>
-              <div
+            <ScrollReveal key={service.id || service.slug} delay={idx * 0.05}>
+              <a
                 id={`service-card-${service.slug}`}
-                onClick={() => handleNav(`/services/${service.slug}/`)}
-                className="p-6 sm:p-7 rounded-2xl bg-[#0D1424] border border-[#1E293B] hover:border-[#2563EB]/50 transition-all cursor-pointer flex flex-col justify-between h-full group hover:shadow-xl hover:shadow-blue-500/5"
+                href={`/services/${service.slug}/`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleNav(`/services/${service.slug}/`);
+                }}
+                className="p-6 sm:p-7 rounded-2xl bg-[#0D1424] border border-[#1E293B] hover:border-[#2563EB]/50 transition-all cursor-pointer flex flex-col justify-between h-full group hover:shadow-xl hover:shadow-blue-500/5 block no-underline"
               >
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
@@ -91,9 +86,14 @@ export const CoreServicesSection: React.FC<CoreServicesSectionProps> = ({
                   <span className="text-[#94A3B8]">{service.metrics?.[0]?.value || 'Engineering SLA'}</span>
                   <span className="text-[#60A5FA] group-hover:underline">Explore Architecture →</span>
                 </div>
-              </div>
+              </a>
             </ScrollReveal>
           ))}
+          {services.length === 0 && (
+            <div className="col-span-full py-12 text-center text-sm text-[#94A3B8]">
+              No service pages published in WordPress CMS yet.
+            </div>
+          )}
         </div>
       </div>
     </section>
