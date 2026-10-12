@@ -233,6 +233,72 @@ export const CATEGORIZED_COUNTRIES = [
   },
 ];
 
+export interface CountryDialInfo {
+  code: string;
+  dialCode: string;
+  placeholder: string;
+  flag: string;
+}
+
+export const COUNTRY_DIAL_MAP: Record<string, CountryDialInfo> = {
+  'India': { code: 'IN', dialCode: '+91', placeholder: '+91 98765 43210', flag: '🇮🇳' },
+  'Brazil': { code: 'BR', dialCode: '+55', placeholder: '+55 11 99999-9999', flag: '🇧🇷' },
+  'United States': { code: 'US', dialCode: '+1', placeholder: '+1 (555) 012-3456', flag: '🇺🇸' },
+  'United Kingdom': { code: 'GB', dialCode: '+44', placeholder: '+44 7700 900000', flag: '🇬🇧' },
+  'United Arab Emirates': { code: 'AE', dialCode: '+971', placeholder: '+971 50 123 4567', flag: '🇦🇪' },
+  'Canada': { code: 'CA', dialCode: '+1', placeholder: '+1 (555) 012-3456', flag: '🇨🇦' },
+  'Australia': { code: 'AU', dialCode: '+61', placeholder: '+61 400 123 456', flag: '🇦🇺' },
+  'Germany': { code: 'DE', dialCode: '+49', placeholder: '+49 151 23456789', flag: '🇩🇪' },
+  'Singapore': { code: 'SG', dialCode: '+65', placeholder: '+65 8123 4567', flag: '🇸🇬' },
+  'Japan': { code: 'JP', dialCode: '+81', placeholder: '+81 90 1234 5678', flag: '🇯🇵' },
+  'New Zealand': { code: 'NZ', dialCode: '+64', placeholder: '+64 21 123 4567', flag: '🇳🇿' },
+  'Hong Kong': { code: 'HK', dialCode: '+852', placeholder: '+852 9123 4567', flag: '🇭🇰' },
+  'South Korea': { code: 'KR', dialCode: '+82', placeholder: '+82 10 1234 5678', flag: '🇰🇷' },
+  'Malaysia': { code: 'MY', dialCode: '+60', placeholder: '+60 12-345 6789', flag: '🇲🇾' },
+  'Indonesia': { code: 'ID', dialCode: '+62', placeholder: '+62 812 3456 7890', flag: '🇮🇩' },
+  'Thailand': { code: 'TH', dialCode: '+66', placeholder: '+66 81 234 5678', flag: '🇹🇭' },
+  'Vietnam': { code: 'VN', dialCode: '+84', placeholder: '+84 90 123 4567', flag: '🇻🇳' },
+  'Philippines': { code: 'PH', dialCode: '+63', placeholder: '+63 917 123 4567', flag: '🇵🇭' },
+  'Mexico': { code: 'MX', dialCode: '+52', placeholder: '+52 55 1234 5678', flag: '🇲🇽' },
+  'France': { code: 'FR', dialCode: '+33', placeholder: '+33 6 12 34 56 78', flag: '🇫🇷' },
+  'Netherlands': { code: 'NL', dialCode: '+31', placeholder: '+31 6 12345678', flag: '🇳🇱' },
+  'Switzerland': { code: 'CH', dialCode: '+41', placeholder: '+41 79 123 45 67', flag: '🇨🇭' },
+  'Sweden': { code: 'SE', dialCode: '+46', placeholder: '+46 70 123 45 67', flag: '🇸🇪' },
+  'Ireland': { code: 'IE', dialCode: '+353', placeholder: '+353 87 123 4567', flag: '🇮🇪' },
+  'Spain': { code: 'ES', dialCode: '+34', placeholder: '+34 612 34 56 78', flag: '🇪🇸' },
+  'Italy': { code: 'IT', dialCode: '+39', placeholder: '+39 312 345 6789', flag: '🇮🇹' },
+  'Belgium': { code: 'BE', dialCode: '+32', placeholder: '+32 470 12 34 56', flag: '🇧🇪' },
+  'Denmark': { code: 'DK', dialCode: '+45', placeholder: '+45 20 12 34 56', flag: '🇩🇰' },
+  'Norway': { code: 'NO', dialCode: '+47', placeholder: '+47 412 34 567', flag: '🇳🇴' },
+  'Finland': { code: 'FI', dialCode: '+358', placeholder: '+358 40 123 4567', flag: '🇫🇮' },
+  'Poland': { code: 'PL', dialCode: '+48', placeholder: '+48 512 345 678', flag: '🇵🇱' },
+  'Austria': { code: 'AT', dialCode: '+43', placeholder: '+43 664 1234567', flag: '🇦🇹' },
+  'Saudi Arabia': { code: 'SA', dialCode: '+966', placeholder: '+966 50 123 4567', flag: '🇸🇦' },
+  'Qatar': { code: 'QA', dialCode: '+974', placeholder: '+974 5012 3456', flag: '🇶🇦' },
+  'Israel': { code: 'IL', dialCode: '+972', placeholder: '+972 50 123 4567', flag: '🇮🇱' },
+  'Egypt': { code: 'EG', dialCode: '+20', placeholder: '+20 100 123 4567', flag: '🇪🇬' },
+  'South Africa': { code: 'ZA', dialCode: '+27', placeholder: '+27 82 123 4567', flag: '🇿🇦' },
+  'Nigeria': { code: 'NG', dialCode: '+234', placeholder: '+234 802 123 4567', flag: '🇳🇬' },
+  'Kenya': { code: 'KE', dialCode: '+254', placeholder: '+254 712 345678', flag: '🇰🇪' },
+  'Argentina': { code: 'AR', dialCode: '+54', placeholder: '+54 9 11 1234-5678', flag: '🇦🇷' },
+  'Chile': { code: 'CL', dialCode: '+56', placeholder: '+56 9 1234 5678', flag: '🇨🇱' },
+  'Colombia': { code: 'CO', dialCode: '+57', placeholder: '+57 300 123 4567', flag: '🇨🇴' },
+  'Peru': { code: 'PE', dialCode: '+51', placeholder: '+51 912 345 678', flag: '🇵🇪' },
+};
+
+export function getCountryDialInfo(countryName: string): CountryDialInfo {
+  if (!countryName) {
+    return { code: 'IN', dialCode: '+91', placeholder: '+91 98765 43210', flag: '🇮🇳' };
+  }
+  const match = Object.keys(COUNTRY_DIAL_MAP).find(
+    (k) => k.toLowerCase() === countryName.trim().toLowerCase()
+  );
+  if (match) {
+    return COUNTRY_DIAL_MAP[match];
+  }
+  return { code: 'INTL', dialCode: '+', placeholder: '+1 555 012 3456', flag: '🌐' };
+}
+
 const INDUSTRY_OPTIONS = CATEGORIZED_INDUSTRIES.flatMap((c) => c.options);
 
 const COUNTRY_OPTIONS = [
@@ -397,7 +463,26 @@ export const ContactTemplate: React.FC<ContactTemplateProps> = ({
   const [note, setNote] = useState('');
   const [ndaAccepted, setNdaAccepted] = useState(true);
 
-// State & Validation for Email / Phone popup
+  // Dynamic Country Dial Code & Flag information
+  const currentDialInfo = useMemo(() => {
+    return getCountryDialInfo(country);
+  }, [country]);
+
+  const [prevDialCode, setPrevDialCode] = useState(currentDialInfo.dialCode);
+
+  useEffect(() => {
+    if (prevDialCode !== currentDialInfo.dialCode) {
+      if (!phone.trim() || phone.trim() === prevDialCode || /^(\+\d{1,4}\s?)$/.test(phone.trim())) {
+        setPhone(`${currentDialInfo.dialCode} `);
+      } else if (phone.startsWith('+')) {
+        const digits = phone.replace(/^\+\d{1,4}\s?/, '');
+        setPhone(`${currentDialInfo.dialCode} ${digits}`);
+      }
+      setPrevDialCode(currentDialInfo.dialCode);
+    }
+  }, [country, currentDialInfo, phone, prevDialCode]);
+
+  // State & Validation for Email / Phone popup
   const [emailTouched, setEmailTouched] = useState(false);
   const [phoneTouched, setPhoneTouched] = useState(false);
 
@@ -813,9 +898,14 @@ export const ContactTemplate: React.FC<ContactTemplateProps> = ({
                             )}
                           </AnimatePresence>
                         </div>
-                        <div className="relative">
-                          <div className={`absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none transition-colors ${showPhoneError ? 'text-red-400' : 'text-[#64748B]'}`}>
-                            <Phone className="w-4 h-4" />
+                        <div className="relative flex items-center">
+                          <div className="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none z-10">
+                            <div className={`flex items-center gap-1.5 px-2 py-1 rounded-lg bg-[#131D33] border text-xs font-mono font-bold transition-colors ${
+                              showPhoneError ? 'border-red-500/60 text-red-400' : 'border-[#1E293B] text-[#60A5FA]'
+                            }`}>
+                              <span className="text-sm leading-none">{currentDialInfo.flag}</span>
+                              <span>{currentDialInfo.dialCode}</span>
+                            </div>
                           </div>
                           <input
                             type="tel"
@@ -827,8 +917,8 @@ export const ContactTemplate: React.FC<ContactTemplateProps> = ({
                               setPhoneTouched(true);
                             }}
                             onBlur={() => setPhoneTouched(true)}
-                            placeholder="+91 83183 56338"
-                            className={`w-full pl-10 pr-4 py-3 bg-[#070B14] border rounded-xl text-sm text-white placeholder-[#475569] font-mono outline-none transition-all ${
+                            placeholder={currentDialInfo.placeholder}
+                            className={`w-full pl-[98px] pr-4 py-3 bg-[#070B14] border rounded-xl text-sm text-white placeholder-[#475569] font-mono outline-none transition-all ${
                               showPhoneError
                                 ? 'border-red-500 focus:border-red-500 ring-1 ring-red-500/50'
                                 : 'border-[#1E293B] focus:border-[#2563EB] focus:ring-1 focus:ring-[#2563EB]'
