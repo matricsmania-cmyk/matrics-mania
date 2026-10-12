@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 import { Navbar } from './Navbar';
 import { Footer } from './Footer';
 import { ToastContainer, ToastMessage } from './Toast';
-import { CookieConsent } from './CookieConsent';
 import { BookingModal } from './BookingModal';
 import { ThemeProvider } from '../context/ThemeContext';
 import { ContentContextProvider, CmsInitialData } from '../providers/ContentContext';
@@ -57,7 +56,6 @@ export function ClientShell({
         <main className="flex-grow">{children}</main>
         <Footer onNavigate={handleNavigate} showIntelBanner={pathname !== '/' && pathname !== ''} />
         <ToastContainer toasts={toasts} onDismiss={handleDismissToast} />
-        <CookieConsent />
         <BookingModal
           isOpen={isBookingOpen}
           onClose={handleCloseBooking}

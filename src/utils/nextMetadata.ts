@@ -47,5 +47,12 @@ export function toNextMetadata(seo: SEOResolved): Metadata {
       description: seo.twitter.description,
       images: [seo.twitter.image],
     },
+    icons: {
+      icon: [
+        { url: '/matricsmania.webp', type: 'image/webp' },
+      ],
+      shortcut: '/matricsmania.webp',
+      apple: '/matricsmania.webp',
+    },
   };
 }

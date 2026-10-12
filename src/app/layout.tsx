@@ -28,6 +28,13 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
+  icons: {
+    icon: [
+      { url: '/matricsmania.webp', type: 'image/webp' },
+    ],
+    shortcut: '/matricsmania.webp',
+    apple: '/matricsmania.webp',
+  },
 };
 
 export default async function RootLayout({
@@ -65,6 +72,11 @@ export default async function RootLayout({
 
   return (
     <html lang="en-IN" className={`dark ${plusJakartaSans.variable}`}>
+      <head>
+        <link rel="icon" href="/matricsmania.webp" type="image/webp" />
+        <link rel="shortcut icon" href="/matricsmania.webp" type="image/webp" />
+        <link rel="apple-touch-icon" href="/matricsmania.webp" />
+      </head>
       <body className={`bg-[#070B14] text-slate-100 font-sans antialiased selection:bg-blue-600 selection:text-white min-h-screen flex flex-col ${plusJakartaSans.className}`}>
         <ClientShell initialData={initialData}>{children}</ClientShell>
       </body>

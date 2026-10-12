@@ -27,8 +27,8 @@ export const TWITTER_CREATOR_HANDLE = '@matricsmania';
 
 export const DEFAULT_OG_IMAGE =
   'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80';
-export const DEFAULT_FAVICON_DARK = '/matrics-mania-logo-dark.webp';
-export const DEFAULT_FAVICON_LIGHT = '/matrics-mania-logo-light.webp';
+export const DEFAULT_FAVICON_DARK = '/matricsmania.webp';
+export const DEFAULT_FAVICON_LIGHT = '/matricsmania.webp';
 export const DEFAULT_THEME_COLOR = '#0136BD';
 
 export const DEFAULT_TITLE =

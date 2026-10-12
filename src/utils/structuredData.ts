@@ -73,7 +73,7 @@ export interface OrganizationSchemaOptions {
 export function generateOrganizationSchema(options?: OrganizationSchemaOptions): SchemaOrganization {
   const contact = options?.contact;
   const hq = contact?.headquarters;
-  const logoUrl = options?.logoUrl || `${PUBLIC_DOMAIN}/matrics-mania-logo-dark.webp`;
+  const logoUrl = options?.logoUrl || `${PUBLIC_DOMAIN}/matricsmania.webp`;
 
   const schema: SchemaOrganization = {
     '@context': 'https://schema.org',
@@ -246,7 +246,7 @@ export function generateLocalBusinessSchema(
   }
 
   // Attach business image if available
-  const imgUrl = resolveMediaUrl(node.image) || `${PUBLIC_DOMAIN}/matrics-mania-logo-dark.webp`;
+  const imgUrl = resolveMediaUrl(node.image) || `${PUBLIC_DOMAIN}/matricsmania.webp`;
   schema.image = imgUrl;
 
   // Verified opening hours if specified
@@ -452,7 +452,7 @@ export function generateArticleSchema(
   canonicalUrl: string,
   options?: { articleType?: 'TechArticle' | 'Article' | 'BlogPosting' }
 ): SchemaArticle {
-  const imgUrl = resolveMediaUrl(insight.featuredImage) || `${PUBLIC_DOMAIN}/matrics-mania-logo-dark.webp`;
+  const imgUrl = resolveMediaUrl(insight.featuredImage) || `${PUBLIC_DOMAIN}/matricsmania.webp`;
 
   const schema: SchemaArticle = {
     '@context': 'https://schema.org',
@@ -474,7 +474,7 @@ export function generateArticleSchema(
       logo: {
         '@type': 'ImageObject',
         '@id': LOGO_ID,
-        url: `${PUBLIC_DOMAIN}/matrics-mania-logo-dark.webp`,
+        url: `${PUBLIC_DOMAIN}/matricsmania.webp`,
       },
     },
     inLanguage: 'en-IN',
@@ -680,7 +680,7 @@ export function generateCaseStudySchema(
   caseStudy: Partial<CaseStudy>,
   canonicalUrl: string
 ): SchemaArticle {
-  const imgUrl = resolveMediaUrl(caseStudy.featuredImage || caseStudy.clientLogo) || `${PUBLIC_DOMAIN}/matrics-mania-logo-dark.webp`;
+  const imgUrl = resolveMediaUrl(caseStudy.featuredImage || caseStudy.clientLogo) || `${PUBLIC_DOMAIN}/matricsmania.webp`;
   const headline = caseStudy.heroHeadline || caseStudy.title || 'Client Case Study';
   const description = caseStudy.executiveSummary || caseStudy.excerpt || caseStudy.challengeSummary || '';
 
@@ -709,7 +709,7 @@ export function generateCaseStudySchema(
       logo: {
         '@type': 'ImageObject',
         '@id': LOGO_ID,
-        url: `${PUBLIC_DOMAIN}/matrics-mania-logo-dark.webp`,
+        url: `${PUBLIC_DOMAIN}/matricsmania.webp`,
       },
     },
     inLanguage: 'en-IN',

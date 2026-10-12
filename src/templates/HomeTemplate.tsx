@@ -76,7 +76,7 @@ export const HomeTemplate: React.FC<HomeTemplateProps> = ({
       '@type': 'Organization',
       name: 'MatricsMania',
       url: 'https://matricsmania.com/',
-      logo: 'https://matricsmania.com/logo.png',
+      logo: 'https://matricsmania.com/matricsmania.webp',
       sameAs: [
         'https://linkedin.com/company/matricsmania',
         'https://twitter.com/matricsmania',

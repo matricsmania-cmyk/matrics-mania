@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useTheme } from '../context/ThemeContext';
 
 interface LogoProps {
   className?: string;
@@ -11,33 +10,27 @@ interface LogoProps {
   textClassName?: string;
 }
 
-// Eager memory cache preloading for instantaneous theme switching
+// Eager memory cache preloading
 if (typeof window !== 'undefined') {
-  const lightPreload = new Image();
-  lightPreload.src = '/matrics-mania-logo-light.webp';
-  const darkPreload = new Image();
-  darkPreload.src = '/matrics-mania-logo-dark.webp';
+  const logoPreload = new Image();
+  logoPreload.src = '/matricsmania.webp';
 }
 
 export const LogoSymbol: React.FC<{
   size?: number | string;
   className?: string;
+  src?: string;
   lightSrc?: string;
   darkSrc?: string;
 }> = ({
-  size = 35,
+  size = 36,
   className = '',
-  lightSrc = '/matrics-mania-logo-light.webp',
-  darkSrc = '/matrics-mania-logo-dark.webp',
+  src = '/matricsmania.webp',
 }) => {
-  const { theme } = useTheme();
   const pixelSize = typeof size === 'number' ? `${size}px` : size;
-  const isDark = theme === 'dark';
+  const [hasError, setHasError] = useState(false);
 
-  const [lightError, setLightError] = useState(false);
-  const [darkError, setDarkError] = useState(false);
-
-  if ((isDark && darkError) || (!isDark && lightError)) {
+  if (hasError) {
     return (
       <span
         style={{ width: pixelSize, height: pixelSize }}
@@ -51,53 +44,36 @@ export const LogoSymbol: React.FC<{
   return (
     <div
       style={{ width: pixelSize, height: pixelSize }}
-      className={`relative shrink-0 inline-block transition-transform duration-300 group-hover:scale-105 ${className}`}
+      className={`relative shrink-0 inline-flex items-center justify-center transition-transform duration-300 group-hover:scale-105 ${className}`}
     >
-      {/* Light Mode Logo */}
       <img
-        src={lightSrc}
+        src={src}
         alt="MatricsMania Logo"
         loading="eager"
         decoding="sync"
-        onError={() => setLightError(true)}
+        onError={() => setHasError(true)}
         style={{ width: pixelSize, height: pixelSize }}
-        className={`absolute inset-0 w-full h-full object-contain transition-opacity duration-150 ${
-          isDark ? 'opacity-0 pointer-events-none' : 'opacity-100'
-        }`}
-      />
-
-      {/* Dark Mode Logo */}
-      <img
-        src={darkSrc}
-        alt="MatricsMania Logo"
-        loading="eager"
-        decoding="sync"
-        onError={() => setDarkError(true)}
-        style={{ width: pixelSize, height: pixelSize }}
-        className={`absolute inset-0 w-full h-full object-contain transition-opacity duration-150 ${
-          isDark ? 'opacity-100' : 'opacity-0 pointer-events-none'
-        }`}
+        className="w-full h-full object-contain"
       />
     </div>
   );
 };
 
-export const Logo: React.FC<LogoProps & { lightSrc?: string; darkSrc?: string }> = ({
+export const Logo: React.FC<LogoProps & { src?: string; lightSrc?: string; darkSrc?: string }> = ({
   className = '',
-  size = 35,
+  size = 36,
   showText = true,
   textColor,
   textClassName = '',
-  lightSrc,
-  darkSrc,
+  src = '/matricsmania.webp',
 }) => {
   if (!showText) {
-    return <LogoSymbol size={size} className={className} lightSrc={lightSrc} darkSrc={darkSrc} />;
+    return <LogoSymbol size={size} className={className} src={src} />;
   }
 
   return (
     <div className={`flex items-center gap-3 ${className}`}>
-      <LogoSymbol size={size} lightSrc={lightSrc} darkSrc={darkSrc} />
+      <LogoSymbol size={size} src={src} />
 
       <div className={`flex flex-col text-left ${textClassName}`}>
         <span
@@ -112,5 +88,3 @@ export const Logo: React.FC<LogoProps & { lightSrc?: string; darkSrc?: string }>
     </div>
   );
 };
-
-

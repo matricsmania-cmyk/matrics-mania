@@ -40,7 +40,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     // Dynamically update favicon based on selected theme
     const favicon = document.querySelector("link[rel*='icon']") as HTMLLinkElement | null;
     if (favicon) {
-      favicon.href = theme === 'dark' ? '/matrics-mania-logo-dark.webp' : '/matrics-mania-logo-light.webp';
+      favicon.href = '/matricsmania.webp';
       favicon.type = 'image/webp';
     }
   }, [theme]);

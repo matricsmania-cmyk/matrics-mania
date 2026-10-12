@@ -325,7 +325,7 @@ export const NAVIGATION_CONFIG: NavigationConfig = {
 
   // 5. COMPANY & AGENCY
   company: {
-    title: 'Company',
+    title: 'Agency',
     items: [
       {
         id: 'about',
@@ -374,13 +374,12 @@ export const NAVIGATION_CONFIG: NavigationConfig = {
     },
     {
       id: 'case-studies',
-      label: 'Case Studies',
+      label: 'Work',
       href: '/case-studies/',
-      badge: 'Proof',
     },
     {
       id: 'company',
-      label: 'Company',
+      label: 'Agency',
       href: '/about/',
     },
     {

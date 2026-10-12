@@ -285,15 +285,56 @@ export const Navbar: React.FC<NavbarProps> = ({
     return false;
   };
 
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollY =
+        window.scrollY ||
+        window.pageYOffset ||
+        document.documentElement.scrollTop ||
+        document.body.scrollTop ||
+        0;
+      setIsScrolled(scrollY > 2);
+    };
+
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    document.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('wheel', handleScroll, { passive: true });
+    window.addEventListener('touchmove', handleScroll, { passive: true });
+    window.addEventListener('resize', handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      document.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('wheel', handleScroll);
+      window.removeEventListener('touchmove', handleScroll);
+      window.removeEventListener('resize', handleScroll);
+    };
+  }, []);
+
+  const shouldFloat = isScrolled && !mobileMenuOpen;
+
   return (
     <header
       ref={navRef}
-      className="fixed top-0 left-0 right-0 z-50 bg-[#070B14]/95 backdrop-blur-md border-b border-[#1E293B]"
+      className="fixed top-0 left-0 right-0 z-50 flex justify-center pointer-events-none"
       role="banner"
     >
       {/* Main Navigation Bar */}
-      <Container maxWidth="xl">
-        <div className="h-16 flex items-center justify-between gap-4">
+      <div
+        className={`pointer-events-auto mx-auto transition-all duration-300 ease-out ${
+          shouldFloat
+            ? 'mt-3.5 w-[94%] max-w-[1080px] rounded-xl bg-[#0D1424]/95 backdrop-blur-xl border border-[#334155] ring-1 ring-white/10 shadow-[0_12px_40px_rgba(0,0,0,0.85)] px-4 sm:px-6'
+            : 'mt-0 w-full rounded-none bg-[#070B14]/95 backdrop-blur-md border-b border-[#1E293B] shadow-none px-4 sm:px-6 lg:px-8'
+        }`}
+      >
+        <div
+          className={`w-full max-w-[1080px] mx-auto flex items-center justify-between gap-4 transition-all duration-300 ease-out ${
+            shouldFloat ? 'h-14' : 'h-16'
+          }`}
+        >
           {/* Brand Logo */}
           <div className="flex items-center gap-6">
             <a
@@ -477,10 +518,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   : 'text-[#94A3B8] hover:text-white hover:bg-[#0D1424]'
               }`}
             >
-              <span>Case Studies</span>
-              <Badge variant="success" size="sm">
-                Proof
-              </Badge>
+              <span>Work</span>
             </a>
 
             {/* 4. Company Dropdown */}
@@ -500,7 +538,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 aria-expanded={activeDropdown === 'company'}
                 aria-haspopup="true"
               >
-                <span>Company</span>
+                <span>Agency</span>
                 <ChevronDown
                   className={`w-3.5 h-3.5 transition-transform duration-200 ${
                     activeDropdown === 'company' ? 'rotate-180 text-[#60A5FA]' : ''
@@ -552,7 +590,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               iconTrailing={<ArrowRight className="w-3.5 h-3.5" />}
               className="hidden sm:inline-flex"
             >
-              Book Growth Audit
+              Let&apos;s Talk
             </Button>
 
             <button
@@ -566,7 +604,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             </button>
           </div>
         </div>
-      </Container>
+      </div>
 
       {/* Responsive Mobile Navigation Drawer */}
       <AnimatePresence>
@@ -576,7 +614,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             animate={{ opacity: 1, height: 'calc(100vh - 64px)' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.2 }}
-            className="xl:hidden fixed top-16 inset-x-0 bg-[#070B14] border-b border-[#1E293B] overflow-y-auto z-40 flex flex-col justify-between"
+            className="xl:hidden fixed top-16 inset-x-0 bg-[#070B14] border-b border-[#1E293B] overflow-y-auto z-40 flex flex-col justify-between pointer-events-auto"
           >
             <div className="p-6 space-y-6">
               {/* Telemetry Indicator */}
@@ -671,16 +709,13 @@ export const Navbar: React.FC<NavbarProps> = ({
                   )}
                 </div>
 
-                {/* 3. Case Studies */}
+                {/* 3. Work */}
                 <a
                   href="/case-studies/"
                   onClick={(e) => handleLinkClick(e, '/case-studies/')}
                   className="p-4 border border-[#1E293B] rounded-lg bg-[#0D1424] flex items-center justify-between text-sm font-bold text-white uppercase tracking-wider"
                 >
-                  <span>Case Studies & Proof</span>
-                  <Badge variant="success" size="sm">
-                    Verified
-                  </Badge>
+                  <span>Work</span>
                 </a>
 
                 {/* 4. Company Hubs */}
@@ -692,7 +727,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     }
                     className="w-full p-4 flex items-center justify-between text-sm font-bold text-white uppercase tracking-wider"
                   >
-                    <span>Company</span>
+                    <span>Agency</span>
                     <ChevronDown
                       className={`w-4 h-4 transition-transform duration-200 ${
                         mobileSectionOpen === 'company' ? 'rotate-180 text-[#60A5FA]' : ''
@@ -735,7 +770,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 }}
                 iconTrailing={<ArrowRight className="w-4 h-4" />}
               >
-                Schedule Growth Audit
+                Let&apos;s Talk
               </Button>
               <p className="text-center text-[11px] font-mono text-[#64748B]">
                 Direct consultation with Principal Growth Engineers

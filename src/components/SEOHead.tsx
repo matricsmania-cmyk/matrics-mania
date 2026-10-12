@@ -150,6 +150,16 @@ export const SEOHead: React.FC<SEOHeadProps> = (props) => {
     }
     canonicalEl.setAttribute('href', resolvedSeo.canonicalUrl);
 
+    // Favicon Link
+    let iconEl = document.querySelector('link[rel="icon"]') as HTMLLinkElement | null;
+    if (!iconEl) {
+      iconEl = document.createElement('link');
+      iconEl.setAttribute('rel', 'icon');
+      document.head.appendChild(iconEl);
+    }
+    iconEl.setAttribute('href', '/matricsmania.webp');
+    iconEl.setAttribute('type', 'image/webp');
+
     // 3. Inject dynamic JSON-LD Schema
     const schemaId = 'matricsmania-structured-data';
     const existingScript = document.getElementById(schemaId);
