@@ -218,39 +218,50 @@ export async function POST(req: NextRequest) {
         revalidatedPaths.push('/services');
         if (rawSlug) {
           safeRevalidatePath(`/services/${rawSlug}`);
-          revalidatedPaths.push(`/services/${rawSlug}`);
+          safeRevalidatePath(`/${rawSlug}`);
+          safeRevalidatePath(`/${rawSlug}`, 'page');
+          revalidatedPaths.push(`/services/${rawSlug}`, `/${rawSlug}`);
         }
       } else if (rawPostType.includes('industr')) {
         safeRevalidatePath('/industries');
         revalidatedPaths.push('/industries');
         if (rawSlug) {
           safeRevalidatePath(`/industries/${rawSlug}`);
-          revalidatedPaths.push(`/industries/${rawSlug}`);
+          safeRevalidatePath(`/${rawSlug}`);
+          safeRevalidatePath(`/${rawSlug}`, 'page');
+          revalidatedPaths.push(`/industries/${rawSlug}`, `/${rawSlug}`);
         }
       } else if (rawPostType.includes('location')) {
         safeRevalidatePath('/locations');
         revalidatedPaths.push('/locations');
         if (rawSlug) {
           safeRevalidatePath(`/locations/${rawSlug}`);
-          revalidatedPaths.push(`/locations/${rawSlug}`);
+          safeRevalidatePath(`/${rawSlug}`);
+          safeRevalidatePath(`/${rawSlug}`, 'page');
+          revalidatedPaths.push(`/locations/${rawSlug}`, `/${rawSlug}`);
         }
       } else if (rawPostType.includes('case') || rawPostType.includes('stud')) {
         safeRevalidatePath('/case-studies');
         revalidatedPaths.push('/case-studies');
         if (rawSlug) {
           safeRevalidatePath(`/case-studies/${rawSlug}`);
-          revalidatedPaths.push(`/case-studies/${rawSlug}`);
+          safeRevalidatePath(`/${rawSlug}`);
+          safeRevalidatePath(`/case-studies/${rawSlug}`, 'page');
+          revalidatedPaths.push(`/case-studies/${rawSlug}`, `/${rawSlug}`);
         }
       } else if (rawPostType.includes('post') || rawPostType.includes('insight')) {
         safeRevalidatePath('/insights');
         revalidatedPaths.push('/insights');
         if (rawSlug) {
           safeRevalidatePath(`/insights/${rawSlug}`);
-          revalidatedPaths.push(`/insights/${rawSlug}`);
+          safeRevalidatePath(`/${rawSlug}`);
+          safeRevalidatePath(`/insights/${rawSlug}`, 'page');
+          revalidatedPaths.push(`/insights/${rawSlug}`, `/${rawSlug}`);
         }
       } else if (rawPostType.includes('page')) {
         const pagePath = rawSlug === 'home' || !rawSlug ? '/' : `/${rawSlug}`;
         safeRevalidatePath(pagePath);
+        safeRevalidatePath(pagePath, 'page');
         revalidatedPaths.push(pagePath);
       } else {
         // Fallback for general or unspecified CMS events
@@ -262,6 +273,10 @@ export async function POST(req: NextRequest) {
         revalidatedPaths.push('/services', '/industries', '/locations', '/case-studies', '/insights');
       }
     }
+
+    // Always revalidate api content endpoint for client-side navigation
+    safeRevalidatePath('/api/content');
+    revalidatedPaths.push('/api/content');
 
     // Always revalidate homepage and global layout for updated nav/footer/widgets
     safeRevalidatePath('/');

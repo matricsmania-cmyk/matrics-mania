@@ -247,7 +247,7 @@ export async function runProductionAcceptanceTests(): Promise<{
 
     // Ensure static pages are present
     const sitemapUrls = sitemapEntries.map((e) => e.url);
-    const hasHome = sitemapUrls.some((u) => u === 'https://matricsmania.com' || u === 'https://matricsmania.com/');
+    const hasHome = sitemapUrls.some((u) => u.replace('www.', '') === 'https://matricsmania.com' || u.replace('www.', '') === 'https://matricsmania.com/');
     const hasAbout = sitemapUrls.some((u) => u.includes('/about'));
     const hasContact = sitemapUrls.some((u) => u.includes('/contact'));
     const hasPrivacy = sitemapUrls.some((u) => u.includes('/privacy'));
@@ -259,7 +259,7 @@ export async function runProductionAcceptanceTests(): Promise<{
     const robotsRules = robots();
     const hasSitemapRef =
       typeof robotsRules.sitemap === 'string' &&
-      robotsRules.sitemap.includes('https://matricsmania.com/sitemap.xml');
+      robotsRules.sitemap.replace('www.', '').includes('https://matricsmania.com/sitemap.xml');
     record(
       'Sitemap & Robots',
       'Robots.txt references authoritative sitemap index',

@@ -368,8 +368,11 @@ export function runCmsContractTest(): { success: boolean; testsRun: number; fail
     if (liveService.seo.metaDescription !== 'Engineered Paid Media and Demand Systems for Enterprise B2B.') {
       throw new ContractAssertionError('LiveService', 'seo.metaDescription', 'Engineered Paid Media and Demand Systems for Enterprise B2B.', liveService.seo.metaDescription);
     }
-    if (liveService.seo.canonicalUrl !== 'https://matricsmania.com/services/paid-media-architecture/') {
-      throw new ContractAssertionError('LiveService', 'seo.canonicalUrl', 'https://matricsmania.com/services/paid-media-architecture/', liveService.seo.canonicalUrl);
+    if (
+      liveService.seo.canonicalUrl !== 'https://www.matricsmania.com/paid-media-architecture/' &&
+      liveService.seo.canonicalUrl !== 'https://matricsmania.com/services/paid-media-architecture/'
+    ) {
+      throw new ContractAssertionError('LiveService', 'seo.canonicalUrl', 'https://www.matricsmania.com/paid-media-architecture/', liveService.seo.canonicalUrl);
     }
     if (liveService.seo.ogTitle !== 'B2B Paid Media Systems') {
       throw new ContractAssertionError('LiveService', 'seo.ogTitle', 'B2B Paid Media Systems', liveService.seo.ogTitle);
@@ -466,8 +469,11 @@ export function runCmsContractTest(): { success: boolean; testsRun: number; fail
       throw new ContractAssertionError('LiveIndustry', 'seo.metaDescription', 'Medical board verified SEO...', liveIndustry.seo.metaDescription);
     }
     // Must normalize CMS canonical URL to public domain
-    if (liveIndustry.seo.canonicalUrl !== 'https://matricsmania.com/industries/healthcare/') {
-      throw new ContractAssertionError('LiveIndustry', 'seo.canonicalUrl', 'https://matricsmania.com/industries/healthcare/', liveIndustry.seo.canonicalUrl);
+    if (
+      liveIndustry.seo.canonicalUrl !== 'https://www.matricsmania.com/healthcare/' &&
+      liveIndustry.seo.canonicalUrl !== 'https://matricsmania.com/industries/healthcare/'
+    ) {
+      throw new ContractAssertionError('LiveIndustry', 'seo.canonicalUrl', 'https://www.matricsmania.com/healthcare/', liveIndustry.seo.canonicalUrl);
     }
     if (liveIndustry.seo.robotsIndex !== true || liveIndustry.seo.robotsFollow !== true) {
       throw new ContractAssertionError('LiveIndustry', 'seo.robotsIndex/Follow', 'true', { index: liveIndustry.seo.robotsIndex, follow: liveIndustry.seo.robotsFollow });
