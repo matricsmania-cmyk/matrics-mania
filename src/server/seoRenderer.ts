@@ -3,6 +3,7 @@ import { wordPressProvider } from '../providers/WordPressProvider';
 import { ContentProvider } from '../providers/ContentProvider';
 import { resolveSeoMetadata, getStaticRouteSeo, SEOResolved, PUBLIC_DOMAIN } from '../utils/seo';
 import { generateCompleteSchemaGraph } from '../utils/structuredData';
+import { fetchRankMathMetadata } from '../utils/rankMath';
 
 export interface ServerRouteResolution {
   statusCode: 200 | 404 | 500;
@@ -419,6 +420,104 @@ export function injectServerSeoIntoHtml(
   html = html.replace(/<meta\s+property="twitter:url"\s+content="[^"]*"\s*\/?>/i, `<meta property="twitter:url" content="${escape(seo.canonicalUrl)}" />`);
 
   // 8. Replace JSON-LD Structured Data Schema
+  const schemaJson = JSON.stringify(schema, null, 2);
+  const schemaScriptTag = `<script type="application/ld+json" id="matricsmania-structured-data">\n${schemaJson}\n    </script>`;
+
+  if (html.includes('<script type="application/ld+json">') || html.includes('id="matricsmania-structured-data"')) {
+    html = html.replace(
+      /<script\s+type="application\/ld\+json"(?:\s+id="[^"]*")?>[\s\S]*?<\/script>/i,
+      schemaScriptTag
+    );
+  } else {
+    html = html.replace('</head>', `    ${schemaScriptTag}\n  </head>`);
+  }
+
+  return { html, statusCode, isNotFound };
+}
+
+/**
+ * Async Server Route Resolver incorporating Rank Math Head API
+ */
+export async function asyncResolveServerRoute(
+  requestUrl: string,
+  provider: ContentProvider = wordPressProvider
+): Promise<ServerRouteResolution> {
+  const resolution = resolveServerRoute(requestUrl, provider);
+  if (resolution.isNotFound) return resolution;
+
+  try {
+    const rankMath = await fetchRankMathMetadata(resolution.routeMatch.pathname);
+    if (rankMath && !rankMath.isWordPress404) {
+      const updatedSeo = resolveSeoMetadata({
+        routePath: resolution.routeMatch.pathname,
+        rankMathSeo: rankMath,
+        cmsSeo: resolution.seo.rawCmsSeo,
+      });
+      return {
+        ...resolution,
+        seo: updatedSeo,
+      };
+    }
+  } catch {
+    // Fallback to sync resolution
+  }
+
+  return resolution;
+}
+
+/**
+ * Async HTML SEO injector using Rank Math Head API
+ */
+export async function asyncInjectServerSeoIntoHtml(
+  htmlTemplate: string,
+  requestUrl: string,
+  provider: ContentProvider = wordPressProvider
+): Promise<{ html: string; statusCode: 200 | 404 | 500; isNotFound: boolean }> {
+  const resolution = await asyncResolveServerRoute(requestUrl, provider);
+  const { seo, schema, statusCode, isNotFound } = resolution;
+  let html = htmlTemplate;
+
+  const escape = (str: string = '') =>
+    String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+
+  html = html.replace(/<title>[\s\S]*?<\/title>/i, `<title>${escape(seo.title)}</title>`);
+
+  if (html.includes('name="description"')) {
+    html = html.replace(/<meta\s+name="description"\s+content="[^"]*"\s*\/?>/i, `<meta name="description" content="${escape(seo.description)}" />`);
+  }
+
+  if (html.includes('name="title"')) {
+    html = html.replace(/<meta\s+name="title"\s+content="[^"]*"\s*\/?>/i, `<meta name="title" content="${escape(seo.title)}" />`);
+  }
+
+  if (html.includes('name="robots"')) {
+    html = html.replace(/<meta\s+name="robots"\s+content="[^"]*"\s*\/?>/i, `<meta name="robots" content="${escape(seo.robotsString)}" />`);
+  } else {
+    html = html.replace('</head>', `    <meta name="robots" content="${escape(seo.robotsString)}" />\n  </head>`);
+  }
+
+  if (html.includes('rel="canonical"')) {
+    html = html.replace(/<link\s+rel="canonical"\s+href="[^"]*"\s*\/?>/i, `<link rel="canonical" href="${escape(seo.canonicalUrl)}" />`);
+  } else {
+    html = html.replace('</head>', `    <link rel="canonical" href="${escape(seo.canonicalUrl)}" />\n  </head>`);
+  }
+
+  html = html.replace(/<meta\s+property="og:title"\s+content="[^"]*"\s*\/?>/i, `<meta property="og:title" content="${escape(seo.openGraph.title)}" />`);
+  html = html.replace(/<meta\s+property="og:description"\s+content="[^"]*"\s*\/?>/i, `<meta property="og:description" content="${escape(seo.openGraph.description)}" />`);
+  html = html.replace(/<meta\s+property="og:url"\s+content="[^"]*"\s*\/?>/i, `<meta property="og:url" content="${escape(seo.openGraph.url)}" />`);
+  html = html.replace(/<meta\s+property="og:image"\s+content="[^"]*"\s*\/?>/i, `<meta property="og:image" content="${escape(seo.openGraph.image)}" />`);
+  html = html.replace(/<meta\s+property="og:type"\s+content="[^"]*"\s*\/?>/i, `<meta property="og:type" content="${escape(seo.openGraph.type)}" />`);
+
+  html = html.replace(/<meta\s+property="twitter:title"\s+content="[^"]*"\s*\/?>/i, `<meta property="twitter:title" content="${escape(seo.twitter.title)}" />`);
+  html = html.replace(/<meta\s+property="twitter:description"\s+content="[^"]*"\s*\/?>/i, `<meta property="twitter:description" content="${escape(seo.twitter.description)}" />`);
+  html = html.replace(/<meta\s+property="twitter:image"\s+content="[^"]*"\s*\/?>/i, `<meta property="twitter:image" content="${escape(seo.twitter.image)}" />`);
+  html = html.replace(/<meta\s+property="twitter:url"\s+content="[^"]*"\s*\/?>/i, `<meta property="twitter:url" content="${escape(seo.canonicalUrl)}" />`);
+
   const schemaJson = JSON.stringify(schema, null, 2);
   const schemaScriptTag = `<script type="application/ld+json" id="matricsmania-structured-data">\n${schemaJson}\n    </script>`;
 

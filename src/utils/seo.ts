@@ -1,6 +1,7 @@
 import { Media } from '../models/media';
 import { SEO, RobotsDirectives } from '../models/seo';
 import { BreadcrumbItem } from '../models/breadcrumb';
+import { fetchRankMathMetadata, ParsedRankMathHead } from './rankMath';
 
 function cleanDomainUrl(val: string | undefined, defaultUrl: string): string {
   if (!val) return defaultUrl;
@@ -132,6 +133,7 @@ export interface SEOMetadataInput {
   breadcrumbs?: BreadcrumbItem[];
   structuredData?: Record<string, any> | Array<Record<string, any>>;
   cmsSeo?: Partial<SEO>;
+  rankMathSeo?: ParsedRankMathHead;
   entityData?: {
     title?: string;
     name?: string;
@@ -325,14 +327,19 @@ export function buildBreadcrumbsFromPath(path: string = '/'): BreadcrumbItem[] {
  * Central SEO Metadata Resolution Engine
  * 
  * Resolves static, dynamic, CMS-provided, and fallback metadata into a single
- * deterministic SEOResolved structure.
+ * deterministic SEOResolved structure. Priority order:
+ * 1. Rank Math API metadata (when valid & success === true)
+ * 2. ACF custom fields (acf.metatitle, acf.metadescription, etc.)
+ * 3. Fallback entity data / site defaults
  */
 export function resolveSeoMetadata(input: SEOMetadataInput = {}): SEOResolved {
+  const rankMath = input.rankMathSeo;
   const cms = input.cmsSeo || input.entityData?.seo || {};
   const entity = input.entityData || {};
 
   // 1. Resolve Title
   const rawTitle =
+    (rankMath && !rankMath.isWordPress404 ? rankMath.title : undefined) ||
     input.title ||
     cms.seoTitle ||
     (entity.title ? `${entity.title} | MatricsMania` : '') ||
@@ -345,6 +352,7 @@ export function resolveSeoMetadata(input: SEOMetadataInput = {}): SEOResolved {
 
   // 2. Resolve Description
   const description =
+    (rankMath && !rankMath.isWordPress404 ? rankMath.description : undefined) ||
     input.description ||
     cms.metaDescription ||
     entity.excerpt ||
@@ -354,6 +362,7 @@ export function resolveSeoMetadata(input: SEOMetadataInput = {}): SEOResolved {
   // 3. Resolve Path & Canonical URL
   const routePath = input.routePath || (entity.slug ? `/${entity.slug}/` : '/');
   const canonicalUrl = normalizeCanonicalUrl(
+    (rankMath && !rankMath.isWordPress404 ? rankMath.canonicalUrl : undefined) ||
     input.canonicalUrl || cms.canonicalUrl,
     routePath
   );
@@ -361,11 +370,13 @@ export function resolveSeoMetadata(input: SEOMetadataInput = {}): SEOResolved {
   // 4. Resolve Robots Directives
   const isNoIndex =
     input.noindex === true ||
+    (rankMath?.robotsIndex === false) ||
     cms.robotsIndex === false ||
     cms.robotsDirectives?.index === false;
 
   const isNoFollow =
     input.nofollow === true ||
+    (rankMath?.robotsFollow === false) ||
     cms.robotsFollow === false ||
     cms.robotsDirectives?.follow === false;
 
@@ -384,29 +395,63 @@ export function resolveSeoMetadata(input: SEOMetadataInput = {}): SEOResolved {
   const robotsString = buildRobotsContentString(robotsDirectives);
 
   // 5. Resolve Open Graph
-  const ogTitle = input.ogTitle || cms.ogTitle || cms.openGraph?.title || title;
+  const ogTitle =
+    (rankMath && !rankMath.isWordPress404 ? rankMath.ogTitle : undefined) ||
+    input.ogTitle ||
+    cms.ogTitle ||
+    cms.openGraph?.title ||
+    title;
+
   const ogDescription =
+    (rankMath && !rankMath.isWordPress404 ? rankMath.ogDescription : undefined) ||
     input.ogDescription ||
     cms.ogDescription ||
     cms.openGraph?.description ||
     description;
+
   const ogImage = resolveAbsoluteImageUrl(
-    input.ogImage || cms.ogImage || cms.openGraph?.image || entity.featuredImage
+    (rankMath && !rankMath.isWordPress404 ? rankMath.ogImage : undefined) ||
+    input.ogImage ||
+    cms.ogImage ||
+    cms.openGraph?.image ||
+    entity.featuredImage
   );
-  const ogType = input.ogType || cms.openGraph?.type || (input.category || entity.category ? 'article' : 'website');
+
+  const ogType =
+    (rankMath && !rankMath.isWordPress404 ? rankMath.ogType : undefined) ||
+    input.ogType ||
+    cms.openGraph?.type ||
+    (input.category || entity.category ? 'article' : 'website');
 
   // 6. Resolve Twitter / X
   const twitterTitle =
-    input.twitterTitle || cms.twitterTitle || cms.twitter?.title || ogTitle;
+    (rankMath && !rankMath.isWordPress404 ? rankMath.twitterTitle : undefined) ||
+    input.twitterTitle ||
+    cms.twitterTitle ||
+    cms.twitter?.title ||
+    ogTitle;
+
   const twitterDescription =
+    (rankMath && !rankMath.isWordPress404 ? rankMath.twitterDescription : undefined) ||
     input.twitterDescription ||
     cms.twitterDescription ||
     cms.twitter?.description ||
     ogDescription;
+
   const twitterImage = resolveAbsoluteImageUrl(
-    input.twitterImage || cms.twitterImage || cms.twitter?.image || ogImage
+    (rankMath && !rankMath.isWordPress404 ? rankMath.twitterImage : undefined) ||
+    input.twitterImage ||
+    cms.twitterImage ||
+    cms.twitter?.image ||
+    ogImage
   );
-  const rawTwitterCard = input.twitterCard || cms.twitter?.card || 'summary_large_image';
+
+  const rawTwitterCard =
+    (rankMath && !rankMath.isWordPress404 ? rankMath.twitterCard : undefined) ||
+    input.twitterCard ||
+    cms.twitter?.card ||
+    'summary_large_image';
+
   const twitterCard: 'summary' | 'summary_large_image' =
     rawTwitterCard === 'summary' ? 'summary' : 'summary_large_image';
 
@@ -432,6 +477,12 @@ export function resolveSeoMetadata(input: SEOMetadataInput = {}): SEOResolved {
     { hrefLang: 'en-IN', href: canonicalUrl },
     { hrefLang: 'x-default', href: canonicalUrl },
   ];
+
+  // 10. Structured Data
+  const structuredData =
+    (rankMath && !rankMath.isWordPress404 ? rankMath.structuredData : undefined) ||
+    input.structuredData ||
+    cms.structuredData;
 
   return {
     title,
@@ -476,9 +527,34 @@ export function resolveSeoMetadata(input: SEOMetadataInput = {}): SEOResolved {
     },
     alternateLanguages,
     breadcrumbs,
-    structuredData: input.structuredData || cms.structuredData,
+    structuredData,
     rawCmsSeo: cms,
   };
+}
+
+/**
+ * Async SEO Metadata Resolution Engine that automatically queries Rank Math Head API first,
+ * falling back to ACF fields and entity defaults.
+ */
+export async function asyncResolveSeoMetadata(input: SEOMetadataInput = {}): Promise<SEOResolved> {
+  const entity = input.entityData || {};
+  const routePath = input.routePath || (entity.slug ? `/${entity.slug}/` : '/');
+
+  let rankMath: ParsedRankMathHead | null = null;
+  if (input.rankMathSeo) {
+    rankMath = input.rankMathSeo;
+  } else {
+    try {
+      rankMath = await fetchRankMathMetadata(routePath);
+    } catch {
+      rankMath = null;
+    }
+  }
+
+  return resolveSeoMetadata({
+    ...input,
+    rankMathSeo: rankMath || undefined,
+  });
 }
 
 /**
@@ -574,6 +650,30 @@ export function getStaticRouteSeo(routeId: string, pathname: string = '/'): SEOR
     default:
       return resolveSeoMetadata({ routePath: pathname });
   }
+}
+
+/**
+ * Async static route SEO resolver querying Rank Math endpoint first
+ */
+export async function asyncGetStaticRouteSeo(routeId: string, pathname: string = '/'): Promise<SEOResolved> {
+  const syncSeo = getStaticRouteSeo(routeId, pathname);
+  const routePath = syncSeo.canonicalUrl.replace(PUBLIC_DOMAIN, '') || pathname;
+
+  try {
+    const rankMath = await fetchRankMathMetadata(routePath);
+    if (rankMath && !rankMath.isWordPress404) {
+      return resolveSeoMetadata({
+        routePath,
+        rankMathSeo: rankMath,
+        title: syncSeo.title,
+        description: syncSeo.description,
+      });
+    }
+  } catch {
+    // Fallback to static SEO
+  }
+
+  return syncSeo;
 }
 
 /**

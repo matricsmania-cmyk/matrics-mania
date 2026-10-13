@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import { ServiceTemplate } from '@/src/templates/ServiceTemplate';
 import { wordPressProvider } from '@/src/providers/WordPressProvider';
-import { resolveSeoMetadata } from '@/src/utils/seo';
+import { asyncResolveSeoMetadata } from '@/src/utils/seo';
 import { toNextMetadata } from '@/src/utils/nextMetadata';
 
 interface ServicePageProps {
@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: ServicePageProps): Promise<Me
       },
     };
   }
-  const seo = resolveSeoMetadata({
+  const seo = await asyncResolveSeoMetadata({
     entityData: service,
     routePath: `/services/${slug}/`,
   });

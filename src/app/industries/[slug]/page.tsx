@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import { IndustryTemplate } from '@/src/templates/IndustryTemplate';
 import { wordPressProvider } from '@/src/providers/WordPressProvider';
-import { resolveSeoMetadata } from '@/src/utils/seo';
+import { asyncResolveSeoMetadata } from '@/src/utils/seo';
 import { toNextMetadata } from '@/src/utils/nextMetadata';
 
 interface IndustryPageProps {
@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: IndustryPageProps): Promise<M
       },
     };
   }
-  const seo = resolveSeoMetadata({
+  const seo = await asyncResolveSeoMetadata({
     entityData: industry,
     routePath: `/industries/${slug}/`,
   });

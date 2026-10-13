@@ -1,12 +1,15 @@
 import React from 'react';
 import { HomeTemplate } from '@/src/templates/HomeTemplate';
 import { wordPressProvider } from '@/src/providers/WordPressProvider';
-import { getStaticRouteSeo } from '@/src/utils/seo';
+import { asyncGetStaticRouteSeo } from '@/src/utils/seo';
 import { toNextMetadata } from '@/src/utils/nextMetadata';
 
 export const revalidate = 3600;
 
-export const metadata = toNextMetadata(getStaticRouteSeo('home'));
+export async function generateMetadata() {
+  const seo = await asyncGetStaticRouteSeo('home', '/');
+  return toNextMetadata(seo);
+}
 
 export default async function HomePage() {
   const [services, industries, caseStudies, insights] = await Promise.all([

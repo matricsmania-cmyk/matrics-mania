@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import { LocationTemplate } from '@/src/templates/LocationTemplate';
 import { wordPressProvider } from '@/src/providers/WordPressProvider';
-import { resolveSeoMetadata } from '@/src/utils/seo';
+import { asyncResolveSeoMetadata } from '@/src/utils/seo';
 import { toNextMetadata } from '@/src/utils/nextMetadata';
 
 interface LocationPageProps {
@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: LocationPageProps): Promise<M
       },
     };
   }
-  const seo = resolveSeoMetadata({
+  const seo = await asyncResolveSeoMetadata({
     entityData: location,
     routePath: `/locations/${slug}/`,
   });

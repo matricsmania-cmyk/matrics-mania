@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import { CaseStudyTemplate } from '@/src/templates/CaseStudyTemplate';
 import { wordPressProvider } from '@/src/providers/WordPressProvider';
-import { resolveSeoMetadata } from '@/src/utils/seo';
+import { asyncResolveSeoMetadata } from '@/src/utils/seo';
 import { toNextMetadata } from '@/src/utils/nextMetadata';
 
 interface CaseStudyPageProps {
@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: CaseStudyPageProps): Promise<
       },
     };
   }
-  const seo = resolveSeoMetadata({
+  const seo = await asyncResolveSeoMetadata({
     entityData: caseStudy,
     routePath: `/case-studies/${slug}/`,
   });
