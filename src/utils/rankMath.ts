@@ -1,4 +1,5 @@
 import { PUBLIC_DOMAIN, CMS_DOMAIN } from './seo';
+import { wordPressProvider } from '../providers/WordPressProvider';
 
 export interface ParsedRankMathHead {
   title?: string;
@@ -21,7 +22,7 @@ export interface ParsedRankMathHead {
 }
 
 /**
-  Decodes common HTML entities in title/description metadata
+ * Decodes common HTML entities in title/description metadata
  */
 export function decodeHtmlEntities(htmlStr: string = ''): string {
   if (!htmlStr) return '';
@@ -48,34 +49,56 @@ export function parseRankMathHeadHtml(headHtml: string, expectedPublicUrl?: stri
   }
 
   // Detect WordPress 404 response in head
-  const is404Title = /<title[^>]*>.*?(Page Not Found|404 Not Found).*?<\/title>/i.test(headHtml);
+  const is404Title =
+    /<title[^>]*>.*?(Page Not Found|404 Not Found).*?<\/title>/i.test(headHtml) ||
+    /<meta\s+property=["']og:title["']\s+content=["'][^"']*(Page Not Found|404 Not Found)[^"']*["']/i.test(headHtml) ||
+    /<meta\s+name=["']twitter:title["']\s+content=["'][^"']*(Page Not Found|404 Not Found)[^"']*["']/i.test(headHtml);
+
   if (is404Title) {
     return { isWordPress404: true, rawHeadHtml: headHtml };
   }
 
-  // Extract <title>
+  // Extract <title>, og:title, or twitter:title
   let title: string | undefined;
   const titleMatch = headHtml.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
-  if (titleMatch && titleMatch[1]) {
+  if (titleMatch && titleMatch[1] && titleMatch[1].trim()) {
     title = decodeHtmlEntities(titleMatch[1]);
+  } else {
+    const ogTitleMatch = headHtml.match(/<meta\s+property=["']og:title["']\s+content=["']([\s\S]*?)["']\s*\/?>/i);
+    if (ogTitleMatch && ogTitleMatch[1]) {
+      title = decodeHtmlEntities(ogTitleMatch[1]);
+    } else {
+      const twTitleMatch = headHtml.match(/<meta\s+name=["']twitter:title["']\s+content=["']([\s\S]*?)["']\s*\/?>/i);
+      if (twTitleMatch && twTitleMatch[1]) {
+        title = decodeHtmlEntities(twTitleMatch[1]);
+      }
+    }
   }
 
   // Extract Meta Description
   let description: string | undefined;
   const descMatch =
     headHtml.match(/<meta\s+name=["']description["']\s+content=["']([\s\S]*?)["']\s*\/?>/i) ||
-    headHtml.match(/<meta\s+content=["']([\s\S]*?)["']\s+name=["']description["']\s*\/?>/i);
+    headHtml.match(/<meta\s+content=["']([\s\S]*?)["']\s+name=["']description["']\s*\/?>/i) ||
+    headHtml.match(/<meta\s+property=["']og:description["']\s+content=["']([\s\S]*?)["']\s*\/?>/i) ||
+    headHtml.match(/<meta\s+name=["']twitter:description["']\s+content=["']([\s\S]*?)["']\s*\/?>/i);
   if (descMatch && descMatch[1]) {
     description = decodeHtmlEntities(descMatch[1]);
   }
 
   // Extract Canonical URL
   let canonicalUrl: string | undefined;
-  const canonicalMatch = headHtml.match(/<link\s+rel=["']canonical["']\s+href=["']([\s\S]*?)["']\s*\/?>/i) || headHtml.match(/<link\s+href=["']([\s\S]*?)["']\s+rel=["']canonical["']\s*\/?>/i);
+  const canonicalMatch =
+    headHtml.match(/<link\s+rel=["']canonical["']\s+href=["']([\s\S]*?)["']\s*\/?>/i) ||
+    headHtml.match(/<link\s+href=["']([\s\S]*?)["']\s+rel=["']canonical["']\s*\/?>/i);
+
   if (canonicalMatch && canonicalMatch[1]) {
     let rawCanonical = canonicalMatch[1].trim();
-    // Normalize CMS domain to public domain
-    rawCanonical = rawCanonical.replace(/^https?:\/\/cms\.matricsmania\.com/i, PUBLIC_DOMAIN);
+    // Normalize CMS domain or localhost to public frontend domain
+    rawCanonical = rawCanonical
+      .replace(/^https?:\/\/cms\.matricsmania\.com/i, PUBLIC_DOMAIN)
+      .replace(/^https?:\/\/localhost(:\d+)?/i, PUBLIC_DOMAIN);
+
     if (!rawCanonical.startsWith('http://') && !rawCanonical.startsWith('https://')) {
       rawCanonical = `${PUBLIC_DOMAIN}${rawCanonical.startsWith('/') ? '' : '/'}${rawCanonical}`;
     }
@@ -169,7 +192,7 @@ export function parseRankMathHeadHtml(headHtml: string, expectedPublicUrl?: stri
           parsedSchemas.push(parsed);
         }
       } catch {
-        // Continue parsing remaining script tags
+        // Continue
       }
     }
   }
@@ -205,79 +228,168 @@ export function parseRankMathHeadHtml(headHtml: string, expectedPublicUrl?: stri
 const rankMathMemoryCache: Map<string, { data: ParsedRankMathHead | null; expiry: number }> = new Map();
 const CACHE_TTL_MS = 300 * 1000;
 
+async function fetchRankMathEndpointWithChallengeSolver(endpointUrlStr: string, cacheKey: string): Promise<any | null> {
+  let currentUrl = endpointUrlStr;
+  const userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
+
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const headers: Record<string, string> = {
+      'User-Agent': userAgent,
+      'Accept': 'application/json, text/html, */*',
+    };
+
+    const sessionCookie = (wordPressProvider as any).sessionCookie;
+    if (sessionCookie) {
+      headers['Cookie'] = sessionCookie;
+    }
+
+    try {
+      const fetchOptions: RequestInit = {
+        headers,
+        signal: AbortSignal.timeout(6000),
+      };
+
+      if (typeof window === 'undefined') {
+        (fetchOptions as any).next = {
+          revalidate: 300,
+          tags: ['rank-math', `rank-math:${cacheKey}`],
+        };
+      }
+
+      const res = await fetch(currentUrl, fetchOptions);
+      const text = await res.text();
+
+      // 1. Direct JSON response
+      if (text.startsWith('{') || text.startsWith('[')) {
+        try {
+          return JSON.parse(text);
+        } catch {
+          // ignore
+        }
+      }
+
+      // 2. InfinityFree / ByetHost challenge page solver
+      if (text.includes('slowAES') || text.includes('/aes.js')) {
+        const aesCode = await (wordPressProvider as any).getAesScript?.();
+        const scriptMatch = text.match(/<script>([\s\S]*?)<\/script>/);
+
+        if (aesCode && scriptMatch && typeof window === 'undefined') {
+          try {
+            const vm = await import('vm');
+            let cookieVal = '';
+            let redirectHref = '';
+
+            const sandbox = {
+              document: {
+                set cookie(val: string) {
+                  const m = val.match(/__test=([^;]+)/);
+                  if (m) cookieVal = `__test=${m[1]}`;
+                },
+              },
+              location: {
+                set href(val: string) {
+                  redirectHref = val;
+                },
+              },
+            };
+
+            const context = vm.createContext(sandbox);
+            vm.runInContext(aesCode, context);
+            vm.runInContext(scriptMatch[1], context);
+
+            if (cookieVal) {
+              (wordPressProvider as any).sessionCookie = cookieVal;
+              if (redirectHref) {
+                currentUrl = redirectHref;
+              }
+              continue; // Retry attempt 1 with session cookie set
+            }
+          } catch {
+            break;
+          }
+        }
+      }
+    } catch {
+      // Attempt failed
+    }
+  }
+  return null;
+}
+
 /**
  * Server-side Rank Math metadata fetcher.
  * Queries `https://cms.matricsmania.com/wp-json/rankmath/v1/getHead?url=FULL_URL`
+ *
+ * Checks WordPress CMS domain URLs first (e.g. `https://cms.matricsmania.com/services/technical-seo/?i=1`
+ * or `https://cms.matricsmania.com/services/technical-seo/`) so Rank Math plugin on WordPress resolves
+ * the page correctly without returning a 404 response.
  */
 export async function fetchRankMathMetadata(
   pagePathOrUrl: string
 ): Promise<ParsedRankMathHead | null> {
   if (!pagePathOrUrl) return null;
 
-  // Build complete page URL using URL API
-  let targetFullUrl = pagePathOrUrl.trim();
-  if (targetFullUrl.startsWith('/')) {
-    targetFullUrl = `${PUBLIC_DOMAIN}${targetFullUrl}`;
-  } else if (!targetFullUrl.startsWith('http://') && !targetFullUrl.startsWith('https://')) {
-    targetFullUrl = `${PUBLIC_DOMAIN}/${targetFullUrl}`;
+  // Standardize clean relative path e.g. "/services/technical-seo/"
+  let cleanPath = pagePathOrUrl.trim();
+  if (cleanPath.startsWith('http://') || cleanPath.startsWith('https://')) {
+    try {
+      const u = new URL(cleanPath);
+      cleanPath = u.pathname;
+    } catch {
+      // keep cleanPath
+    }
   }
+  if (!cleanPath.startsWith('/')) cleanPath = '/' + cleanPath;
+  if (cleanPath !== '/' && !cleanPath.endsWith('/')) cleanPath = cleanPath + '/';
 
-  const cacheKey = targetFullUrl.toLowerCase();
+  const expectedPublicUrl = `${PUBLIC_DOMAIN}${cleanPath}`;
+  const cmsBase = CMS_DOMAIN || 'https://cms.matricsmania.com';
+
+  const cacheKey = cleanPath.toLowerCase();
   const cached = rankMathMemoryCache.get(cacheKey);
   if (cached && Date.now() < cached.expiry) {
     return cached.data;
   }
 
-  const cmsBase = CMS_DOMAIN || 'https://cms.matricsmania.com';
-  
-  // Construct endpoint URL using standard URL API
-  const endpointUrl = new URL('/wp-json/rankmath/v1/getHead', cmsBase);
-  endpointUrl.searchParams.set('url', targetFullUrl);
+  // Candidate URLs to query Rank Math API with:
+  // 1. CMS Domain with ?i=1 parameter (matches WordPress rewrite rule & bypasses host challenge)
+  // 2. CMS Domain without query parameter
+  // 3. Public Domain URL
+  const candidateUrlsToQuery = [
+    `${cmsBase}${cleanPath}?i=1`,
+    `${cmsBase}${cleanPath}`,
+    expectedPublicUrl,
+  ];
 
-  try {
-    const fetchOptions: RequestInit = {
-      headers: {
-        'Accept': 'application/json',
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) NextJS-RankMath-Relay/1.0',
-      },
-      signal: AbortSignal.timeout(8000), // 8s timeout safeguard
-    };
+  for (const targetUrl of candidateUrlsToQuery) {
+    const endpointUrl = new URL('/wp-json/rankmath/v1/getHead', cmsBase);
+    endpointUrl.searchParams.set('url', targetUrl);
 
-    if (typeof window === 'undefined') {
-      (fetchOptions as any).next = {
-        revalidate: 300,
-        tags: ['rank-math', `rank-math:${cacheKey}`],
-      };
+    try {
+      const json = await fetchRankMathEndpointWithChallengeSolver(endpointUrl.toString(), cacheKey);
+
+      if (!json || json.success !== true || typeof json.head !== 'string' || !json.head.trim()) {
+        continue;
+      }
+
+      const parsed = parseRankMathHeadHtml(json.head, expectedPublicUrl);
+
+      // If this candidate URL resulted in a 404 response in Rank Math, try next candidate URL
+      if (parsed.isWordPress404) {
+        continue;
+      }
+
+      // Found valid Rank Math metadata! Cache and return
+      rankMathMemoryCache.set(cacheKey, { data: parsed, expiry: Date.now() + CACHE_TTL_MS });
+      return parsed;
+    } catch {
+      // Candidate request failed, try next
+      continue;
     }
-
-    const res = await fetch(endpointUrl.toString(), fetchOptions);
-
-    if (!res.ok) {
-      // 404 or 500 response from Rank Math API
-      rankMathMemoryCache.set(cacheKey, { data: null, expiry: Date.now() + 60000 }); // cache 60s
-      return null;
-    }
-
-    const json = await res.json();
-
-    if (!json || json.success !== true || typeof json.head !== 'string' || !json.head.trim()) {
-      rankMathMemoryCache.set(cacheKey, { data: null, expiry: Date.now() + 60000 });
-      return null;
-    }
-
-    const parsed = parseRankMathHeadHtml(json.head, targetFullUrl);
-
-    // If Rank Math returned a 404 page head for a valid route, return null so ACF/entity fallback kicks in
-    if (parsed.isWordPress404) {
-      rankMathMemoryCache.set(cacheKey, { data: null, expiry: Date.now() + 60000 });
-      return null;
-    }
-
-    rankMathMemoryCache.set(cacheKey, { data: parsed, expiry: Date.now() + CACHE_TTL_MS });
-    return parsed;
-  } catch (err) {
-    // Network error or timeout -> graceful fallback
-    rankMathMemoryCache.set(cacheKey, { data: null, expiry: Date.now() + 30000 });
-    return null;
   }
+
+  // All candidates returned 404 or failed -> cache null for 60s and return null so ACF fallback takes over
+  rankMathMemoryCache.set(cacheKey, { data: null, expiry: Date.now() + 60000 });
+  return null;
 }
+
