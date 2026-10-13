@@ -115,13 +115,15 @@ export function normalizeWpSeo(rawPost: RawWpBasePost, canonicalUrlFallback?: st
   const metaDescription = acf.metadescription || yoast?.description || rankMath?.description || fallbackExcerpt;
 
   // Map acf.canonicalurl -> canonicalUrl
-  const rawCanonical = acf.canonicalurl || yoast?.canonical || rankMath?.canonical || canonicalUrlFallback || rawPost.link || `https://matricsmania.com/${rawPost.slug}/`;
+  const rawCanonical = acf.canonicalurl || yoast?.canonical || rankMath?.canonical || canonicalUrlFallback || rawPost.link || `https://www.matricsmania.com/${rawPost.slug}/`;
   let canonicalUrl = rawCanonical.trim();
   if (canonicalUrl.includes('#')) canonicalUrl = canonicalUrl.split('#')[0];
   if (canonicalUrl.includes('?')) canonicalUrl = canonicalUrl.split('?')[0];
-  canonicalUrl = canonicalUrl.replace(/^https?:\/\/cms\.matricsmania\.com/i, 'https://matricsmania.com');
+  canonicalUrl = canonicalUrl
+    .replace(/^https?:\/\/cms\.matricsmania\.com/i, 'https://www.matricsmania.com')
+    .replace(/^https?:\/\/matricsmania\.com/i, 'https://www.matricsmania.com');
   if (canonicalUrl.startsWith('/')) {
-    canonicalUrl = `https://matricsmania.com${canonicalUrl}`;
+    canonicalUrl = `https://www.matricsmania.com${canonicalUrl}`;
   }
   if (!canonicalUrl.endsWith('/')) {
     canonicalUrl = `${canonicalUrl}/`;
@@ -303,7 +305,7 @@ export function normalizeWpService(raw: RawWpServicePost): Service {
     publishedAt: raw.date,
     updatedAt: raw.modified,
     status: raw.status === 'publish' ? 'published' : (raw.status as any),
-    seo: normalizeWpSeo(raw, `https://matricsmania.com/services/${raw.slug}/`),
+    seo: normalizeWpSeo(raw, `https://www.matricsmania.com/services/${raw.slug}/`),
     relationships,
 
     serviceCode: acf.servicecode || acf.service_code || `SRV-${raw.slug.toUpperCase().slice(0, 4)}`,
@@ -385,7 +387,7 @@ export function normalizeWpIndustry(raw: RawWpIndustryPost): Industry {
     publishedAt: raw.date,
     updatedAt: raw.modified,
     status: raw.status === 'publish' ? 'published' : (raw.status as any),
-    seo: normalizeWpSeo(raw, `https://matricsmania.com/industries/${raw.slug}/`),
+    seo: normalizeWpSeo(raw, `https://www.matricsmania.com/industries/${raw.slug}/`),
     relationships,
 
     industryCode: acf.industrycode || acf.industry_code || `IND-${raw.slug ? raw.slug.toUpperCase().slice(0, 3) : 'GEN'}`,
@@ -468,7 +470,7 @@ export function normalizeWpLocation(raw: RawWpLocationPost): Location {
     publishedAt: raw.date,
     updatedAt: raw.modified,
     status: raw.status === 'publish' ? 'published' : (raw.status as any),
-    seo: normalizeWpSeo(raw, `https://matricsmania.com/locations/${raw.slug}/`),
+    seo: normalizeWpSeo(raw, `https://www.matricsmania.com/locations/${raw.slug}/`),
     relationships,
 
     locationCode: acf.location_code || nodeCode,
@@ -565,7 +567,7 @@ export function normalizeWpInsight(raw: RawWpInsightPost): Insight {
     publishedAt: raw.date,
     updatedAt: raw.modified,
     status: raw.status === 'publish' ? 'published' : (raw.status as any),
-    seo: normalizeWpSeo(raw, `https://matricsmania.com/insights/${raw.slug}/`),
+    seo: normalizeWpSeo(raw, `https://www.matricsmania.com/insights/${raw.slug}/`),
     relationships,
 
     standfirst: acf.standfirst,
@@ -643,7 +645,7 @@ export function normalizeWpCaseStudy(raw: RawWpCaseStudyPost): CaseStudy {
     publishedAt: raw.date,
     updatedAt: raw.modified,
     status: raw.status === 'publish' ? 'published' : (raw.status as any),
-    seo: normalizeWpSeo(raw, `https://matricsmania.com/case-studies/${raw.slug}/`),
+    seo: normalizeWpSeo(raw, `https://www.matricsmania.com/case-studies/${raw.slug}/`),
     relationships,
 
     caseStudyCode: acf.case_study_code || `CS-${raw.slug ? raw.slug.toUpperCase().slice(0, 4) : 'PROJ'}`,
@@ -700,7 +702,7 @@ export function normalizeWpPage(raw: RawWpBasePost): Page {
     publishedAt: raw.date,
     updatedAt: raw.modified,
     status: raw.status === 'publish' ? 'published' : (raw.status as any),
-    seo: normalizeWpSeo(raw, `https://matricsmania.com/${raw.slug}/`),
+    seo: normalizeWpSeo(raw, `https://www.matricsmania.com/${raw.slug}/`),
     relationships: {},
     template: (raw.template as any) || 'default',
     heroHeadline: raw.acf?.hero_headline,

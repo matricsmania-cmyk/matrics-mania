@@ -234,7 +234,7 @@ export const LocationTemplate: React.FC<LocationTemplateProps> = ({
                   location.relationships.services.map((srv, idx) => (
                     <div
                       key={idx}
-                      onClick={() => onNavigate(srv.url || `/services/${srv.slug}/`)}
+                      onClick={() => onNavigate(srv.url || `/${srv.slug}/`)}
                       className="p-4 rounded-xl bg-[#0D1424] border border-[#1E293B] hover:border-[#2563EB] transition-all cursor-pointer flex items-center justify-between group"
                     >
                       <div className="flex items-center gap-3">
@@ -250,7 +250,7 @@ export const LocationTemplate: React.FC<LocationTemplateProps> = ({
                   provider.getAllServices().slice(0, 4).map((srv, idx) => (
                     <div
                       key={idx}
-                      onClick={() => onNavigate(`/services/${srv.slug}/`)}
+                      onClick={() => onNavigate(`/${srv.slug}/`)}
                       className="p-4 rounded-xl bg-[#0D1424] border border-[#1E293B] hover:border-[#2563EB] transition-all cursor-pointer flex items-center justify-between group"
                     >
                       <div className="flex items-center gap-3">

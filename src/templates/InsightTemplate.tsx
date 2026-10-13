@@ -637,10 +637,10 @@ export const InsightTemplate: React.FC<InsightTemplateProps> = ({
                     {post.relationships.services.slice(0, 2).map((srv) => (
                       <a
                         key={srv.id}
-                        href={srv.url || `/services/${srv.slug}/`}
+                        href={srv.url || `/${srv.slug}/`}
                         onClick={(e) => {
                           e.preventDefault();
-                          onNavigate(srv.url || `/services/${srv.slug}/`);
+                          onNavigate(srv.url || `/${srv.slug}/`);
                         }}
                         className="w-full text-left p-2.5 rounded-xl bg-[#070B14] hover:bg-[#1E293B] border border-[#1E293B] text-xs text-[#CBD5E1] hover:text-white flex items-center justify-between group cursor-pointer no-underline block"
                       >

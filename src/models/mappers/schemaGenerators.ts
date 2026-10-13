@@ -67,7 +67,7 @@ export function createOrganizationSchema(contact: ContactInformation): SchemaOrg
  * Creates Schema.org Service Graph for a Service entity
  */
 export function createServiceSchema(service: Service): SchemaService {
-  return generateServiceSchema(service, `${PUBLIC_DOMAIN}/services/${service.slug}/`);
+  return generateServiceSchema(service, `${PUBLIC_DOMAIN}/${service.slug}/`);
 }
 
 /**

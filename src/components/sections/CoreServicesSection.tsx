@@ -47,10 +47,10 @@ export const CoreServicesSection: React.FC<CoreServicesSectionProps> = ({
             <ScrollReveal key={service.id || service.slug} delay={idx * 0.05}>
               <a
                 id={`service-card-${service.slug}`}
-                href={`/services/${service.slug}/`}
+                href={`/${service.slug}/`}
                 onClick={(e) => {
                   e.preventDefault();
-                  handleNav(`/services/${service.slug}/`);
+                  handleNav(`/${service.slug}/`);
                 }}
                 className="p-6 sm:p-7 rounded-2xl bg-[#0D1424] border border-[#1E293B] hover:border-[#2563EB]/50 transition-all cursor-pointer flex flex-col justify-between h-full group hover:shadow-xl hover:shadow-blue-500/5 block no-underline"
               >

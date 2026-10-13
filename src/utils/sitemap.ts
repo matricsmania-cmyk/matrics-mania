@@ -169,7 +169,7 @@ export async function getSitemapEntries(
       if (service.seo?.robotsIndex === false) return;
 
       addEntry({
-        loc: `${host}/services/${service.slug}/`,
+        loc: `${host}/${service.slug}/`,
         lastmod: service.updatedAt || service.publishedAt || defaultUpdatedDate,
         changefreq: 'weekly',
         priority: 0.8,

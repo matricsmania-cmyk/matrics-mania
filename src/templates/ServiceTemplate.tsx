@@ -66,14 +66,14 @@ export const ServiceTemplate: React.FC<ServiceTemplateProps> = ({
   if (!service) {
     return (
       <NotFoundState
-        attemptedPath={slug ? `/services/${slug}/` : '/services/'}
+        attemptedPath={slug ? `/${slug}/` : '/services/'}
         onNavigate={onNavigate}
         onOpenBooking={onOpenBooking}
       />
     );
   }
 
-  const canonicalUrl = service.seo?.canonicalUrl || `https://matricsmania.com/services/${service.slug}/`;
+  const canonicalUrl = service.seo?.canonicalUrl || `https://www.matricsmania.com/${service.slug}/`;
   const serviceTitle = service.title;
   const metaDescription = service.seo?.metaDescription || service.shortDescription || service.excerpt;
 

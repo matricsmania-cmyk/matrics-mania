@@ -53,8 +53,8 @@ export function resolveServerRoute(
         seo = resolveSeoMetadata({
           title: service.seo?.seoTitle || `${service.title} | Enterprise Growth Engineering | MatricsMania`,
           description: service.seo?.metaDescription || service.shortDescription || service.excerpt,
-          canonicalUrl: service.seo?.canonicalUrl || `${PUBLIC_DOMAIN}/services/${service.slug}/`,
-          routePath: `/services/${service.slug}/`,
+          canonicalUrl: service.seo?.canonicalUrl || `${PUBLIC_DOMAIN}/${service.slug}/`,
+          routePath: `/${service.slug}/`,
           ogImage: service.featuredImage || service.seo?.ogImage,
           ogType: 'website',
           cmsSeo: service.seo,
@@ -62,7 +62,7 @@ export function resolveServerRoute(
           breadcrumbs: [
             { name: 'Home', url: `${PUBLIC_DOMAIN}/`, position: 1 },
             { name: 'Services', url: `${PUBLIC_DOMAIN}/services/`, position: 2 },
-            { name: service.title, url: `${PUBLIC_DOMAIN}/services/${service.slug}/`, position: 3, isCurrentPage: true },
+            { name: service.title, url: `${PUBLIC_DOMAIN}/${service.slug}/`, position: 3, isCurrentPage: true },
           ],
         });
         schema = generateCompleteSchemaGraph({

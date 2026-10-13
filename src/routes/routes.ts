@@ -12,7 +12,7 @@ export interface RouteDefinition {
   getCanonical: (params: Record<string, string>) => string;
 }
 
-export const BASE_URL = 'https://matricsmania.com';
+export const BASE_URL = 'https://www.matricsmania.com';
 
 /**
  * Normalized route definitions for MatricsMania.
@@ -51,9 +51,9 @@ export const ROUTES: RouteDefinition[] = [
   },
   {
     id: 'service-detail',
-    pattern: /^\/services\/([a-zA-Z0-9_-]+)\/?$/,
+    pattern: /^\/([a-zA-Z0-9_-]+)\/?$/,
     template: 'service',
-    getCanonical: (p) => `${BASE_URL}/services/${p.slug}/`,
+    getCanonical: (p) => `${BASE_URL}/${p.slug}/`,
   },
   {
     id: 'industries-index',

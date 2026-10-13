@@ -87,7 +87,7 @@ export const NAVIGATION_CONFIG: NavigationConfig = {
     featured: {
       title: 'Generative Engine Optimization (GEO)',
       description: 'Pioneering LLM citation indexing, semantic vector tuning, and Perplexity/ChatGPT brand visibility architectures.',
-      href: '/services/generative-engine-optimization/',
+      href: '/generative-engine-optimization/',
       badge: '2025 Architecture',
     },
     groups: [
@@ -99,27 +99,27 @@ export const NAVIGATION_CONFIG: NavigationConfig = {
           {
             id: 'technical-seo',
             label: 'Technical SEO Infrastructure',
-            href: '/services/technical-seo/',
+            href: '/technical-seo/',
             description: 'Core Web Vitals, headless crawl graphs, indexation pipelines',
             badge: 'Core',
           },
           {
             id: 'aeo-geo',
             label: 'AEO & Generative Engine Optimization',
-            href: '/services/generative-engine-optimization/',
+            href: '/generative-engine-optimization/',
             description: 'Optimization for Perplexity, ChatGPT Search, and Google SGE',
             badge: 'New',
           },
           {
             id: 'semantic-knowledge-graphs',
             label: 'Semantic Knowledge Graphs',
-            href: '/services/semantic-knowledge-graphs/',
+            href: '/semantic-knowledge-graphs/',
             description: 'Schema.org JSON-LD entity validation and topical authority vectors',
           },
           {
             id: 'b2b-search-strategy',
             label: 'High-Intent B2B SEO Strategy',
-            href: '/services/b2b-seo-strategy/',
+            href: '/b2b-seo-strategy/',
             description: 'Pipeline-generating non-brand search acquisition models',
           },
         ],
@@ -132,20 +132,20 @@ export const NAVIGATION_CONFIG: NavigationConfig = {
           {
             id: 'enterprise-paid-search',
             label: 'Enterprise Google & Bing Ads',
-            href: '/services/paid-search-engineering/',
+            href: '/paid-search-engineering/',
             description: 'Value-based smart bidding and high-intent keyword conquesting',
           },
           {
             id: 'paid-social-capi',
             label: 'Paid Social & Server-Side CAPI',
-            href: '/services/server-side-capi/',
+            href: '/server-side-capi/',
             description: 'First-party data matching for Meta, LinkedIn, and YouTube',
             badge: 'CAPI',
           },
           {
             id: 'programmatic-dsp',
             label: 'Account-Based Retargeting (ABM)',
-            href: '/services/abm-retargeting/',
+            href: '/abm-retargeting/',
             description: 'Hyper-targeted account conquesting for enterprise sales pipelines',
           },
         ],
@@ -158,19 +158,19 @@ export const NAVIGATION_CONFIG: NavigationConfig = {
           {
             id: 'cro-experimentation',
             label: 'CRO & Revenue Experimentation',
-            href: '/services/cro-revenue-experimentation/',
+            href: '/cro-revenue-experimentation/',
             description: 'Bayesian A/B testing, funnel instrumentation, velocity modeling',
           },
           {
             id: 'full-funnel-attribution',
             label: 'Multi-Touch Revenue Attribution',
-            href: '/services/multi-touch-attribution/',
+            href: '/multi-touch-attribution/',
             description: 'First-touch to closed-won CRM synchronization and pipeline reporting',
           },
           {
             id: 'growth-audit',
             label: '360° Growth & Audit Blueprint',
-            href: '/services/growth-audit-blueprint/',
+            href: '/growth-audit-blueprint/',
             description: 'Deep-dive diagnostic of search, media, code, and revenue funnels',
             badge: 'Audit',
           },
@@ -398,12 +398,12 @@ export const NAVIGATION_CONFIG: NavigationConfig = {
   // 7. FOOTER STRUCTURED COLUMNS
   footer: {
     solutions: [
-      { id: 'f-tech-seo', label: 'Technical SEO Infrastructure', href: '/services/technical-seo/' },
-      { id: 'f-aeo-geo', label: 'Generative Engine Optimization (GEO)', href: '/services/technical-seo/' },
-      { id: 'f-knowledge-graphs', label: 'Semantic Knowledge Graphs', href: '/services/technical-seo/' },
-      { id: 'f-paid-search', label: 'Enterprise Google & Bing Ads', href: '/services/technical-seo/' },
-      { id: 'f-capi-social', label: 'Server-Side CAPI Paid Social', href: '/services/technical-seo/' },
-      { id: 'f-cro-revenue', label: 'CRO & Revenue Experimentation', href: '/services/technical-seo/' },
+      { id: 'f-tech-seo', label: 'Technical SEO Infrastructure', href: '/technical-seo/' },
+      { id: 'f-aeo-geo', label: 'Generative Engine Optimization (GEO)', href: '/technical-seo/' },
+      { id: 'f-knowledge-graphs', label: 'Semantic Knowledge Graphs', href: '/technical-seo/' },
+      { id: 'f-paid-search', label: 'Enterprise Google & Bing Ads', href: '/technical-seo/' },
+      { id: 'f-capi-social', label: 'Server-Side CAPI Paid Social', href: '/technical-seo/' },
+      { id: 'f-cro-revenue', label: 'CRO & Revenue Experimentation', href: '/technical-seo/' },
       { id: 'f-all-services', label: 'View All Growth Services →', href: '/services/' },
     ],
     industries: [

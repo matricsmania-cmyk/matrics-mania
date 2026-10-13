@@ -129,7 +129,7 @@ function groupServicesForNavigation(services: Service[]): DynamicNavGroup[] {
     const item = {
       id: s.slug,
       label: s.title,
-      href: `/services/${s.slug}/`,
+      href: `/${s.slug}/`,
       description: s.shortDescription || s.tagline || undefined,
     };
 
@@ -191,7 +191,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     return {
       title: feat.title,
       description: feat.shortDescription || feat.tagline || 'Pioneering organic and algorithmic search architectures.',
-      href: `/services/${feat.slug}/`,
+      href: `/${feat.slug}/`,
       badge: feat.category || 'FEATURED CAPABILITY',
     };
   }, [services]);
@@ -687,8 +687,8 @@ export const Navbar: React.FC<NavbarProps> = ({
                           {services.map((s) => (
                             <a
                               key={s.slug}
-                              href={`/services/${s.slug}/`}
-                              onClick={(e) => handleLinkClick(e, `/services/${s.slug}/`)}
+                              href={`/${s.slug}/`}
+                              onClick={(e) => handleLinkClick(e, `/${s.slug}/`)}
                               className="block p-2 text-xs font-medium text-[#CBD5E1] hover:text-white rounded-lg hover:bg-[#131D33] transition-colors"
                             >
                               {s.title}

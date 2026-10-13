@@ -187,7 +187,7 @@ export const ServicesIndexTemplate: React.FC<ServicesIndexTemplateProps> = ({
                     {/* Bottom Actions */}
                     <div className="pt-5 border-t border-[#1E293B] flex items-center justify-between gap-4">
                       <button
-                        onClick={() => onNavigate(`/services/${service.slug}/`)}
+                        onClick={() => onNavigate(`/${service.slug}/`)}
                         className="inline-flex items-center gap-2 text-xs font-mono font-bold text-[#60A5FA] hover:text-white transition-colors cursor-pointer"
                       >
                         <span>Full Service Specification</span>

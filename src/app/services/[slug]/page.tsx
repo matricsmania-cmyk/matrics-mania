@@ -1,49 +1,25 @@
-import React from 'react';
-import { notFound } from 'next/navigation';
-import { Metadata } from 'next';
-import { ServiceTemplate } from '@/src/templates/ServiceTemplate';
+import { permanentRedirect, notFound } from 'next/navigation';
 import { wordPressProvider } from '@/src/providers/WordPressProvider';
-import { asyncResolveSeoMetadata } from '@/src/utils/seo';
-import { toNextMetadata } from '@/src/utils/nextMetadata';
 
 interface ServicePageProps {
   params: Promise<{ slug: string }>;
 }
 
 export const dynamicParams = true;
-export const revalidate = 300;
 
 export async function generateStaticParams() {
   const services = await wordPressProvider.asyncGetAllServices();
   return services.map((s) => ({ slug: s.slug }));
 }
 
-export async function generateMetadata({ params }: ServicePageProps): Promise<Metadata> {
+export default async function LegacyServicePage({ params }: ServicePageProps) {
   const { slug } = await params;
-  const service = await wordPressProvider.asyncGetServiceBySlug(slug);
-  if (!service) {
-    return {
-      title: 'Service Not Found | MatricsMania',
-      robots: {
-        index: false,
-        follow: false,
-      },
-    };
-  }
-  const seo = await asyncResolveSeoMetadata({
-    entityData: service,
-    routePath: `/services/${slug}/`,
-  });
-  return toNextMetadata(seo);
-}
+  const cleanSlug = (slug || '').toLowerCase().trim();
 
-export default async function ServicePage({ params }: ServicePageProps) {
-  const { slug } = await params;
-  const service = await wordPressProvider.asyncGetServiceBySlug(slug);
-
-  if (!service) {
+  if (!cleanSlug) {
     notFound();
   }
 
-  return <ServiceTemplate service={service} />;
+  // Issue permanent HTTP 308 redirect from /services/:slug to /:slug/
+  permanentRedirect(`/${cleanSlug}/`);
 }

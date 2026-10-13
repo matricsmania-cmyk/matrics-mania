@@ -12,13 +12,17 @@ function cleanDomainUrl(val: string | undefined, defaultUrl: string): string {
   if (!cleaned.startsWith('http://') && !cleaned.startsWith('https://')) {
     cleaned = defaultUrl;
   }
-  return cleaned.replace(/\/$/, '');
+  cleaned = cleaned.replace(/\/$/, '');
+  if (/^https?:\/\/matricsmania\.com$/i.test(cleaned)) {
+    cleaned = 'https://www.matricsmania.com';
+  }
+  return cleaned;
 }
 
 /**
  * Global Domain Constants
  */
-export const PUBLIC_DOMAIN = cleanDomainUrl(process.env.NEXT_PUBLIC_SITE_URL, 'https://matricsmania.com');
+export const PUBLIC_DOMAIN = cleanDomainUrl(process.env.NEXT_PUBLIC_SITE_URL, 'https://www.matricsmania.com');
 export const CMS_DOMAIN = cleanDomainUrl(process.env.NEXT_PUBLIC_WORDPRESS_URL || process.env.WORDPRESS_URL, 'https://cms.matricsmania.com');
 export const DEFAULT_SITE_NAME = 'MatricsMania';
 export const DEFAULT_LOCALE = 'en_IN';
@@ -176,9 +180,10 @@ export function normalizeCanonicalUrl(rawUrl?: string, pathFallback: string = '/
     cleaned = cleaned.split('?')[0];
   }
 
-  // Replace CMS domain or localhost with public domain
+  // Replace CMS domain, apex domain, or localhost with public domain (www.matricsmania.com)
   cleaned = cleaned
-    .replace(/^https?:\/\/cms\.matricsmania\.com/i, PUBLIC_DOMAIN)
+    .replace(/^https?:\/\/(www\.)?cms\.matricsmania\.com/i, PUBLIC_DOMAIN)
+    .replace(/^https?:\/\/matricsmania\.com/i, PUBLIC_DOMAIN)
     .replace(/^https?:\/\/localhost(:\d+)?/i, PUBLIC_DOMAIN)
     .replace(/^https?:\/\/127\.0\.0\.1(:\d+)?/i, PUBLIC_DOMAIN)
     .replace(/^https?:\/\/ais-[a-zA-Z0-9-]+\.[a-zA-Z0-9.-]+\.run\.app/i, PUBLIC_DOMAIN);
@@ -338,6 +343,7 @@ export function resolveSeoMetadata(input: SEOMetadataInput = {}): SEOResolved {
   const entity = input.entityData || {};
 
   // 1. Resolve Title
+  const isFromRankMath = Boolean(rankMath && !rankMath.isWordPress404 && rankMath.title);
   const rawTitle =
     (rankMath && !rankMath.isWordPress404 ? rankMath.title : undefined) ||
     input.title ||
@@ -346,9 +352,9 @@ export function resolveSeoMetadata(input: SEOMetadataInput = {}): SEOResolved {
     (entity.name ? `${entity.name} | MatricsMania` : '') ||
     DEFAULT_TITLE;
 
-  const title = /matrics\s*mania/i.test(rawTitle)
+  const title = isFromRankMath
     ? rawTitle
-    : `${rawTitle} | MatricsMania`;
+    : (/matrics\s*mania/i.test(rawTitle) ? rawTitle : `${rawTitle} | MatricsMania`);
 
   // 2. Resolve Description
   const description =

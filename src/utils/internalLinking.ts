@@ -31,7 +31,7 @@ export function resolveEntityRef(
           id: srv.id,
           slug: srv.slug,
           title: srv.title,
-          url: `/services/${srv.slug}/`,
+          url: `/${srv.slug}/`,
           excerpt: srv.shortDescription || srv.excerpt,
           category: srv.category || 'Service Architecture',
         };

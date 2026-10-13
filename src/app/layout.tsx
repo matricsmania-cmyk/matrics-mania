@@ -17,7 +17,7 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://matricsmania.com'),
+  metadataBase: new URL('https://www.matricsmania.com'),
   title: {
     default: '#1 Best Digital Marketing Agency in India | Matrics Mania',
     template: '%s',

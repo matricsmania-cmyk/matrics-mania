@@ -163,7 +163,7 @@ export const MOCK_SERVICES: Service[] = [
     seo: {
       seoTitle: 'Technical SEO | MatricsMania',
       metaDescription: 'Technical SEO description',
-      canonicalUrl: 'https://matricsmania.com/services/technical-seo/',
+      canonicalUrl: 'https://www.matricsmania.com/technical-seo/',
       ogTitle: 'Technical SEO',
       ogDescription: 'Technical SEO',
       ogImage: 'https://matricsmania.com/og.png',

@@ -184,7 +184,7 @@ export const FivePillarsSection: React.FC<FivePillarsSectionProps> = ({ onNaviga
 
                 <div className="pt-4">
                   <button
-                    onClick={() => handleNav(`/services/${current.slug}/`)}
+                    onClick={() => handleNav(`/${current.slug}/`)}
                     className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white text-xs font-semibold transition-all shadow-md shadow-blue-500/20 cursor-pointer"
                   >
                     <span>Explore {current.title} Architecture</span>

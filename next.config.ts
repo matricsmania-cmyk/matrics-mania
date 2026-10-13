@@ -36,8 +36,8 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
       {
-        source: '/services',
-        destination: '/',
+        source: '/services/:slug((?!$).*)',
+        destination: '/:slug',
         permanent: true,
       },
     ];
