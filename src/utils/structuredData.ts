@@ -21,7 +21,7 @@ import {
   StructuredDataGraph,
   CmsStructuredDataInput,
 } from '../models/structuredData';
-import { PUBLIC_DOMAIN } from './seo';
+import { PUBLIC_DOMAIN } from './constants';
 export { PUBLIC_DOMAIN };
 
 /**

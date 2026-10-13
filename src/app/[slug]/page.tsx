@@ -62,6 +62,7 @@ export async function generateMetadata({ params }: ServicePageProps): Promise<Me
   const seo = await asyncResolveSeoMetadata({
     entityData: service,
     routePath: `/${cleanSlug}/`,
+    cmsSourceUrl: `/services/${cleanSlug}/`,
   });
 
   return toNextMetadata(seo);

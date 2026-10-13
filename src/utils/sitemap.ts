@@ -1,6 +1,6 @@
 import { ContentProvider } from '../providers/ContentProvider';
 import { wordPressProvider } from '../providers/WordPressProvider';
-import { PUBLIC_DOMAIN } from './seo';
+import { PUBLIC_DOMAIN } from './constants';
 
 export interface SitemapUrlEntry {
   loc: string;

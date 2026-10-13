@@ -1,4 +1,4 @@
-import { PUBLIC_DOMAIN } from './seo';
+import { PUBLIC_DOMAIN } from './constants';
 
 export type RedirectStatusCode = 301 | 302 | 307 | 308;
 

@@ -1,4 +1,4 @@
-import { PUBLIC_DOMAIN } from './seo';
+import { PUBLIC_DOMAIN } from './constants';
 
 /**
  * Generates the production-grade robots.txt directives for MatricsMania.

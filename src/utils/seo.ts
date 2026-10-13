@@ -2,55 +2,39 @@ import { Media } from '../models/media';
 import { SEO, RobotsDirectives } from '../models/seo';
 import { BreadcrumbItem } from '../models/breadcrumb';
 import { fetchRankMathMetadata, ParsedRankMathHead } from './rankMath';
+import {
+  PUBLIC_DOMAIN,
+  CMS_DOMAIN,
+  DEFAULT_SITE_NAME,
+  DEFAULT_LOCALE,
+  DEFAULT_LANG,
+  TWITTER_SITE_HANDLE,
+  TWITTER_CREATOR_HANDLE,
+  DEFAULT_OG_IMAGE,
+  DEFAULT_FAVICON_DARK,
+  DEFAULT_FAVICON_LIGHT,
+  DEFAULT_THEME_COLOR,
+  DEFAULT_TITLE,
+  DEFAULT_DESCRIPTION,
+  DEFAULT_KEYWORDS,
+} from './constants';
 
-function cleanDomainUrl(val: string | undefined, defaultUrl: string): string {
-  if (!val) return defaultUrl;
-  let cleaned = val.trim();
-  if (cleaned.includes('=')) {
-    cleaned = cleaned.substring(cleaned.lastIndexOf('=') + 1).trim();
-  }
-  if (!cleaned.startsWith('http://') && !cleaned.startsWith('https://')) {
-    cleaned = defaultUrl;
-  }
-  cleaned = cleaned.replace(/\/$/, '');
-  if (/^https?:\/\/matricsmania\.com$/i.test(cleaned)) {
-    cleaned = 'https://www.matricsmania.com';
-  }
-  return cleaned;
-}
-
-/**
- * Global Domain Constants
- */
-export const PUBLIC_DOMAIN = cleanDomainUrl(process.env.NEXT_PUBLIC_SITE_URL, 'https://www.matricsmania.com');
-export const CMS_DOMAIN = cleanDomainUrl(process.env.NEXT_PUBLIC_WORDPRESS_URL || process.env.WORDPRESS_URL, 'https://cms.matricsmania.com');
-export const DEFAULT_SITE_NAME = 'MatricsMania';
-export const DEFAULT_LOCALE = 'en_IN';
-export const DEFAULT_LANG = 'en-IN';
-export const TWITTER_SITE_HANDLE = '@matricsmania';
-export const TWITTER_CREATOR_HANDLE = '@matricsmania';
-
-export const DEFAULT_OG_IMAGE =
-  'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80';
-export const DEFAULT_FAVICON_DARK = '/matricsmania.webp';
-export const DEFAULT_FAVICON_LIGHT = '/matricsmania.webp';
-export const DEFAULT_THEME_COLOR = '#0136BD';
-
-export const DEFAULT_TITLE =
-  '#1 Best Digital Marketing Agency in India | Matrics Mania';
-export const DEFAULT_DESCRIPTION =
-  'Metrics Mania is a results-driven digital marketing agency in India helping businesses grow with SEO, PPC, social media, content, and data-driven strategies.';
-export const DEFAULT_KEYWORDS = [
-  'digital marketing agency india',
-  'performance marketing agency',
-  'best SEO agency in india',
-  'PPC management india',
-  'CRO web development',
-  'growth marketing agency',
-  'bangalore seo agency',
-  'ai search optimization',
-  'revenue attribution',
-];
+export {
+  PUBLIC_DOMAIN,
+  CMS_DOMAIN,
+  DEFAULT_SITE_NAME,
+  DEFAULT_LOCALE,
+  DEFAULT_LANG,
+  TWITTER_SITE_HANDLE,
+  TWITTER_CREATOR_HANDLE,
+  DEFAULT_OG_IMAGE,
+  DEFAULT_FAVICON_DARK,
+  DEFAULT_FAVICON_LIGHT,
+  DEFAULT_THEME_COLOR,
+  DEFAULT_TITLE,
+  DEFAULT_DESCRIPTION,
+  DEFAULT_KEYWORDS,
+};
 
 /**
  * Resolved SEO payload ready for client-side injection and server-side SSR insertion
@@ -114,6 +98,7 @@ export interface SEOMetadataInput {
   description?: string;
   canonicalUrl?: string;
   routePath?: string;
+  cmsSourceUrl?: string;
   slug?: string;
   noindex?: boolean;
   nofollow?: boolean;
@@ -201,6 +186,14 @@ export function normalizeCanonicalUrl(rawUrl?: string, pathFallback: string = '/
     // Normalize path to have leading and trailing slash
     if (!pathname.startsWith('/')) pathname = '/' + pathname;
     if (pathname !== '/' && !pathname.endsWith('/')) pathname = pathname + '/';
+
+    // If pathFallback is root-level (e.g., /technical-seo/) but CMS canonical is /services/technical-seo/
+    if (pathFallback && !pathFallback.startsWith('/services/') && pathname.startsWith('/services/')) {
+      const strippedPath = pathname.replace(/^\/services\//i, '/');
+      if (strippedPath === pathFallback.toLowerCase()) {
+        pathname = pathFallback;
+      }
+    }
 
     return `${PUBLIC_DOMAIN}${pathname.toLowerCase()}`;
   } catch {
@@ -546,12 +539,27 @@ export async function asyncResolveSeoMetadata(input: SEOMetadataInput = {}): Pro
   const entity = input.entityData || {};
   const routePath = input.routePath || (entity.slug ? `/${entity.slug}/` : '/');
 
+  let cmsSourceUrl = input.cmsSourceUrl;
+  if (!cmsSourceUrl && entity.slug) {
+    if (entity.serviceCode || (input as any).isService) {
+      cmsSourceUrl = `/services/${entity.slug}/`;
+    } else if (entity.industryCode) {
+      cmsSourceUrl = `/industries/${entity.slug}/`;
+    } else if (entity.locationCode) {
+      cmsSourceUrl = `/locations/${entity.slug}/`;
+    } else if (entity.caseStudyCode) {
+      cmsSourceUrl = `/case-studies/${entity.slug}/`;
+    } else if (entity.standfirst) {
+      cmsSourceUrl = `/insights/${entity.slug}/`;
+    }
+  }
+
   let rankMath: ParsedRankMathHead | null = null;
   if (input.rankMathSeo) {
     rankMath = input.rankMathSeo;
   } else {
     try {
-      rankMath = await fetchRankMathMetadata(routePath);
+      rankMath = await fetchRankMathMetadata(routePath, cmsSourceUrl);
     } catch {
       rankMath = null;
     }

@@ -1,4 +1,4 @@
-import { PUBLIC_DOMAIN, CMS_DOMAIN } from './seo';
+import { PUBLIC_DOMAIN, CMS_DOMAIN } from './constants';
 import { wordPressProvider } from '../providers/WordPressProvider';
 
 export interface ParsedRankMathHead {
@@ -325,11 +325,12 @@ async function fetchRankMathEndpointWithChallengeSolver(endpointUrlStr: string, 
  * the page correctly without returning a 404 response.
  */
 export async function fetchRankMathMetadata(
-  pagePathOrUrl: string
+  pagePathOrUrl: string,
+  cmsSourceUrlFallback?: string
 ): Promise<ParsedRankMathHead | null> {
   if (!pagePathOrUrl) return null;
 
-  // Standardize clean relative path e.g. "/services/technical-seo/"
+  // Standardize clean relative path e.g. "/technical-seo/"
   let cleanPath = pagePathOrUrl.trim();
   if (cleanPath.startsWith('http://') || cleanPath.startsWith('https://')) {
     try {
@@ -352,14 +353,50 @@ export async function fetchRankMathMetadata(
   }
 
   // Candidate URLs to query Rank Math API with:
-  // 1. CMS Domain with ?i=1 parameter (matches WordPress rewrite rule & bypasses host challenge)
-  // 2. CMS Domain without query parameter
-  // 3. Public Domain URL
-  const candidateUrlsToQuery = [
-    `${cmsBase}${cleanPath}?i=1`,
-    `${cmsBase}${cleanPath}`,
-    expectedPublicUrl,
-  ];
+  const candidateUrlsToQuery: string[] = [];
+
+  // 1. Explicit CMS Source URL if provided
+  if (cmsSourceUrlFallback) {
+    let cleanCmsSource = cmsSourceUrlFallback.trim();
+    if (cleanCmsSource.startsWith('http://') || cleanCmsSource.startsWith('https://')) {
+      try {
+        cleanCmsSource = new URL(cleanCmsSource).pathname;
+      } catch {
+        // keep cleanCmsSource
+      }
+    }
+    if (!cleanCmsSource.startsWith('/')) cleanCmsSource = '/' + cleanCmsSource;
+    if (cleanCmsSource !== '/' && !cleanCmsSource.endsWith('/')) cleanCmsSource += '/';
+
+    candidateUrlsToQuery.push(`${cmsBase}${cleanCmsSource}?i=1`);
+    candidateUrlsToQuery.push(`${cmsBase}${cleanCmsSource}`);
+  }
+
+  // 2. If path does not start with CPT prefix, try CPT prefixes
+  if (
+    !cleanPath.startsWith('/services/') &&
+    !cleanPath.startsWith('/industries/') &&
+    !cleanPath.startsWith('/locations/') &&
+    !cleanPath.startsWith('/case-studies/') &&
+    !cleanPath.startsWith('/insights/') &&
+    cleanPath !== '/'
+  ) {
+    candidateUrlsToQuery.push(`${cmsBase}/services${cleanPath}?i=1`);
+    candidateUrlsToQuery.push(`${cmsBase}/services${cleanPath}`);
+    candidateUrlsToQuery.push(`${cmsBase}/industries${cleanPath}?i=1`);
+    candidateUrlsToQuery.push(`${cmsBase}/industries${cleanPath}`);
+    candidateUrlsToQuery.push(`${cmsBase}/locations${cleanPath}?i=1`);
+    candidateUrlsToQuery.push(`${cmsBase}/locations${cleanPath}`);
+    candidateUrlsToQuery.push(`${cmsBase}/case-studies${cleanPath}?i=1`);
+    candidateUrlsToQuery.push(`${cmsBase}/case-studies${cleanPath}`);
+    candidateUrlsToQuery.push(`${cmsBase}/insights${cleanPath}?i=1`);
+    candidateUrlsToQuery.push(`${cmsBase}/insights${cleanPath}`);
+  }
+
+  // 3. Direct path candidates
+  candidateUrlsToQuery.push(`${cmsBase}${cleanPath}?i=1`);
+  candidateUrlsToQuery.push(`${cmsBase}${cleanPath}`);
+  candidateUrlsToQuery.push(expectedPublicUrl);
 
   for (const targetUrl of candidateUrlsToQuery) {
     const endpointUrl = new URL('/wp-json/rankmath/v1/getHead', cmsBase);
