@@ -91,9 +91,8 @@ export class WordPressProvider implements ContentProvider {
   // In-flight request deduplication
   private inFlightRequests: Map<string, Promise<any>> = new Map();
 
-  // Cache TTL: 86400 seconds (24 hours). Backed by instant on-demand webhooks for real-time sync
-  // and saving InfinityFree daily hit credits (0 hits for page visitors).
-  private readonly CACHE_TTL_MS = 86400 * 1000;
+  // Cache TTL: 0 (Always fetch fresh from CMS on every request for 100% real-time sync on every page refresh)
+  private readonly CACHE_TTL_MS = 0;
   private cacheExpiry: { [key: string]: number } = {};
   private negativeCache: Map<string, number> = new Map();
 
