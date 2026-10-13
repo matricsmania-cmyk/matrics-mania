@@ -76,6 +76,30 @@ export default async function RootLayout({
         <link rel="icon" href="/matricsmania.webp" type="image/webp" />
         <link rel="shortcut icon" href="/matricsmania.webp" type="image/webp" />
         <link rel="apple-touch-icon" href="/matricsmania.webp" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  if (typeof window !== 'undefined' && window.location.hash) {
+                    var h = window.location.hash;
+                    if (h.indexOf('core-services') !== -1 || h.indexOf('services') !== -1) {
+                      var clean = (window.location.pathname || '/') + (window.location.search || '');
+                      if (window.history && window.history.replaceState) {
+                        window.history.replaceState(null, '', clean);
+                      }
+                      if (window.parent && window.parent !== window) {
+                        window.parent.postMessage({ type: 'navigation', url: clean, path: clean }, '*');
+                        window.parent.postMessage({ type: 'urlchange', url: clean, path: clean }, '*');
+                        window.parent.postMessage({ action: 'navigate', url: clean, path: clean }, '*');
+                      }
+                    }
+                  }
+                } catch(e) {}
+              })();
+            `,
+          }}
+        />
       </head>
       <body className={`bg-[#070B14] text-slate-100 font-sans antialiased selection:bg-blue-600 selection:text-white min-h-screen flex flex-col ${plusJakartaSans.className}`}>
         <ClientShell initialData={initialData}>{children}</ClientShell>

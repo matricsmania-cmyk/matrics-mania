@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import { usePathname } from 'next/navigation';
 import { Mail, ArrowUpRight, Phone } from 'lucide-react';
 import { Logo } from './Logo';
 import { Container } from '../design-system/primitives/Container';
@@ -21,48 +20,17 @@ interface QuickLinkItem {
 }
 
 const QUICK_LINKS: QuickLinkItem[] = [
-  { id: 'services', label: 'Services', href: '/', targetId: 'core-services-section' },
-  { id: 'work', label: 'Work', href: '/work/', targetId: 'case-study-evidence-section' },
-  { id: 'industries', label: 'Industries', href: '/industries/', targetId: 'industries-served-section' },
+  { id: 'services', label: 'Services', href: '/' },
+  { id: 'work', label: 'Work', href: '/work/' },
+  { id: 'industries', label: 'Industries', href: '/industries/' },
   { id: 'locations', label: 'Locations', href: '/locations/' },
   { id: 'contact', label: 'Contact Us', href: '/contact/' },
   { id: 'about', label: 'About', href: '/about/' },
 ];
 
 export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
-  const pathname = usePathname();
-  const isHome = pathname === '/' || pathname === '' || !pathname;
-
   const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, item: QuickLinkItem) => {
     e.preventDefault();
-
-    if (item.id === 'services') {
-      if (isHome) {
-        const targetElement = document.getElementById('core-services-section');
-        if (targetElement) {
-          targetElement.scrollIntoView({ behavior: 'smooth' });
-          return;
-        }
-      } else {
-        if (typeof window !== 'undefined') {
-          sessionStorage.setItem('scroll_to_section', 'core-services-section');
-        }
-        if (onNavigate) {
-          onNavigate('/');
-        } else if (typeof window !== 'undefined') {
-          window.location.href = '/';
-        }
-        return;
-      }
-    }
-
-    if (isHome && item.targetId) {
-      const targetElement = document.getElementById(item.targetId);
-      if (targetElement) {
-        targetElement.scrollIntoView({ behavior: 'smooth' });
-        return;
-      }
-    }
 
     if (onNavigate) {
       onNavigate(item.href);

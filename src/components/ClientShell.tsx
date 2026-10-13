@@ -21,6 +21,33 @@ export function ClientShell({
   const [bookingPrefill, setBookingPrefill] = useState<any>(undefined);
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const purgeHash = () => {
+        const hash = window.location.hash;
+        if (hash && (hash.includes('core-services-section') || hash.includes('core-services') || hash.includes('services'))) {
+          const cleanPath = (window.location.pathname || '/') + (window.location.search || '');
+          try {
+            window.history.replaceState(null, '', cleanPath);
+          } catch (e) {}
+          if (window.parent && window.parent !== window) {
+            try {
+              window.parent.postMessage({ type: 'navigation', url: cleanPath, path: cleanPath }, '*');
+              window.parent.postMessage({ type: 'urlchange', url: cleanPath, path: cleanPath }, '*');
+              window.parent.postMessage({ action: 'navigate', url: cleanPath, path: cleanPath }, '*');
+            } catch (e) {}
+          }
+        }
+      };
+
+      purgeHash();
+      window.addEventListener('hashchange', purgeHash);
+      return () => {
+        window.removeEventListener('hashchange', purgeHash);
+      };
+    }
+  }, [pathname]);
+
   const handleNavigate = (path: string) => {
     if (typeof window !== 'undefined') {
       window.location.href = path;

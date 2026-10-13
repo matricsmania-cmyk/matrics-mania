@@ -25,7 +25,7 @@ export const CoreServicesSection: React.FC<CoreServicesSectionProps> = ({
     else router.push(path);
   };
   return (
-    <section id="core-services-section" className="py-20 sm:py-28 bg-[#070B14] border-b border-[#1E293B]">
+    <section id="disciplines-overview" className="py-20 sm:py-28 bg-[#070B14] border-b border-[#1E293B]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <ScrollReveal className="flex flex-col md:flex-row md:items-end justify-between mb-14 gap-6">
           <div className="space-y-3">

@@ -140,9 +140,9 @@ export const ROUTES: RouteDefinition[] = [
  */
 export function normalizePath(path: string): string {
   let cleaned = path.trim();
-  // Strip hash if present
-  if (cleaned.startsWith('#')) {
-    cleaned = cleaned.replace(/^#\/?/, '/');
+  // Strip hash fragment if present (e.g. /#core-services-section -> /)
+  if (cleaned.includes('#')) {
+    cleaned = cleaned.split('#')[0] || '/';
   }
   // Ensure leading slash
   if (!cleaned.startsWith('/')) {
