@@ -141,10 +141,27 @@ export const ContentContextProvider: React.FC<{
     }
   }, [provider]);
 
-  // Expose global manual refresh function without automatic polling or focus loops
+  // Expose global manual refresh function and auto-sync on tab switch / window focus
   useEffect(() => {
-    // Expose global trigger for manual administrative refresh if needed
     (window as any).__refreshWordPressContent = refreshContent;
+
+    const handleFocus = () => {
+      refreshContent();
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        refreshContent();
+      }
+    };
+
+    window.addEventListener('focus', handleFocus);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
   }, [refreshContent]);
 
   const value = useMemo(

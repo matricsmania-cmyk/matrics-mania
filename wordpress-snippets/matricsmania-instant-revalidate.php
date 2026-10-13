@@ -17,9 +17,13 @@ class MatricsMania_Instant_Revalidate {
     const OPTION_SECRET_TOKEN  = 'matricsmania_revalidate_secret';
     const DEFAULT_FRONTEND_URL = 'https://matricsmania.com';
 
+    private static $dispatched_posts = [];
+
     public function __construct() {
-        // 1. Instant Real-Time Webhook Triggers
+        // 1. Instant Real-Time Webhook Triggers (ACF, Gutenberg REST API, standard WP save)
         add_action('transition_post_status', [$this, 'handle_post_status_transition'], 10, 3);
+        add_action('acf/save_post', [$this, 'handle_acf_save_post'], 20);
+        add_action('rest_after_insert_post', [$this, 'handle_rest_after_insert_post'], 20, 2);
         add_action('wp_trash_post', [$this, 'handle_trash_post']);
         add_action('untrash_post', [$this, 'handle_untrash_post']);
         add_action('before_delete_post', [$this, 'handle_delete_post']);
@@ -59,6 +63,12 @@ class MatricsMania_Instant_Revalidate {
      * Dispatches non-blocking instant webhook to Next.js /api/revalidate
      */
     public function dispatch_revalidation($action, $post_type, $slug, $post_id = 0, $explicit_path = null) {
+        $dedup_key = $post_type . ':' . $post_id . ':' . $action . ':' . $slug;
+        if (isset(self::$dispatched_posts[$dedup_key])) {
+            return true;
+        }
+        self::$dispatched_posts[$dedup_key] = true;
+
         $frontend_url = self::get_frontend_url();
         $secret = self::get_secret_token();
 
@@ -134,6 +144,27 @@ class MatricsMania_Instant_Revalidate {
                 $post->post_name,
                 $post->ID
             );
+        }
+    }
+
+    /**
+     * ACF save_post hook (Fires after all custom ACF fields are written to DB)
+     */
+    public function handle_acf_save_post($post_id) {
+        if (is_numeric($post_id)) {
+            $post = get_post($post_id);
+            if ($post && $post->post_status === 'publish') {
+                $this->dispatch_revalidation('update', $post->post_type, $post->post_name, $post->ID);
+            }
+        }
+    }
+
+    /**
+     * Gutenberg REST API insert post hook (Fires after REST API inserts or updates post)
+     */
+    public function handle_rest_after_insert_post($post, $request) {
+        if ($post && is_object($post) && $post->post_status === 'publish') {
+            $this->dispatch_revalidation('update', $post->post_type, $post->post_name, $post->ID);
         }
     }
 
