@@ -187,11 +187,23 @@ export function normalizeCanonicalUrl(rawUrl?: string, pathFallback: string = '/
     if (!pathname.startsWith('/')) pathname = '/' + pathname;
     if (pathname !== '/' && !pathname.endsWith('/')) pathname = pathname + '/';
 
-    // If pathFallback is root-level (e.g., /technical-seo/) but CMS canonical is /services/technical-seo/
-    if (pathFallback && !pathFallback.startsWith('/services/') && pathname.startsWith('/services/')) {
-      const strippedPath = pathname.replace(/^\/services\//i, '/');
-      if (strippedPath === pathFallback.toLowerCase()) {
-        pathname = pathFallback;
+    // If pathFallback is root-level (e.g., /technical-seo/, /healthcare/, /bangalore/) but CMS canonical has prefix
+    if (pathFallback) {
+      if (!pathFallback.startsWith('/services/') && pathname.startsWith('/services/')) {
+        const strippedPath = pathname.replace(/^\/services\//i, '/');
+        if (strippedPath === pathFallback.toLowerCase()) {
+          pathname = pathFallback;
+        }
+      } else if (!pathFallback.startsWith('/industries/') && pathname.startsWith('/industries/')) {
+        const strippedPath = pathname.replace(/^\/industries\//i, '/');
+        if (strippedPath === pathFallback.toLowerCase()) {
+          pathname = pathFallback;
+        }
+      } else if (!pathFallback.startsWith('/locations/') && pathname.startsWith('/locations/')) {
+        const strippedPath = pathname.replace(/^\/locations\//i, '/');
+        if (strippedPath === pathFallback.toLowerCase()) {
+          pathname = pathFallback;
+        }
       }
     }
 

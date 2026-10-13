@@ -118,11 +118,8 @@ export async function getSitemapEntries(
   // 1. Static Core Landing Pages
   const staticCorePages: Array<{ path: string; changefreq: SitemapUrlEntry['changefreq']; priority: number }> = [
     { path: '/', changefreq: 'daily', priority: 1.0 },
-    { path: '/services/', changefreq: 'weekly', priority: 0.9 },
-    { path: '/industries/', changefreq: 'weekly', priority: 0.9 },
     { path: '/case-studies/', changefreq: 'weekly', priority: 0.9 },
     { path: '/insights/', changefreq: 'daily', priority: 0.9 },
-    { path: '/locations/', changefreq: 'weekly', priority: 0.8 },
     { path: '/about/', changefreq: 'monthly', priority: 0.8 },
     { path: '/work/', changefreq: 'weekly', priority: 0.8 },
     { path: '/process/', changefreq: 'monthly', priority: 0.7 },
@@ -187,7 +184,7 @@ export async function getSitemapEntries(
       if (industry.seo?.robotsIndex === false) return;
 
       addEntry({
-        loc: `${host}/industries/${industry.slug}/`,
+        loc: `${host}/${industry.slug}/`,
         lastmod: industry.updatedAt || industry.publishedAt || defaultUpdatedDate,
         changefreq: 'monthly',
         priority: 0.8,
@@ -205,7 +202,7 @@ export async function getSitemapEntries(
       if (location.seo?.robotsIndex === false) return;
 
       addEntry({
-        loc: `${host}/locations/${location.slug}/`,
+        loc: `${host}/${location.slug}/`,
         lastmod: location.updatedAt || location.publishedAt || defaultUpdatedDate,
         changefreq: 'weekly',
         priority: 0.8,

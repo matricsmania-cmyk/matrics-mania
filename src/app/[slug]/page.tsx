@@ -2,18 +2,20 @@ import React from 'react';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import { ServiceTemplate } from '@/src/templates/ServiceTemplate';
+import { IndustryTemplate } from '@/src/templates/IndustryTemplate';
+import { LocationTemplate } from '@/src/templates/LocationTemplate';
 import { wordPressProvider } from '@/src/providers/WordPressProvider';
 import { asyncResolveSeoMetadata } from '@/src/utils/seo';
 import { toNextMetadata } from '@/src/utils/nextMetadata';
 
-interface ServicePageProps {
+interface DynamicSlugPageProps {
   params: Promise<{ slug: string }>;
 }
 
 export const dynamicParams = true;
 export const revalidate = 300;
 
-// Set of static top-level routes and section indexes that must never be handled as root service slugs
+// Set of static top-level routes and section indexes that must never be handled as root entity slugs
 const RESERVED_TOP_LEVEL_SLUGS = new Set([
   'about',
   'contact',
@@ -25,7 +27,9 @@ const RESERVED_TOP_LEVEL_SLUGS = new Set([
   'process',
   'services',
   'industries',
+  'industry',
   'locations',
+  'location',
   'case-studies',
   'insights',
   'sitemap',
@@ -34,13 +38,34 @@ const RESERVED_TOP_LEVEL_SLUGS = new Set([
 ]);
 
 export async function generateStaticParams() {
-  const services = await wordPressProvider.asyncGetAllServices();
-  return services
-    .filter((s) => s.slug && !RESERVED_TOP_LEVEL_SLUGS.has(s.slug.toLowerCase()))
-    .map((s) => ({ slug: s.slug }));
+  const [services, industries, locations] = await Promise.all([
+    wordPressProvider.asyncGetAllServices(),
+    wordPressProvider.asyncGetAllIndustries(),
+    wordPressProvider.asyncGetAllLocations(),
+  ]);
+
+  const allSlugs = new Set<string>();
+
+  for (const s of services) {
+    if (s.slug && !RESERVED_TOP_LEVEL_SLUGS.has(s.slug.toLowerCase())) {
+      allSlugs.add(s.slug.toLowerCase());
+    }
+  }
+  for (const i of industries) {
+    if (i.slug && !RESERVED_TOP_LEVEL_SLUGS.has(i.slug.toLowerCase())) {
+      allSlugs.add(i.slug.toLowerCase());
+    }
+  }
+  for (const l of locations) {
+    if (l.slug && !RESERVED_TOP_LEVEL_SLUGS.has(l.slug.toLowerCase())) {
+      allSlugs.add(l.slug.toLowerCase());
+    }
+  }
+
+  return Array.from(allSlugs).map((slug) => ({ slug }));
 }
 
-export async function generateMetadata({ params }: ServicePageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: DynamicSlugPageProps): Promise<Metadata> {
   const { slug } = await params;
   const cleanSlug = (slug || '').toLowerCase().trim();
 
@@ -51,24 +76,46 @@ export async function generateMetadata({ params }: ServicePageProps): Promise<Me
     };
   }
 
+  // 1. Service Resolution
   const service = await wordPressProvider.asyncGetServiceBySlug(cleanSlug);
-  if (!service) {
-    return {
-      title: 'Service Not Found | MatricsMania',
-      robots: { index: false, follow: false },
-    };
+  if (service) {
+    const seo = await asyncResolveSeoMetadata({
+      entityData: service,
+      routePath: `/${cleanSlug}/`,
+      cmsSourceUrl: `/services/${cleanSlug}/`,
+    });
+    return toNextMetadata(seo);
   }
 
-  const seo = await asyncResolveSeoMetadata({
-    entityData: service,
-    routePath: `/${cleanSlug}/`,
-    cmsSourceUrl: `/services/${cleanSlug}/`,
-  });
+  // 2. Industry Resolution
+  const industry = await wordPressProvider.asyncGetIndustryBySlug(cleanSlug);
+  if (industry) {
+    const seo = await asyncResolveSeoMetadata({
+      entityData: industry,
+      routePath: `/${cleanSlug}/`,
+      cmsSourceUrl: `/industries/${cleanSlug}/`,
+    });
+    return toNextMetadata(seo);
+  }
 
-  return toNextMetadata(seo);
+  // 3. Location Resolution
+  const location = await wordPressProvider.asyncGetLocationBySlug(cleanSlug);
+  if (location) {
+    const seo = await asyncResolveSeoMetadata({
+      entityData: location,
+      routePath: `/${cleanSlug}/`,
+      cmsSourceUrl: `/locations/${cleanSlug}/`,
+    });
+    return toNextMetadata(seo);
+  }
+
+  return {
+    title: 'Page Not Found | MatricsMania',
+    robots: { index: false, follow: false },
+  };
 }
 
-export default async function RootServicePage({ params }: ServicePageProps) {
+export default async function RootDynamicSlugPage({ params }: DynamicSlugPageProps) {
   const { slug } = await params;
   const cleanSlug = (slug || '').toLowerCase().trim();
 
@@ -76,11 +123,23 @@ export default async function RootServicePage({ params }: ServicePageProps) {
     notFound();
   }
 
+  // 1. Service Check
   const service = await wordPressProvider.asyncGetServiceBySlug(cleanSlug);
-
-  if (!service) {
-    notFound();
+  if (service) {
+    return <ServiceTemplate service={service} />;
   }
 
-  return <ServiceTemplate service={service} />;
+  // 2. Industry Check
+  const industry = await wordPressProvider.asyncGetIndustryBySlug(cleanSlug);
+  if (industry) {
+    return <IndustryTemplate industry={industry} />;
+  }
+
+  // 3. Location Check
+  const location = await wordPressProvider.asyncGetLocationBySlug(cleanSlug);
+  if (location) {
+    return <LocationTemplate location={location} />;
+  }
+
+  notFound();
 }

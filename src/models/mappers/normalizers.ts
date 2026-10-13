@@ -125,6 +125,10 @@ export function normalizeWpSeo(rawPost: RawWpBasePost, canonicalUrlFallback?: st
   if (canonicalUrl.startsWith('/')) {
     canonicalUrl = `https://www.matricsmania.com${canonicalUrl}`;
   }
+  canonicalUrl = canonicalUrl
+    .replace('https://www.matricsmania.com/services/', 'https://www.matricsmania.com/')
+    .replace('https://www.matricsmania.com/industries/', 'https://www.matricsmania.com/')
+    .replace('https://www.matricsmania.com/locations/', 'https://www.matricsmania.com/');
   if (!canonicalUrl.endsWith('/')) {
     canonicalUrl = `${canonicalUrl}/`;
   }
@@ -305,7 +309,7 @@ export function normalizeWpService(raw: RawWpServicePost): Service {
     publishedAt: raw.date,
     updatedAt: raw.modified,
     status: raw.status === 'publish' ? 'published' : (raw.status as any),
-    seo: normalizeWpSeo(raw, `https://www.matricsmania.com/services/${raw.slug}/`),
+    seo: normalizeWpSeo(raw, `https://www.matricsmania.com/${raw.slug}/`),
     relationships,
 
     serviceCode: acf.servicecode || acf.service_code || `SRV-${raw.slug.toUpperCase().slice(0, 4)}`,
@@ -387,7 +391,7 @@ export function normalizeWpIndustry(raw: RawWpIndustryPost): Industry {
     publishedAt: raw.date,
     updatedAt: raw.modified,
     status: raw.status === 'publish' ? 'published' : (raw.status as any),
-    seo: normalizeWpSeo(raw, `https://www.matricsmania.com/industries/${raw.slug}/`),
+    seo: normalizeWpSeo(raw, `https://www.matricsmania.com/${raw.slug}/`),
     relationships,
 
     industryCode: acf.industrycode || acf.industry_code || `IND-${raw.slug ? raw.slug.toUpperCase().slice(0, 3) : 'GEN'}`,
@@ -470,7 +474,7 @@ export function normalizeWpLocation(raw: RawWpLocationPost): Location {
     publishedAt: raw.date,
     updatedAt: raw.modified,
     status: raw.status === 'publish' ? 'published' : (raw.status as any),
-    seo: normalizeWpSeo(raw, `https://www.matricsmania.com/locations/${raw.slug}/`),
+    seo: normalizeWpSeo(raw, `https://www.matricsmania.com/${raw.slug}/`),
     relationships,
 
     locationCode: acf.location_code || nodeCode,

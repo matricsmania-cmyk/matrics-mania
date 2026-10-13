@@ -26,8 +26,8 @@ import { ContentProvider } from './ContentProvider';
 
 export const MOCK_NAVIGATION: Navigation = {
   headerMenu: [
-    { id: 'nav-services', label: 'Services', url: '/services/' },
-    { id: 'nav-industries', label: 'Industries', url: '/industries/' },
+    { id: 'nav-services', label: 'Services', url: '/' },
+    { id: 'nav-industries', label: 'Industries', url: '/' },
     { id: 'nav-case-studies', label: 'Case Studies', url: '/case-studies/' },
     { id: 'nav-insights', label: 'Insights', url: '/insights/' },
     { id: 'nav-about', label: 'About', url: '/about/' },
@@ -206,7 +206,7 @@ export const MOCK_INDUSTRIES: Industry[] = [
     seo: {
       seoTitle: 'Healthcare | MatricsMania',
       metaDescription: 'Healthcare description',
-      canonicalUrl: 'https://matricsmania.com/industries/healthcare/',
+      canonicalUrl: 'https://matricsmania.com/healthcare/',
       ogTitle: 'Healthcare',
       ogDescription: 'Healthcare',
       ogImage: 'https://matricsmania.com/og.png',

@@ -10,11 +10,8 @@ import { WordPressProvider } from '../providers/WordPressProvider';
 import { mockDataProvider } from '../providers/MockDataProvider';
 import sitemap from '../app/sitemap';
 import robots from '../app/robots';
-import { generateMetadata as generateServiceMetadata } from '../app/[slug]/page';
-import { generateMetadata as generateIndustryMetadata } from '../app/industries/[slug]/page';
-import { generateMetadata as generateLocationMetadata } from '../app/locations/[slug]/page';
+import { generateMetadata as generateRootMetadata, generateStaticParams as getRootStaticParams } from '../app/[slug]/page';
 import { generateMetadata as generateCaseStudyMetadata } from '../app/case-studies/[slug]/page';
-import { generateStaticParams as getServiceStaticParams } from '../app/[slug]/page';
 import { generateStaticParams as getIndustryStaticParams } from '../app/industries/[slug]/page';
 import { generateStaticParams as getLocationStaticParams } from '../app/locations/[slug]/page';
 import { generateStaticParams as getCaseStudyStaticParams } from '../app/case-studies/[slug]/page';
@@ -147,7 +144,7 @@ export async function runProductionAcceptanceTests(): Promise<{
   // --- SUITE 3: Dynamic Route Metadata & 404 Pre-render Verification ---
   try {
     // 3.1 Non-existent service metadata
-    const missingServiceMeta = await generateServiceMetadata({
+    const missingServiceMeta = await generateRootMetadata({
       params: Promise.resolve({ slug: 'non-existent-service-123' }),
     });
     record(
@@ -160,8 +157,8 @@ export async function runProductionAcceptanceTests(): Promise<{
     );
 
     // 3.2 Non-existent industry metadata
-    const missingIndustryMeta = await generateIndustryMetadata({
-      params: Promise.resolve({ slug: 'finance' }),
+    const missingIndustryMeta = await generateRootMetadata({
+      params: Promise.resolve({ slug: 'non-existent-industry-xyz' }),
     });
     record(
       'Metadata & 404 Guards',
@@ -169,11 +166,11 @@ export async function runProductionAcceptanceTests(): Promise<{
       missingIndustryMeta?.robots === 'noindex, nofollow' ||
         (typeof missingIndustryMeta?.robots === 'object' &&
           (missingIndustryMeta.robots as any)?.index === false),
-      `slug="finance", robots=${JSON.stringify(missingIndustryMeta?.robots)}`
+      `slug="non-existent-industry-xyz", robots=${JSON.stringify(missingIndustryMeta?.robots)}`
     );
 
     // 3.3 Non-existent location metadata
-    const missingLocationMeta = await generateLocationMetadata({
+    const missingLocationMeta = await generateRootMetadata({
       params: Promise.resolve({ slug: 'dubai' }),
     });
     record(
@@ -203,10 +200,10 @@ export async function runProductionAcceptanceTests(): Promise<{
 
   // --- SUITE 4: generateStaticParams Contract ---
   try {
-    const serviceParams = await getServiceStaticParams();
+    const serviceParams = await getRootStaticParams();
     record(
       'Static Params Contract',
-      'Service generateStaticParams returns an array of slug objects',
+      'Root generateStaticParams returns an array of slug objects',
       Array.isArray(serviceParams),
       `count=${serviceParams.length}`
     );

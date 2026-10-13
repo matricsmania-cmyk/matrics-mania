@@ -61,14 +61,14 @@ export const LocationTemplate: React.FC<LocationTemplateProps> = ({
   if (!location) {
     return (
       <NotFoundState
-        attemptedPath={slug ? `/locations/${slug}/` : '/locations/'}
+        attemptedPath={slug ? `/${slug}/` : '/'}
         onNavigate={onNavigate}
         onOpenBooking={onOpenBooking}
       />
     );
   }
 
-  const canonicalUrl = location.seo?.canonicalUrl || `https://matricsmania.com/locations/${location.slug}/`;
+  const canonicalUrl = location.seo?.canonicalUrl || `https://matricsmania.com/${location.slug}/`;
   const locationName = location.city || location.title;
   const metaDescription = location.seo?.metaDescription || location.localMarketSummary || location.excerpt;
 
@@ -260,7 +260,7 @@ export const LocationTemplate: React.FC<LocationTemplateProps> = ({
                   location.relationships.industries.map((ind, idx) => (
                     <div
                       key={idx}
-                      onClick={() => onNavigate(ind.url || `/industries/${ind.slug}/`)}
+                      onClick={() => onNavigate(ind.url || `/${ind.slug}/`)}
                       className="p-4 rounded-xl bg-[#0D1424] border border-[#1E293B] hover:border-[#2563EB] transition-all cursor-pointer flex items-center justify-between group"
                     >
                       <div className="flex items-center gap-3">
@@ -276,7 +276,7 @@ export const LocationTemplate: React.FC<LocationTemplateProps> = ({
                   provider.getAllIndustries().slice(0, 4).map((ind, idx) => (
                     <div
                       key={idx}
-                      onClick={() => onNavigate(`/industries/${ind.slug}/`)}
+                      onClick={() => onNavigate(`/${ind.slug}/`)}
                       className="p-4 rounded-xl bg-[#0D1424] border border-[#1E293B] hover:border-[#2563EB] transition-all cursor-pointer flex items-center justify-between group"
                     >
                       <div className="flex items-center gap-3">
@@ -540,24 +540,24 @@ export const LocationTemplate: React.FC<LocationTemplateProps> = ({
                 Explore Other Regional Engineering Labs
               </span>
               <a
-                href="/locations/"
+                href="/contact/"
                 onClick={(e) => {
                   e.preventDefault();
-                  onNavigate('/locations/');
+                  onNavigate('/contact/');
                 }}
                 className="text-xs text-[#60A5FA] hover:underline cursor-pointer"
               >
-                All Regional Hubs →
+                Global Operations Network →
               </a>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               {allLocations.map((loc) => (
                 <a
                   key={loc.id}
-                  href={`/locations/${loc.slug}/`}
+                  href={`/${loc.slug}/`}
                   onClick={(e) => {
                     e.preventDefault();
-                    onNavigate(`/locations/${loc.slug}/`);
+                    onNavigate(`/${loc.slug}/`);
                   }}
                   className={`p-4 rounded-xl border text-left transition-all text-xs font-medium cursor-pointer block no-underline ${
                     loc.slug === location.slug

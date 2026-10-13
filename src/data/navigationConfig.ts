@@ -182,11 +182,11 @@ export const NAVIGATION_CONFIG: NavigationConfig = {
   // 2. INDUSTRIES NAVIGATION (Vertical Playbooks)
   industries: {
     title: 'Industries',
-    href: '/industries/',
+    href: '/',
     featured: {
       title: 'Enterprise SaaS Growth Blueprint',
       description: 'How high-growth B2B software platforms capture 4.8x qualified demo pipeline through technical search and intent modeling.',
-      href: '/industries/saas/',
+      href: '/saas/',
       badge: 'Featured Playbook',
     },
     groups: [
@@ -197,14 +197,14 @@ export const NAVIGATION_CONFIG: NavigationConfig = {
           {
             id: 'saas',
             label: 'Enterprise SaaS & Cloud',
-            href: '/industries/saas/',
+            href: '/saas/',
             description: 'Product-led and sales-led search attribution systems',
             badge: '+310% ARR',
           },
           {
             id: 'fintech',
             label: 'Finance & FinTech',
-            href: '/industries/finance/',
+            href: '/finance/',
             description: 'Compliant CAC optimization and high-trust acquisition',
           },
         ],
@@ -216,14 +216,14 @@ export const NAVIGATION_CONFIG: NavigationConfig = {
           {
             id: 'real-estate',
             label: 'Real Estate & Properties',
-            href: '/industries/real-estate/',
+            href: '/real-estate/',
             description: 'Ultra-luxury residential and commercial development lead engines',
             badge: '$140M Pipeline',
           },
           {
             id: 'luxury',
             label: 'Luxury Brands & High-AOV',
-            href: '/industries/luxury/',
+            href: '/luxury/',
             description: 'Prestigious brand equity and private client acquisition',
           },
         ],
@@ -235,19 +235,19 @@ export const NAVIGATION_CONFIG: NavigationConfig = {
           {
             id: 'healthcare',
             label: 'Healthcare & Life Sciences',
-            href: '/industries/healthcare/',
+            href: '/healthcare/',
             description: 'HIPAA-compliant patient acquisition and clinical authority',
           },
           {
             id: 'education',
             label: 'Education & Universities',
-            href: '/industries/education/',
+            href: '/education/',
             description: 'Global student enrollment and high-value program yield',
           },
           {
             id: 'professional-services',
             label: 'Professional & Legal Services',
-            href: '/industries/professional-services/',
+            href: '/professional-services/',
             description: 'Retainer client generation for top-tier law and advisory firms',
           },
         ],
@@ -299,7 +299,7 @@ export const NAVIGATION_CONFIG: NavigationConfig = {
   // 4. REGIONAL LOCATIONS & HUBS
   locations: {
     title: 'Locations',
-    href: '/locations/',
+    href: '/contact/',
     items: [
       {
         id: 'varanasi',
@@ -311,19 +311,19 @@ export const NAVIGATION_CONFIG: NavigationConfig = {
       {
         id: 'bangalore',
         label: 'Bangalore Office',
-        href: '/locations/bangalore/',
+        href: '/bangalore/',
         description: 'Tech Innovation Center, Bangalore, Karnataka',
       },
       {
         id: 'london',
         label: 'London EMEA Hub',
-        href: '/locations/',
+        href: '/london/',
         description: 'Canary Wharf — European Enterprise Operations',
       },
       {
         id: 'san-francisco',
         label: 'San Francisco Bay Hub',
-        href: '/locations/',
+        href: '/san-francisco/',
         description: 'SOMA Tech Corridor — US Growth Engineering',
       },
     ],
@@ -376,7 +376,7 @@ export const NAVIGATION_CONFIG: NavigationConfig = {
     {
       id: 'industries',
       label: 'Industries',
-      href: '/industries/',
+      href: '/',
     },
     {
       id: 'case-studies',
@@ -404,16 +404,16 @@ export const NAVIGATION_CONFIG: NavigationConfig = {
       { id: 'f-paid-search', label: 'Enterprise Google & Bing Ads', href: '/technical-seo/' },
       { id: 'f-capi-social', label: 'Server-Side CAPI Paid Social', href: '/technical-seo/' },
       { id: 'f-cro-revenue', label: 'CRO & Revenue Experimentation', href: '/technical-seo/' },
-      { id: 'f-all-services', label: 'View All Growth Services →', href: '/services/' },
+      { id: 'f-all-services', label: 'View All Growth Services →', href: '/' },
     ],
     industries: [
-      { id: 'f-saas', label: 'Enterprise SaaS & Cloud', href: '/industries/saas/' },
-      { id: 'f-real-estate', label: 'Real Estate & Properties', href: '/industries/real-estate/' },
-      { id: 'f-healthcare', label: 'Healthcare & Life Sciences', href: '/industries/healthcare/' },
-      { id: 'f-finance', label: 'Finance & FinTech', href: '/industries/finance/' },
-      { id: 'f-luxury', label: 'Luxury Brands & High-AOV', href: '/industries/luxury/' },
-      { id: 'f-education', label: 'Education & Universities', href: '/industries/education/' },
-      { id: 'f-all-industries', label: 'View All Industry Playbooks →', href: '/industries/' },
+      { id: 'f-saas', label: 'Enterprise SaaS & Cloud', href: '/saas/' },
+      { id: 'f-real-estate', label: 'Real Estate & Properties', href: '/real-estate/' },
+      { id: 'f-healthcare', label: 'Healthcare & Life Sciences', href: '/healthcare/' },
+      { id: 'f-finance', label: 'Finance & FinTech', href: '/finance/' },
+      { id: 'f-luxury', label: 'Luxury Brands & High-AOV', href: '/luxury/' },
+      { id: 'f-education', label: 'Education & Universities', href: '/education/' },
+      { id: 'f-all-industries', label: 'View All Industry Playbooks →', href: '/#industries-served-section' },
     ],
     insights: [
       { id: 'f-geo-whitepaper', label: 'The 2025 GEO Manifesto', href: '/insights/how-ai-search-is-changing-digital-discovery/' },
@@ -423,7 +423,7 @@ export const NAVIGATION_CONFIG: NavigationConfig = {
       { id: 'f-all-insights', label: 'All Research & Whitepapers →', href: '/insights/' },
     ],
     hubs: [
-      { id: 'f-all-locations', label: 'Global Operations Network →', href: '/locations/' },
+      { id: 'f-all-locations', label: 'Global Operations Network →', href: '/contact/' },
     ],
     company: [
       { id: 'f-about', label: 'About MatricsMania', href: '/about/' },

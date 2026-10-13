@@ -59,25 +59,25 @@ export const ROUTES: RouteDefinition[] = [
     id: 'industries-index',
     pattern: /^\/industries\/?$/,
     template: 'static',
-    getCanonical: () => `${BASE_URL}/industries/`,
+    getCanonical: () => `${BASE_URL}/`,
   },
   {
     id: 'industry-detail',
     pattern: /^\/industries\/([a-zA-Z0-9_-]+)\/?$/,
     template: 'industry',
-    getCanonical: (p) => `${BASE_URL}/industries/${p.slug}/`,
+    getCanonical: (p) => `${BASE_URL}/${p.slug}/`,
   },
   {
     id: 'locations-index',
     pattern: /^\/locations\/?$/,
     template: 'static',
-    getCanonical: () => `${BASE_URL}/locations/`,
+    getCanonical: () => `${BASE_URL}/`,
   },
   {
     id: 'location-detail',
     pattern: /^\/locations\/([a-zA-Z0-9_-]+)\/?$/,
     template: 'location',
-    getCanonical: (p) => `${BASE_URL}/locations/${p.slug}/`,
+    getCanonical: (p) => `${BASE_URL}/${p.slug}/`,
   },
   {
     id: 'insights-index',
@@ -164,10 +164,10 @@ export function resolveRoute(rawPath: string): RouteMatch {
   // Check explicit legacy / shortcut aliases
   if (normalized === '/digital-marketing-agency-in-bangalore/' || normalized === '/bangalore/') {
     return {
-      pathname: '/locations/bangalore/',
+      pathname: '/bangalore/',
       routeId: 'location-detail',
       params: { slug: 'bangalore' },
-      canonicalUrl: `${BASE_URL}/locations/bangalore/`,
+      canonicalUrl: `${BASE_URL}/bangalore/`,
     };
   }
 

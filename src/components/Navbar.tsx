@@ -202,7 +202,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     return industries.map((ind) => ({
       id: ind.slug,
       label: ind.title,
-      href: `/industries/${ind.slug}/`,
+      href: `/${ind.slug}/`,
       description: ind.tagline || ind.industryCode || 'Growth Playbook',
     }));
   }, [industries]);
@@ -215,7 +215,7 @@ export const Navbar: React.FC<NavbarProps> = ({
       badge: feat.industryCode || 'CMS PLAYBOOK',
       title: feat.title,
       description: feat.tagline || feat.marketSummary || 'Enterprise growth architecture and performance marketing.',
-      href: `/industries/${feat.slug}/`,
+      href: `/${feat.slug}/`,
     };
   }, [industries]);
 
@@ -443,11 +443,13 @@ export const Navbar: React.FC<NavbarProps> = ({
               onMouseEnter={() => handleDropdownEnter('industries')}
               onMouseLeave={handleDropdownLeave}
             >
-              <a
-                href={NAVIGATION_CONFIG.industries.href}
-                onClick={(e) => handleLinkClick(e, NAVIGATION_CONFIG.industries.href)}
-                className={`flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold uppercase tracking-wider rounded-lg transition-all duration-200 ${
-                  isLinkActive('/industries/') || activeDropdown === 'industries'
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                }}
+                className={`flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold uppercase tracking-wider rounded-lg transition-all duration-200 cursor-default select-none ${
+                  activeDropdown === 'industries'
                     ? 'text-[#60A5FA] bg-[#131D33] ring-1 ring-[#60A5FA]/20'
                     : 'text-[#94A3B8] hover:text-white hover:bg-[#0D1424]'
                 }`}
@@ -460,7 +462,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     activeDropdown === 'industries' ? 'rotate-180 text-[#60A5FA]' : ''
                   }`}
                 />
-              </a>
+              </button>
 
               {/* Industries Dropdown */}
               <AnimatePresence>
@@ -478,13 +480,9 @@ export const Navbar: React.FC<NavbarProps> = ({
                           <span className="w-1.5 h-1.5 rounded-full bg-[#60A5FA]" />
                           Industry Growth Playbooks
                         </span>
-                        <a
-                          href="/industries/"
-                          onClick={(e) => handleLinkClick(e, '/industries/')}
-                          className="text-[11px] font-mono text-[#94A3B8] hover:text-white transition-colors"
-                        >
-                          View All Industries ({liveIndustryItems.length}) →
-                        </a>
+                        <span className="text-[10px] font-mono text-[#64748B]">
+                          {liveIndustryItems.length} {liveIndustryItems.length === 1 ? 'playbook' : 'playbooks'}
+                        </span>
                       </div>
                       <div className="grid grid-cols-2 gap-2">
                         {liveIndustryItems.map((item) => (
@@ -733,8 +731,8 @@ export const Navbar: React.FC<NavbarProps> = ({
                           {industries.map((ind) => (
                             <a
                               key={ind.slug}
-                              href={`/industries/${ind.slug}/`}
-                              onClick={(e) => handleLinkClick(e, `/industries/${ind.slug}/`)}
+                              href={`/${ind.slug}/`}
+                              onClick={(e) => handleLinkClick(e, `/${ind.slug}/`)}
                               className="block p-2 text-xs font-medium text-[#CBD5E1] hover:text-white rounded-lg hover:bg-[#131D33] transition-colors"
                             >
                               {ind.title}
@@ -743,15 +741,6 @@ export const Navbar: React.FC<NavbarProps> = ({
                           {industries.length === 0 && (
                             <p className="text-xs text-[#94A3B8] p-2">No industries published in CMS yet.</p>
                           )}
-                          <div className="pt-2 border-t border-[#1E293B]">
-                            <a
-                              href="/industries/"
-                              onClick={(e) => handleLinkClick(e, '/industries/')}
-                              className="text-xs font-mono text-[#60A5FA] font-bold block p-2 hover:underline"
-                            >
-                              View All Industry Playbooks →
-                            </a>
-                          </div>
                         </div>
                       </motion.div>
                     )}

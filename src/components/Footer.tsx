@@ -22,8 +22,8 @@ interface QuickLinkItem {
 const QUICK_LINKS: QuickLinkItem[] = [
   { id: 'services', label: 'Services', href: '/' },
   { id: 'work', label: 'Work', href: '/work/' },
-  { id: 'industries', label: 'Industries', href: '/industries/' },
-  { id: 'locations', label: 'Locations', href: '/locations/' },
+  { id: 'industries', label: 'Industries', href: '/#industries-served-section' },
+  { id: 'locations', label: 'Locations', href: '/contact/' },
   { id: 'contact', label: 'Contact Us', href: '/contact/' },
   { id: 'about', label: 'About', href: '/about/' },
 ];

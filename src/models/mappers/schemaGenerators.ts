@@ -74,7 +74,7 @@ export function createServiceSchema(service: Service): SchemaService {
  * Creates Schema.org LocalBusiness / ProfessionalService Graph for a Location entity
  */
 export function createLocalBusinessSchema(location: Location): SchemaLocalBusiness | undefined {
-  return generateLocalBusinessSchema(location, `${PUBLIC_DOMAIN}/locations/${location.slug}/`);
+  return generateLocalBusinessSchema(location, `${PUBLIC_DOMAIN}/${location.slug}/`);
 }
 
 /**

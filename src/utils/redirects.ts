@@ -29,15 +29,9 @@ export const STATIC_REDIRECT_RULES: RedirectRule[] = [
   },
   {
     source: /^\/digital-marketing-agency-in-bangalore\/?$/,
-    destination: '/locations/bangalore/',
+    destination: '/bangalore/',
     statusCode: 301,
-    description: 'Legacy Bangalore landing page redirected to structured location hub',
-  },
-  {
-    source: /^\/bangalore\/?$/,
-    destination: '/locations/bangalore/',
-    statusCode: 301,
-    description: 'Shortcut Bangalore slug redirected to structured location hub',
+    description: 'Legacy Bangalore landing page redirected to canonical Bangalore location page',
   },
   {
     source: /^\/agency\/?$/,
@@ -58,16 +52,52 @@ export const STATIC_REDIRECT_RULES: RedirectRule[] = [
     description: 'Singular case-study alias redirected to plural case-studies hub',
   },
   {
-    source: /^\/industry\/?$/,
-    destination: '/industries/',
+    source: /^\/services\/?$/,
+    destination: '/',
     statusCode: 301,
-    description: 'Singular industry alias redirected to plural industries hub',
+    description: 'Services index redirected to homepage',
+  },
+  {
+    source: /^\/services\/([a-zA-Z0-9_-]+)\/?$/,
+    destination: '/$1/',
+    statusCode: 308,
+    description: 'Legacy /services/ prefix migrated to root URL',
+  },
+  {
+    source: /^\/industry\/?$/,
+    destination: '/',
+    statusCode: 301,
+    description: 'Industry alias redirected to homepage',
+  },
+  {
+    source: /^\/industries\/?$/,
+    destination: '/',
+    statusCode: 301,
+    description: 'Industries index redirected to homepage',
+  },
+  {
+    source: /^\/industries\/([a-zA-Z0-9_-]+)\/?$/,
+    destination: '/$1/',
+    statusCode: 308,
+    description: 'Legacy /industries/ prefix migrated to root URL',
   },
   {
     source: /^\/location\/?$/,
-    destination: '/locations/',
+    destination: '/',
     statusCode: 301,
-    description: 'Singular location alias redirected to plural locations hub',
+    description: 'Location alias redirected to homepage',
+  },
+  {
+    source: /^\/locations\/?$/,
+    destination: '/',
+    statusCode: 301,
+    description: 'Locations index redirected to homepage',
+  },
+  {
+    source: /^\/locations\/([a-zA-Z0-9_-]+)\/?$/,
+    destination: '/$1/',
+    statusCode: 308,
+    description: 'Legacy /locations/ prefix migrated to root URL',
   },
 ];
 

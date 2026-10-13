@@ -8,8 +8,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     '/about/',
     '/work/',
     '/case-studies/',
-    '/industries/',
-    '/locations/',
     '/careers/',
     '/faq/',
     '/contact/',
@@ -30,7 +28,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const services = await wordPressProvider.asyncGetAllServices();
   for (const s of services) {
     routes.push({
-      url: `${PUBLIC_DOMAIN}/services/${s.slug}/`,
+      url: `${PUBLIC_DOMAIN}/${s.slug}/`,
       lastModified: s.updatedAt || now,
       changeFrequency: 'weekly',
       priority: 0.9,
@@ -41,7 +39,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const industries = await wordPressProvider.asyncGetAllIndustries();
   for (const ind of industries) {
     routes.push({
-      url: `${PUBLIC_DOMAIN}/industries/${ind.slug}/`,
+      url: `${PUBLIC_DOMAIN}/${ind.slug}/`,
       lastModified: ind.updatedAt || now,
       changeFrequency: 'weekly',
       priority: 0.85,
@@ -52,7 +50,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const locations = await wordPressProvider.asyncGetAllLocations();
   for (const loc of locations) {
     routes.push({
-      url: `${PUBLIC_DOMAIN}/locations/${loc.slug}/`,
+      url: `${PUBLIC_DOMAIN}/${loc.slug}/`,
       lastModified: loc.updatedAt || now,
       changeFrequency: 'weekly',
       priority: 0.8,

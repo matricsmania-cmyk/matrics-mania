@@ -95,16 +95,15 @@ export function resolveServerRoute(
         seo = resolveSeoMetadata({
           title: industry.seo?.seoTitle || `${industry.title} Growth Systems & Customer Acquisition | MatricsMania`,
           description: industry.seo?.metaDescription || industry.marketSummary || industry.tagline || industry.excerpt,
-          canonicalUrl: industry.seo?.canonicalUrl || `${PUBLIC_DOMAIN}/industries/${industry.slug}/`,
-          routePath: `/industries/${industry.slug}/`,
+          canonicalUrl: industry.seo?.canonicalUrl || `${PUBLIC_DOMAIN}/${industry.slug}/`,
+          routePath: `/${industry.slug}/`,
           ogImage: industry.featuredImage || industry.seo?.ogImage,
           ogType: 'website',
           cmsSeo: industry.seo,
           entityData: industry,
           breadcrumbs: [
             { name: 'Home', url: `${PUBLIC_DOMAIN}/`, position: 1 },
-            { name: 'Industries', url: `${PUBLIC_DOMAIN}/industries/`, position: 2 },
-            { name: industry.title, url: `${PUBLIC_DOMAIN}/industries/${industry.slug}/`, position: 3, isCurrentPage: true },
+            { name: industry.title, url: `${PUBLIC_DOMAIN}/${industry.slug}/`, position: 2, isCurrentPage: true },
           ],
         });
         schema = generateCompleteSchemaGraph({
@@ -137,16 +136,15 @@ export function resolveServerRoute(
         seo = resolveSeoMetadata({
           title: location.seo?.seoTitle || `Performance Digital Marketing Agency in ${location.city} | MatricsMania`,
           description: location.seo?.metaDescription || location.localMarketSummary || location.excerpt || `MatricsMania ${location.city} regional hub delivering technical SEO, paid acquisition, and revenue attribution.`,
-          canonicalUrl: location.seo?.canonicalUrl || `${PUBLIC_DOMAIN}/locations/${location.slug}/`,
-          routePath: `/locations/${location.slug}/`,
+          canonicalUrl: location.seo?.canonicalUrl || `${PUBLIC_DOMAIN}/${location.slug}/`,
+          routePath: `/${location.slug}/`,
           ogImage: location.featuredImage || location.seo?.ogImage,
           ogType: 'business.business',
           cmsSeo: location.seo,
           entityData: location,
           breadcrumbs: [
             { name: 'Home', url: `${PUBLIC_DOMAIN}/`, position: 1 },
-            { name: 'Locations', url: `${PUBLIC_DOMAIN}/locations/`, position: 2 },
-            { name: location.city, url: `${PUBLIC_DOMAIN}/locations/${location.slug}/`, position: 3, isCurrentPage: true },
+            { name: location.city, url: `${PUBLIC_DOMAIN}/${location.slug}/`, position: 2, isCurrentPage: true },
           ],
         });
         schema = generateCompleteSchemaGraph({

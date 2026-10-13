@@ -128,25 +128,13 @@ export const NotFoundState: React.FC<NotFoundStateProps> = ({
 
                 <button
                   type="button"
-                  onClick={() => handleNav('/services/')}
-                  className="flex items-center gap-2.5 p-2.5 rounded-lg bg-[#0D1424] hover:bg-[#131D33] text-[#CBD5E1] hover:text-white border border-[#1E293B]/60 transition-all text-left group"
-                >
-                  <Layers className="w-4 h-4 text-[#60A5FA] group-hover:scale-110 transition-transform" />
-                  <div>
-                    <span className="font-bold block text-white">/services/</span>
-                    <span className="text-[10px] text-[#64748B]">Growth Engineering</span>
-                  </div>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => handleNav('/industries/')}
+                  onClick={() => handleNav('/about/')}
                   className="flex items-center gap-2.5 p-2.5 rounded-lg bg-[#0D1424] hover:bg-[#131D33] text-[#CBD5E1] hover:text-white border border-[#1E293B]/60 transition-all text-left group"
                 >
                   <Briefcase className="w-4 h-4 text-[#60A5FA] group-hover:scale-110 transition-transform" />
                   <div>
-                    <span className="font-bold block text-white">/industries/</span>
-                    <span className="text-[10px] text-[#64748B]">Industry Playbooks</span>
+                    <span className="font-bold block text-white">/about/</span>
+                    <span className="text-[10px] text-[#64748B]">Agency Overview</span>
                   </div>
                 </button>
 
@@ -176,13 +164,13 @@ export const NotFoundState: React.FC<NotFoundStateProps> = ({
 
                 <button
                   type="button"
-                  onClick={() => handleNav('/locations/')}
+                  onClick={() => handleNav('/contact/')}
                   className="flex items-center gap-2.5 p-2.5 rounded-lg bg-[#0D1424] hover:bg-[#131D33] text-[#CBD5E1] hover:text-white border border-[#1E293B]/60 transition-all text-left group"
                 >
                   <MapPin className="w-4 h-4 text-[#60A5FA] group-hover:scale-110 transition-transform" />
                   <div>
-                    <span className="font-bold block text-white">/locations/</span>
-                    <span className="text-[10px] text-[#64748B]">Physical Hubs</span>
+                    <span className="font-bold block text-white">/contact/</span>
+                    <span className="text-[10px] text-[#64748B]">Contact & Hubs</span>
                   </div>
                 </button>
               </div>

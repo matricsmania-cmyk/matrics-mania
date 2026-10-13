@@ -36,15 +36,6 @@ export const IndustriesSection: React.FC<IndustriesSectionProps> = ({
               {subtitle}
             </p>
           </div>
-
-          <button
-            id="view-all-industries-btn"
-            onClick={() => handleNav('/industries/')}
-            className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[#60A5FA] hover:text-white transition-colors group cursor-pointer"
-          >
-            <span>View All Verticals</span>
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-          </button>
         </ScrollReveal>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -52,7 +43,7 @@ export const IndustriesSection: React.FC<IndustriesSectionProps> = ({
             <ScrollReveal key={ind.id} delay={idx * 0.08}>
               <div
                 id={`industry-card-${ind.slug}`}
-                onClick={() => handleNav(`/industries/${ind.slug}/`)}
+                onClick={() => handleNav(`/${ind.slug}/`)}
                 className="p-6 rounded-2xl bg-[#0D1424] border border-[#1E293B] hover:border-[#2563EB]/50 transition-all cursor-pointer flex flex-col justify-between h-full group hover:shadow-xl hover:shadow-blue-500/5"
               >
                 <div className="space-y-4">

@@ -178,7 +178,7 @@ export const LOCATIONS_DATA: Record<string, LocationDetailData> = {
     meta: {
       title: 'Digital Marketing Agency Bangalore | Search, AI, Paid Media & CRO | MatricsMania',
       description: 'MatricsMania is Bangalore’s premier digital growth and performance engineering agency. We build technical SEO systems, AI search visibility, and high-ROAS acquisition engines.',
-      canonical: 'https://matricsmania.com/locations/bangalore/',
+      canonical: 'https://matricsmania.com/bangalore/',
     },
   },
 };

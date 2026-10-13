@@ -45,7 +45,7 @@ export const IndustryTemplate: React.FC<IndustryTemplateProps> = ({
   if (!industry) {
     return (
       <NotFoundState
-        attemptedPath={slug ? `/industries/${slug}/` : '/industries/'}
+        attemptedPath={slug ? `/${slug}/` : '/'}
         onNavigate={onNavigate}
         onOpenBooking={onOpenBooking}
       />
@@ -208,29 +208,19 @@ export const IndustryTemplate: React.FC<IndustryTemplateProps> = ({
       {allIndustries.length > 1 && (
         <section className="py-12 border-b border-[#1E293B] bg-[#050811]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between mb-6">
+            <div className="mb-6">
               <span className="text-xs font-mono font-semibold text-[#64748B] uppercase tracking-wider">
                 Explore Other Industry Verticals
               </span>
-              <a
-                href="/industries/"
-                onClick={(e) => {
-                  e.preventDefault();
-                  onNavigate?.('/industries/');
-                }}
-                className="text-xs text-[#60A5FA] hover:underline cursor-pointer"
-              >
-                All Industries →
-              </a>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               {allIndustries.map((ind) => (
                 <a
                   key={ind.id}
-                  href={`/industries/${ind.slug}/`}
+                  href={`/${ind.slug}/`}
                   onClick={(e) => {
                     e.preventDefault();
-                    onNavigate?.(`/industries/${ind.slug}/`);
+                    onNavigate?.(`/${ind.slug}/`);
                   }}
                   className={`p-4 rounded-xl border text-left transition-all text-xs font-medium cursor-pointer block no-underline ${
                     ind.slug === industry.slug

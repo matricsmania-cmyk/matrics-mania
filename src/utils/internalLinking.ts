@@ -45,7 +45,7 @@ export function resolveEntityRef(
           id: ind.id,
           slug: ind.slug,
           title: ind.title,
-          url: `/industries/${ind.slug}/`,
+          url: `/${ind.slug}/`,
           excerpt: ind.marketSummary || ind.excerpt || ind.tagline,
           category: ind.industryCode || 'Industry Practice',
         };
@@ -59,7 +59,7 @@ export function resolveEntityRef(
           id: loc.id,
           slug: loc.slug,
           title: loc.city ? `${loc.city} Regional Hub` : loc.title,
-          url: `/locations/${loc.slug}/`,
+          url: `/${loc.slug}/`,
           excerpt: loc.localMarketSummary || loc.excerpt,
           category: loc.country || 'Operating Node',
         };

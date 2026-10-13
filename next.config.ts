@@ -36,7 +36,42 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
       {
+        source: '/services',
+        destination: '/',
+        permanent: true,
+      },
+      {
         source: '/services/:slug((?!$).*)',
+        destination: '/:slug',
+        permanent: true,
+      },
+      {
+        source: '/industry',
+        destination: '/',
+        permanent: true,
+      },
+      {
+        source: '/industries',
+        destination: '/',
+        permanent: true,
+      },
+      {
+        source: '/industries/:slug((?!$).*)',
+        destination: '/:slug',
+        permanent: true,
+      },
+      {
+        source: '/location',
+        destination: '/',
+        permanent: true,
+      },
+      {
+        source: '/locations',
+        destination: '/',
+        permanent: true,
+      },
+      {
+        source: '/locations/:slug((?!$).*)',
         destination: '/:slug',
         permanent: true,
       },
