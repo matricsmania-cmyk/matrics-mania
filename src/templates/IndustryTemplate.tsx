@@ -14,7 +14,6 @@ import { Industry } from '../models';
 import { NotFoundState } from '../components/ErrorStates';
 import {
   CheckCircle2,
-  Target,
   AlertTriangle,
 } from 'lucide-react';
 
@@ -67,19 +66,9 @@ export const IndustryTemplate: React.FC<IndustryTemplateProps> = ({
 
       {/* 1. HERO */}
       <PageHeroSection
-        eyebrow={`// ${industry.industryCode || 'Industry Practice'}`}
         title={industryTitle}
         tagline={industry.tagline}
         subtitle={metaDescription}
-        primaryCtaLabel="Book Industry Strategy Session"
-        onPrimaryCta={() =>
-          onOpenBooking?.({ industry: industryTitle, interest: `${industryTitle} Architecture` })
-        }
-        secondaryCtaLabel="Explore Acquisition Mechanics"
-        onSecondaryCta={() => {
-          const el = document.getElementById('acquisition-mechanics');
-          if (el) el.scrollIntoView({ behavior: 'smooth' });
-        }}
         metrics={industry.benchmarks?.map((m) => ({
           label: m.metric,
           value: m.matricsManiaEngineered,
@@ -92,10 +81,6 @@ export const IndustryTemplate: React.FC<IndustryTemplateProps> = ({
         <section id="acquisition-mechanics" className="py-16 md:py-24 border-b border-[#1E293B] bg-[#070B14]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
             <ScrollReveal className="max-w-3xl space-y-4">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[#0D1424] border border-[#1E293B] text-[11px] font-mono font-semibold tracking-wider text-[#60A5FA] uppercase">
-                <Target className="w-3.5 h-3.5 text-[#3B82F6]" />
-                Acquisition Mechanics
-              </div>
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white">
                 How We Capture & Route Demand in {industryTitle}
               </h2>
@@ -112,7 +97,7 @@ export const IndustryTemplate: React.FC<IndustryTemplateProps> = ({
                     <ScrollReveal key={idx} delay={idx * 0.08}>
                       <div className="p-6 rounded-2xl bg-[#0D1424] border border-[#1E293B] h-full flex flex-col justify-between space-y-4">
                         <div className="space-y-3">
-                          <span className="text-[10px] font-mono font-semibold text-[#60A5FA] bg-[#2563EB]/10 px-2 py-0.5 rounded border border-[#2563EB]/20 uppercase">
+                          <span className="text-[10px] font-mono font-semibold text-[#60A5FA] uppercase tracking-wider">
                             STAGE 0{idx + 1}
                           </span>
                           <h4 className="text-base font-bold text-white">{stage.stage}</h4>
@@ -171,10 +156,6 @@ export const IndustryTemplate: React.FC<IndustryTemplateProps> = ({
         <section id="strategic-pillars" className="py-16 md:py-20 border-b border-[#1E293B] bg-[#070B14]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <ScrollReveal className="max-w-3xl mb-12 space-y-4">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[#0D1424] border border-[#1E293B] text-[11px] font-mono font-semibold tracking-wider text-[#60A5FA] uppercase">
-                <Target className="w-3.5 h-3.5 text-[#3B82F6]" />
-                Tailored Playbooks
-              </div>
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white">
                 Engineered Solutions for {industryTitle}
               </h2>
@@ -188,7 +169,7 @@ export const IndustryTemplate: React.FC<IndustryTemplateProps> = ({
                 <ScrollReveal key={idx} delay={idx * 0.08}>
                   <div className="p-6 rounded-2xl bg-[#0D1424] border border-[#1E293B] hover:border-[#2563EB]/40 transition-all flex flex-col justify-between h-full space-y-4">
                     <div className="space-y-3">
-                      <span className="text-xs font-mono text-[#60A5FA] bg-[#2563EB]/10 px-2.5 py-1 rounded border border-[#2563EB]/20">
+                      <span className="text-xs font-mono font-semibold text-[#60A5FA] uppercase tracking-wider">
                         {sol.phase || `PILLAR 0${idx + 1}`}
                       </span>
                       <h3 className="text-lg font-bold text-white">{sol.title}</h3>

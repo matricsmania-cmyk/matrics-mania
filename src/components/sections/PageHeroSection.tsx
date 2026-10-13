@@ -45,7 +45,7 @@ export const PageHeroSection: React.FC<PageHeroSectionProps> = ({
   const isCentered = align === 'center';
 
   return (
-    <section className="relative border-b border-[#1E293B] pt-12 pb-16 md:py-20 overflow-hidden bg-[#070B14]">
+    <header className="relative border-b border-[#1E293B] pt-12 pb-16 md:py-20 overflow-hidden bg-[#070B14]">
       {/* Background ambient lighting */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[650px] h-[350px] bg-[#2563EB]/10 blur-[130px] pointer-events-none rounded-full" />
 
@@ -64,28 +64,29 @@ export const PageHeroSection: React.FC<PageHeroSectionProps> = ({
             }`}
           >
             {/* Eyebrow / Badges */}
-            <div
-              className={`flex flex-wrap items-center gap-2.5 ${
-                isCentered ? 'justify-center' : ''
-              }`}
-            >
-              {eyebrow && (
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[#0D1424] border border-[#1E293B] text-[11px] font-mono font-semibold tracking-wider text-[#60A5FA] uppercase">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#3B82F6] animate-pulse" />
-                  {eyebrow}
-                </div>
-              )}
-              {badge && (
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#1E293B]/70 text-[#94A3B8] border border-[#334155]">
-                  {badge}
-                </span>
-              )}
-              {statusBadge && (
-                <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-mono uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
-                  {statusBadge}
-                </span>
-              )}
-            </div>
+            {(eyebrow || badge || statusBadge) && (
+              <div
+                className={`flex flex-wrap items-center gap-2.5 ${
+                  isCentered ? 'justify-center' : ''
+                }`}
+              >
+                {eyebrow && (
+                  <span className="text-[11px] font-mono font-semibold tracking-wider text-[#60A5FA] uppercase">
+                    {eyebrow}
+                  </span>
+                )}
+                {badge && (
+                  <span className="text-xs font-mono text-[#94A3B8]">
+                    {badge}
+                  </span>
+                )}
+                {statusBadge && (
+                  <span className="text-[10px] font-mono uppercase text-emerald-400">
+                    {statusBadge}
+                  </span>
+                )}
+              </div>
+            )}
 
             {/* H1 Title */}
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white leading-[1.12]">
@@ -146,7 +147,7 @@ export const PageHeroSection: React.FC<PageHeroSectionProps> = ({
                   <span className="text-xs font-mono font-medium text-[#94A3B8] uppercase tracking-wider">
                     Performance Telemetry
                   </span>
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#2563EB]/20 text-[#60A5FA] border border-[#2563EB]/30">
+                  <span className="text-[10px] font-mono text-[#60A5FA] uppercase tracking-wider font-semibold">
                     SIMULATED BENCHMARK
                   </span>
                 </div>
@@ -184,6 +185,6 @@ export const PageHeroSection: React.FC<PageHeroSectionProps> = ({
           )}
         </div>
       </div>
-    </section>
+    </header>
   );
 };

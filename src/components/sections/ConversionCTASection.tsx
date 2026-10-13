@@ -30,10 +30,12 @@ export const ConversionCTASection: React.FC<ConversionCTASectionProps> = ({
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <ScrollReveal>
           <div className="rounded-3xl bg-gradient-to-b from-[#0D1424] to-[#070B14] border border-[#2563EB]/40 p-8 sm:p-12 md:p-16 text-center space-y-6 shadow-2xl relative overflow-hidden">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#2563EB]/10 border border-[#2563EB]/30 text-xs font-mono text-[#60A5FA]">
-              <span className="w-2 h-2 rounded-full bg-[#3B82F6] animate-pulse" />
-              <span>{badge}</span>
-            </div>
+            {badge && (
+              <div className="text-xs font-mono text-[#60A5FA] uppercase tracking-wider flex items-center justify-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#3B82F6]" />
+                <span>{badge}</span>
+              </div>
+            )}
 
             <h2 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-white tracking-tight leading-tight max-w-3xl mx-auto">
               {title}

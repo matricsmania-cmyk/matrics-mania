@@ -10,7 +10,6 @@ import {
   BookOpen,
   BarChart3,
   ArrowRight,
-  Sparkles,
   ExternalLink,
 } from 'lucide-react';
 import { EntityRef } from '../models';
@@ -164,10 +163,6 @@ export const InternalLinkingGraph: React.FC<InternalLinkingGraphProps> = ({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-12">
         {/* Section Header */}
         <ScrollReveal className="max-w-3xl space-y-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[#0D1424] border border-[#1E293B] text-[11px] font-mono font-semibold tracking-wider text-[#60A5FA] uppercase">
-            <Sparkles className="w-3.5 h-3.5 text-[#3B82F6]" />
-            {badge}
-          </div>
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white">
             {title}
           </h2>
@@ -189,7 +184,7 @@ export const InternalLinkingGraph: React.FC<InternalLinkingGraphProps> = ({
                       <Icon className="w-4 h-4 text-[#60A5FA]" />
                       <span>{group.label}</span>
                     </div>
-                    <span className="text-[10px] font-mono text-[#64748B] bg-[#0D1424] px-2 py-0.5 rounded border border-[#1E293B]">
+                    <span className="text-[10px] font-mono text-[#64748B]">
                       {group.items.length} {group.items.length === 1 ? 'Link' : 'Links'}
                     </span>
                   </div>

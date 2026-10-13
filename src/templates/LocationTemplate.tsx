@@ -19,14 +19,11 @@ import {
   Mail,
   Phone,
   Clock,
-  Compass,
   Building2,
   CheckCircle2,
-  Globe2,
   Layers,
   ArrowRight,
   ShieldCheck,
-  TrendingUp,
   Users,
   Navigation,
   Key,
@@ -90,21 +87,8 @@ export const LocationTemplate: React.FC<LocationTemplateProps> = ({
 
       {/* 2. HERO */}
       <PageHeroSection
-        eyebrow={`// ${location.hubType || 'Regional Engineering Hub'}`}
         title={location.title || `${locationName} Digital Growth Lab`}
         subtitle={metaDescription}
-        primaryCtaLabel={`Schedule ${locationName} Strategy Session`}
-        onPrimaryCta={() =>
-          onOpenBooking({
-            location: locationName,
-            interest: `${locationName} Regional Consultation`,
-          })
-        }
-        secondaryCtaLabel="View Operating Logistics"
-        onSecondaryCta={() => {
-          const el = document.getElementById('office-logistics');
-          if (el) el.scrollIntoView({ behavior: 'smooth' });
-        }}
         metrics={location.marketDrivers?.map((s) => ({
           label: s.title,
           value: s.metric,
@@ -154,10 +138,6 @@ export const LocationTemplate: React.FC<LocationTemplateProps> = ({
         <section className="py-16 md:py-24 border-b border-[#1E293B] bg-[#070B14]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
             <ScrollReveal className="max-w-3xl space-y-4">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[#0D1424] border border-[#1E293B] text-[11px] font-mono font-semibold tracking-wider text-[#60A5FA] uppercase">
-                <Globe2 className="w-3.5 h-3.5 text-[#3B82F6]" />
-                Geographic Relevance
-              </div>
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white">
                 Why {locationName} Is a Strategic Growth Epicenter
               </h2>
@@ -319,10 +299,6 @@ export const LocationTemplate: React.FC<LocationTemplateProps> = ({
       <section id="office-logistics" className="py-16 md:py-24 border-b border-[#1E293B] bg-[#070B14]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           <ScrollReveal className="max-w-3xl space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[#0D1424] border border-[#1E293B] text-[11px] font-mono font-semibold tracking-wider text-[#60A5FA] uppercase">
-              <Compass className="w-3.5 h-3.5 text-[#3B82F6]" />
-              Local Operating Logistics
-            </div>
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white">
               {locationName} Engineering Headquarters & Facilities
             </h2>
@@ -489,10 +465,6 @@ export const LocationTemplate: React.FC<LocationTemplateProps> = ({
         <section className="py-16 md:py-24 border-b border-[#1E293B] bg-[#050811]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
             <ScrollReveal className="max-w-3xl space-y-4">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[#0D1424] border border-[#1E293B] text-[11px] font-mono font-semibold tracking-wider text-[#60A5FA] uppercase">
-                <TrendingUp className="w-3.5 h-3.5 text-[#3B82F6]" />
-                Regional Case Evidence
-              </div>
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white">
                 Selected Work & Verified Results in {locationName}
               </h2>
@@ -510,7 +482,7 @@ export const LocationTemplate: React.FC<LocationTemplateProps> = ({
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-mono text-[#64748B]">{client.industry}</span>
-                      <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+                      <span className="text-xs font-mono font-semibold text-emerald-400">
                         {client.resultMetric}
                       </span>
                     </div>

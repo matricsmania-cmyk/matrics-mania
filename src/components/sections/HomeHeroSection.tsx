@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowRight, CheckCircle2, ShieldCheck, Activity } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 
 export interface HomeHeroSectionProps {
   onOpenBooking?: (prefillInfo?: any) => void;
@@ -57,22 +57,6 @@ export const HomeHeroSection: React.FC<HomeHeroSectionProps> = ({
               <span>Schedule Diagnostic Session</span>
               <ArrowRight className="w-4 h-4" />
             </button>
-          </div>
-
-          {/* Micro Telemetry & Guarantee Indicators */}
-          <div className="pt-3 sm:pt-4 flex flex-wrap items-center justify-center gap-2.5 sm:gap-4 md:gap-5 text-xs font-mono">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#0D1424] border border-[#1E293B] text-[#E2E8F0] shadow-sm hover:border-emerald-500/40 transition-colors select-none">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-              <span className="font-medium text-[11px] sm:text-xs">Zero Fluff Guarantee</span>
-            </div>
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#0D1424] border border-[#1E293B] text-[#E2E8F0] shadow-sm hover:border-blue-500/40 transition-colors select-none">
-              <ShieldCheck className="w-3.5 h-3.5 text-blue-400 shrink-0" />
-              <span className="font-medium text-[11px] sm:text-xs">100% First-Party Data Ownership</span>
-            </div>
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#0D1424] border border-[#1E293B] text-[#E2E8F0] shadow-sm hover:border-purple-500/40 transition-colors select-none">
-              <Activity className="w-3.5 h-3.5 text-purple-400 shrink-0" />
-              <span className="font-medium text-[11px] sm:text-xs">Deterministic Engineering SLAs</span>
-            </div>
           </div>
         </div>
       </div>

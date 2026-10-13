@@ -75,11 +75,11 @@ export const CaseStudyIndexTemplate: React.FC<CaseStudyIndexTemplateProps> = ({
                   className="p-8 rounded-3xl bg-[#0D1424] border border-[#1E293B] hover:border-[#2563EB]/50 focus:outline-none focus:ring-2 focus:ring-[#2563EB] transition-all cursor-pointer flex flex-col justify-between h-full group block text-left"
                 >
                   <div className="space-y-6">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-mono uppercase px-3 py-1 rounded-full bg-[#1E293B] text-[#94A3B8]">
+                    <div className="flex items-center justify-between text-xs font-mono">
+                      <span className="uppercase text-[#94A3B8]">
                         {cs.clientIndustry || cs.industry}
                       </span>
-                      <span className="text-xs font-mono text-[#60A5FA] bg-[#2563EB]/10 px-2.5 py-1 rounded border border-[#2563EB]/20">
+                      <span className="text-[#60A5FA] font-semibold">
                         {cs.caseStudyCode}
                       </span>
                     </div>

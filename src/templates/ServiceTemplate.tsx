@@ -12,21 +12,8 @@ import {
   ArrowRight,
   ChevronDown,
   CheckCircle2,
-  AlertTriangle,
-  Layers,
   Sparkles,
-  Zap,
-  TrendingUp,
-  Cpu,
-  BarChart3,
-  BookOpen,
-  Code2,
-  FileCheck,
-  ShieldCheck,
-  ArrowUpRight,
   Database,
-  ExternalLink,
-  Clock,
   Terminal,
 } from 'lucide-react';
 
@@ -119,27 +106,13 @@ export const ServiceTemplate: React.FC<ServiceTemplateProps> = ({
       />
 
       {/* =========================================================================
-          HERO
+          HERO / HEADER COMPONENT
          ========================================================================= */}
-      <section className="relative border-b border-[#1E293B] pt-12 pb-16 md:pt-16 md:pb-24 overflow-hidden bg-gradient-to-b from-[#0B1120] to-[#070B14]">
+      <header className="relative border-b border-[#1E293B] pt-12 pb-16 md:pt-16 md:pb-24 overflow-hidden bg-gradient-to-b from-[#0B1120] to-[#070B14]">
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-[#2563EB]/12 blur-[140px] pointer-events-none rounded-full" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-8">
           <ScrollReveal className="max-w-4xl space-y-5">
-            {/* Top Badges */}
-            <div className="flex flex-wrap items-center gap-3">
-              {service.category && (
-                <span className="px-2.5 py-1 rounded-md bg-[#0D1424] border border-[#1E293B] text-[11px] font-mono font-medium text-[#60A5FA]">
-                  {service.category}
-                </span>
-              )}
-              {service.priceStartingMonthly && (
-                <span className="px-2.5 py-1 rounded-md bg-[#0D1424] border border-[#1E293B] text-[11px] font-mono text-[#CBD5E1]">
-                  Starting at {service.priceStartingMonthly}
-                </span>
-              )}
-            </div>
-
             {/* Title */}
             <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white leading-tight">
               {serviceTitle}
@@ -155,27 +128,6 @@ export const ServiceTemplate: React.FC<ServiceTemplateProps> = ({
             <p className="text-sm sm:text-base md:text-lg text-[#94A3B8] leading-relaxed max-w-3xl">
               {service.shortDescription || service.excerpt}
             </p>
-
-            {/* CTAs */}
-            <div className="flex flex-wrap gap-4 pt-2">
-              <button
-                onClick={() => onOpenBooking({ service: serviceTitle })}
-                className="px-6 py-3.5 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white text-xs sm:text-sm font-bold transition-all shadow-lg shadow-[#2563EB]/25 flex items-center gap-2 cursor-pointer"
-              >
-                <span>Schedule Diagnostic Strategy Call</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
-
-              <button
-                onClick={() => {
-                  const el = document.getElementById('deliverables-section');
-                  if (el) el.scrollIntoView({ behavior: 'smooth' });
-                }}
-                className="px-6 py-3.5 rounded-xl bg-[#0D1424] hover:bg-[#1E293B] border border-[#1E293B] text-xs sm:text-sm font-semibold text-[#CBD5E1] hover:text-white transition-all cursor-pointer"
-              >
-                Explore Scope &amp; Deliverables
-              </button>
-            </div>
           </ScrollReveal>
 
           {/* Metric Benchmark Chips in Hero */}
@@ -201,7 +153,7 @@ export const ServiceTemplate: React.FC<ServiceTemplateProps> = ({
             </div>
           )}
         </div>
-      </section>
+      </header>
 
       {/* =========================================================================
           2. EDITORIAL CONTENT (Live WordPress Payload)
@@ -210,10 +162,6 @@ export const ServiceTemplate: React.FC<ServiceTemplateProps> = ({
         <section className="py-12 md:py-16 border-b border-[#1E293B] bg-[#070B14]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
             <ScrollReveal className="max-w-3xl space-y-3">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[#0D1424] border border-[#1E293B] text-[11px] font-mono font-semibold text-[#60A5FA] uppercase tracking-wider">
-                <BookOpen className="w-3.5 h-3.5 text-[#3B82F6]" />
-                Editorial Overview
-              </div>
               <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
                 {serviceTitle} Overview
               </h2>
@@ -237,10 +185,6 @@ export const ServiceTemplate: React.FC<ServiceTemplateProps> = ({
         <section className="py-16 md:py-20 border-b border-[#1E293B] bg-[#050811]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
             <ScrollReveal className="max-w-3xl space-y-3">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[#0D1424] border border-[#1E293B] text-[11px] font-mono font-semibold text-[#60A5FA] uppercase tracking-wider">
-                <ShieldCheck className="w-3.5 h-3.5 text-[#3B82F6]" />
-                Strategic Positioning &amp; Engineering Paradigm
-              </div>
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white">
                 Strategic Service Positioning
               </h2>
@@ -326,15 +270,9 @@ export const ServiceTemplate: React.FC<ServiceTemplateProps> = ({
         <section className="py-16 md:py-20 border-b border-[#1E293B] bg-[#070B14]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
             <ScrollReveal className="max-w-3xl space-y-3">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[#0D1424] border border-[#1E293B] text-[11px] font-mono font-semibold text-amber-400 uppercase tracking-wider">
-                <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
-                Diagnostics &amp; System Failure Modes
-              </div>
-              {service.diagnosis.headline && (
-                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white">
-                  {service.diagnosis.headline}
-                </h2>
-              )}
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white">
+                {service.diagnosis.headline || 'Diagnostics & System Failure Modes'}
+              </h2>
               {service.diagnosis.summary && (
                 <p className="text-sm sm:text-base text-[#94A3B8]">
                   {service.diagnosis.summary}
@@ -395,10 +333,6 @@ export const ServiceTemplate: React.FC<ServiceTemplateProps> = ({
         <section className="py-16 md:py-20 border-b border-[#1E293B] bg-[#050811]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
             <ScrollReveal className="max-w-3xl space-y-3">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[#0D1424] border border-[#1E293B] text-[11px] font-mono font-semibold text-[#60A5FA] uppercase tracking-wider">
-                <Clock className="w-3.5 h-3.5 text-[#3B82F6]" />
-                Phased Execution Protocol
-              </div>
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white">
                 Engineered Deployment Cadence
               </h2>
@@ -458,10 +392,6 @@ export const ServiceTemplate: React.FC<ServiceTemplateProps> = ({
         <section className="py-16 md:py-24 border-b border-[#1E293B] bg-[#070B14]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
             <ScrollReveal className="max-w-3xl space-y-3">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[#0D1424] border border-[#1E293B] text-[11px] font-mono font-semibold text-[#60A5FA] uppercase tracking-wider">
-                <Layers className="w-3.5 h-3.5 text-[#3B82F6]" />
-                Four-Pillar Framework
-              </div>
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white">
                 The Four Architectural Pillars of {serviceTitle}
               </h2>
@@ -555,10 +485,6 @@ export const ServiceTemplate: React.FC<ServiceTemplateProps> = ({
         <section id="deliverables-section" className="py-16 md:py-20 border-b border-[#1E293B] bg-[#050811]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
             <ScrollReveal className="max-w-3xl space-y-3">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[#0D1424] border border-[#1E293B] text-[11px] font-mono font-semibold text-[#60A5FA] uppercase tracking-wider">
-                <FileCheck className="w-3.5 h-3.5 text-[#3B82F6]" />
-                Verifiable Deliverables &amp; Code Specifications
-              </div>
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white">
                 Tangible Scope Checklist
               </h2>
@@ -631,10 +557,6 @@ export const ServiceTemplate: React.FC<ServiceTemplateProps> = ({
           <section className="py-16 md:py-20 border-b border-[#1E293B] bg-[#070B14]">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
               <ScrollReveal className="max-w-3xl space-y-3">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[#0D1424] border border-[#1E293B] text-[11px] font-mono font-semibold text-emerald-400 uppercase tracking-wider">
-                  <TrendingUp className="w-3.5 h-3.5 text-emerald-400" />
-                  Unit Economics &amp; Measurement Governance
-                </div>
                 <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white">
                   {service.economics?.modelTitle || `${serviceTitle} Economic &amp; CAC Impact Model`}
                 </h2>
@@ -701,10 +623,6 @@ export const ServiceTemplate: React.FC<ServiceTemplateProps> = ({
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
               <ScrollReveal className="max-w-2xl space-y-3">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[#0D1424] border border-[#1E293B] text-[11px] font-mono font-semibold text-[#60A5FA] uppercase tracking-wider">
-                  <Cpu className="w-3.5 h-3.5 text-[#3B82F6]" />
-                  Telemetry &amp; Infrastructure Stack
-                </div>
                 <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white">
                   Integrated Software Toolchain
                 </h2>
@@ -787,9 +705,6 @@ export const ServiceTemplate: React.FC<ServiceTemplateProps> = ({
         <section className="py-16 md:py-20 border-b border-[#1E293B] bg-[#050811]">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
             <ScrollReveal className="text-center space-y-3">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[#0D1424] border border-[#1E293B] text-[11px] font-mono font-semibold text-[#60A5FA] uppercase tracking-wider">
-                Technical FAQ
-              </div>
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white">
                 Frequently Asked Questions
               </h2>

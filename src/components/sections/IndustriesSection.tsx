@@ -3,7 +3,7 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import { ScrollReveal } from '../ScrollReveal';
-import { Building2, ArrowRight, ArrowUpRight, ShieldCheck, Check } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, ShieldCheck, Check } from 'lucide-react';
 import { Industry } from '../../models';
 
 export interface IndustriesSectionProps {
@@ -29,10 +29,6 @@ export const IndustriesSection: React.FC<IndustriesSectionProps> = ({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <ScrollReveal className="flex flex-col md:flex-row md:items-end justify-between mb-14 gap-6">
           <div className="space-y-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[#0D1424] border border-[#1E293B] text-[11px] font-mono font-semibold tracking-wider text-[#60A5FA] uppercase">
-              <Building2 className="w-3.5 h-3.5 text-[#3B82F6]" />
-              Domain Specialization
-            </div>
             <h2 className="text-2xl sm:text-4xl font-bold tracking-tight text-white">
               {title}
             </h2>
@@ -61,7 +57,7 @@ export const IndustriesSection: React.FC<IndustriesSectionProps> = ({
               >
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-mono uppercase px-2.5 py-1 rounded bg-[#070B14] text-[#60A5FA] border border-[#1E293B]">
+                    <span className="text-[10px] font-mono uppercase text-[#60A5FA] font-semibold">
                       {ind.industryCode || 'VERTICAL'}
                     </span>
                     <ArrowUpRight className="w-4 h-4 text-[#64748B] group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />

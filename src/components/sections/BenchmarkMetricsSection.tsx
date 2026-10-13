@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { ScrollReveal } from '../ScrollReveal';
-import { TrendingUp, ShieldCheck, AlertCircle } from 'lucide-react';
+import { ShieldCheck, AlertCircle } from 'lucide-react';
 
 export interface MetricPoint {
   label: string;
@@ -39,10 +39,6 @@ export const BenchmarkMetricsSection: React.FC<BenchmarkMetricsSectionProps> = (
     <section className="py-16 md:py-20 border-b border-[#1E293B] bg-[#050811] relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <ScrollReveal className="text-center max-w-3xl mx-auto mb-12 space-y-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[#0D1424] border border-[#1E293B] text-[11px] font-mono font-semibold tracking-wider text-[#60A5FA] uppercase">
-            <TrendingUp className="w-3.5 h-3.5 text-[#3B82F6]" />
-            Quantitative Engineering
-          </div>
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white">
             {title}
           </h2>
@@ -59,7 +55,7 @@ export const BenchmarkMetricsSection: React.FC<BenchmarkMetricsSectionProps> = (
                   <div className="flex items-center justify-between text-xs font-mono text-[#64748B] mb-2">
                     <span>NODE {String(idx + 1).padStart(2, '0')}</span>
                     {metric.timeframe && (
-                      <span className="text-[#60A5FA] bg-[#2563EB]/10 px-2 py-0.5 rounded border border-[#2563EB]/20">
+                      <span className="text-[#60A5FA]">
                         {metric.timeframe}
                       </span>
                     )}

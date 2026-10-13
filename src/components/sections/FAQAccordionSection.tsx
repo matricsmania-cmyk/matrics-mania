@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { ScrollReveal } from '../ScrollReveal';
-import { ChevronDown, HelpCircle } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import { FAQ } from '../../models';
 
 export interface FAQAccordionSectionProps {
@@ -30,10 +30,6 @@ export const FAQAccordionSection: React.FC<FAQAccordionSectionProps> = ({
     <section className="py-16 md:py-20 border-b border-[#1E293B] bg-[#050811]">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <ScrollReveal className="text-center mb-12 space-y-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[#0D1424] border border-[#1E293B] text-[11px] font-mono font-semibold tracking-wider text-[#60A5FA] uppercase">
-            <HelpCircle className="w-3.5 h-3.5 text-[#3B82F6]" />
-            Engineering FAQ
-          </div>
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white">
             {title}
           </h2>

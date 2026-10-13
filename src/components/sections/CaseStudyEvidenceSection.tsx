@@ -3,7 +3,7 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import { ScrollReveal } from '../ScrollReveal';
-import { BarChart3, ArrowRight, ArrowUpRight, Lock } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, Lock } from 'lucide-react';
 import { CaseStudy } from '../../models';
 
 export interface CaseStudyEvidenceSectionProps {
@@ -31,10 +31,6 @@ export const CaseStudyEvidenceSection: React.FC<CaseStudyEvidenceSectionProps> =
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <ScrollReveal className="flex flex-col md:flex-row md:items-end justify-between mb-14 gap-6">
           <div className="space-y-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[#0D1424] border border-[#1E293B] text-[11px] font-mono font-semibold tracking-wider text-[#60A5FA] uppercase">
-              <BarChart3 className="w-3.5 h-3.5 text-[#3B82F6]" />
-              Engineering Evidence
-            </div>
             <h2 className="text-2xl sm:text-4xl font-bold tracking-tight text-white">
               {title}
             </h2>

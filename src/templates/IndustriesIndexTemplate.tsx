@@ -7,7 +7,6 @@ import { ScrollReveal } from '../components/ScrollReveal';
 import { Industry } from '../models';
 import {
   ArrowRight,
-  Building2,
   ShieldCheck,
   TrendingUp,
   BarChart3,
@@ -43,16 +42,11 @@ export const IndustriesIndexTemplate: React.FC<IndustriesIndexTemplateProps> = (
       />
 
       {/* HERO SECTION */}
-      <section className="relative border-b border-[#1E293B] pt-14 pb-16 md:pt-20 md:pb-24 overflow-hidden">
+      <header className="relative border-b border-[#1E293B] pt-14 pb-16 md:pt-20 md:pb-24 overflow-hidden">
         <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-[#2563EB]/10 blur-[140px] pointer-events-none rounded-full" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-6">
           <ScrollReveal className="max-w-3xl space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[#0D1424] border border-[#1E293B] text-[11px] font-mono font-semibold text-[#60A5FA] uppercase tracking-wider">
-              <Building2 className="w-3.5 h-3.5 text-[#3B82F6]" />
-              Sector-Specific Execution
-            </div>
-
             <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white leading-tight">
               Industry Growth Playbooks
             </h1>
@@ -62,7 +56,7 @@ export const IndustriesIndexTemplate: React.FC<IndustriesIndexTemplateProps> = (
             </p>
           </ScrollReveal>
         </div>
-      </section>
+      </header>
 
       {/* INDUSTRIES GRID */}
       <section className="py-16 md:py-24 border-b border-[#1E293B]">
@@ -80,7 +74,7 @@ export const IndustriesIndexTemplate: React.FC<IndustriesIndexTemplateProps> = (
                         {ind.industryCode || 'PLAYBOOK'}
                       </span>
                       {ind.complianceStandards && ind.complianceStandards.length > 0 && (
-                        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#131D33] text-[#94A3B8] border border-[#1E293B]">
+                        <span className="text-[10px] font-mono text-[#94A3B8]">
                           {ind.complianceStandards[0]}
                         </span>
                       )}

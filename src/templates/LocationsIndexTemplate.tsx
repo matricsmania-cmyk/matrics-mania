@@ -7,7 +7,6 @@ import { ScrollReveal } from '../components/ScrollReveal';
 import { Location } from '../models';
 import {
   ArrowRight,
-  Globe2,
   MapPin,
   Clock,
   ShieldCheck,
@@ -41,16 +40,11 @@ export const LocationsIndexTemplate: React.FC<LocationsIndexTemplateProps> = ({
       />
 
       {/* HERO SECTION */}
-      <section className="relative border-b border-[#1E293B] pt-14 pb-16 md:pt-20 md:pb-24 overflow-hidden">
+      <header className="relative border-b border-[#1E293B] pt-14 pb-16 md:pt-20 md:pb-24 overflow-hidden">
         <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-[#2563EB]/10 blur-[140px] pointer-events-none rounded-full" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-6">
           <ScrollReveal className="max-w-3xl space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[#0D1424] border border-[#1E293B] text-[11px] font-mono font-semibold text-[#60A5FA] uppercase tracking-wider">
-              <Globe2 className="w-3.5 h-3.5 text-[#3B82F6]" />
-              Global Telemetry & Operations
-            </div>
-
             <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white leading-tight">
               Global Operating Hubs
             </h1>
@@ -60,7 +54,7 @@ export const LocationsIndexTemplate: React.FC<LocationsIndexTemplateProps> = ({
             </p>
           </ScrollReveal>
         </div>
-      </section>
+      </header>
 
       {/* LOCATIONS GRID */}
       <section className="py-16 md:py-24 border-b border-[#1E293B]">
@@ -79,7 +73,7 @@ export const LocationsIndexTemplate: React.FC<LocationsIndexTemplateProps> = ({
                         {loc.city}, {loc.country}
                       </span>
                       {loc.hubType && loc.hubType.includes('Headquarters') && (
-                        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#10B981]/10 text-[#34D399] border border-[#10B981]/30">
+                        <span className="text-[10px] font-mono text-[#34D399] uppercase tracking-wider font-semibold">
                           GLOBAL HQ
                         </span>
                       )}
