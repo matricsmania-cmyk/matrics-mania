@@ -557,27 +557,27 @@ export const ContactTemplate: React.FC<ContactTemplateProps> = ({
     if (!name.trim()) {
       const msg = 'Please provide your full name.';
       setFormError(msg);
-      if (onShowToast) onShowToast('Your Name Required', msg, 'error');
+      if (onShowToast) onShowToast('Full Name Required', msg, 'error');
       return;
     }
     if (!isValidEmail(workEmail)) {
       setEmailTouched(true);
-      const msg = 'Please enter a valid corporate email address.';
+      const msg = 'Please enter a valid business email address.';
       setFormError(msg);
-      if (onShowToast) onShowToast('Valid Work Email Required', msg, 'error');
+      if (onShowToast) onShowToast('Business Email Required', msg, 'error');
       return;
     }
     if (!isValidPhone(phone)) {
       setPhoneTouched(true);
-      const msg = 'Please enter a valid phone number.';
+      const msg = 'Please enter a valid contact number.';
       setFormError(msg);
-      if (onShowToast) onShowToast('Phone Number Required', msg, 'error');
+      if (onShowToast) onShowToast('Contact Number Required', msg, 'error');
       return;
     }
     if (selectedServices.length === 0) {
       const msg = 'Please choose at least one service.';
       setFormError(msg);
-      if (onShowToast) onShowToast('Select Services', msg, 'error');
+      if (onShowToast) onShowToast('Services Interested In Required', msg, 'error');
       return;
     }
     if (!ndaAccepted) {
@@ -795,10 +795,10 @@ export const ContactTemplate: React.FC<ContactTemplateProps> = ({
                         </div>
                       </div>
 
-                      {/* 2. Your Name */}
+                      {/* 2. Full Name */}
                       <div className="space-y-1.5">
                         <label htmlFor="form-name" className="block text-xs font-mono font-bold text-white">
-                          2. Your Name <span className="text-[#3B82F6]">*</span>
+                          2. Full Name <span className="text-[#3B82F6]">*</span>
                         </label>
                         <div className="relative">
                           <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#64748B]">
@@ -817,7 +817,7 @@ export const ContactTemplate: React.FC<ContactTemplateProps> = ({
                       </div>
                     </div>
 
-                    {/* 3. Industry (Optional) & 4. Corporate Work Email */}
+                    {/* 3. Industry (Optional) & 4. Business Email */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       {/* 3. Industry (Optional) */}
                       <MinimalCustomSelect
@@ -831,11 +831,11 @@ export const ContactTemplate: React.FC<ContactTemplateProps> = ({
                         categories={CATEGORIZED_INDUSTRIES}
                       />
 
-                      {/* 4. Corporate Work Email */}
+                      {/* 4. Business Email */}
                       <div className="space-y-1.5 relative">
                         <div className="flex items-center justify-between">
                           <label htmlFor="form-email" className="block text-xs font-mono font-bold text-white">
-                            4. Corporate Work Email <span className="text-[#3B82F6]">*</span>
+                            4. Business Email <span className="text-[#3B82F6]">*</span>
                           </label>
                           <AnimatePresence>
                             {showEmailError && (
@@ -877,13 +877,13 @@ export const ContactTemplate: React.FC<ContactTemplateProps> = ({
                       </div>
                     </div>
 
-                    {/* 5. Phone Number & 6. Country / Region */}
+                    {/* 5. Contact Number & 6. Country */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      {/* 5. Phone Number */}
+                      {/* 5. Contact Number */}
                       <div className="space-y-1.5 relative">
                         <div className="flex items-center justify-between">
                           <label htmlFor="form-phone" className="block text-xs font-mono font-bold text-white">
-                            5. Phone Number <span className="text-[#3B82F6]">*</span>
+                            5. Contact Number <span className="text-[#3B82F6]">*</span>
                           </label>
                           <AnimatePresence>
                             {showPhoneError && (
@@ -935,24 +935,24 @@ export const ContactTemplate: React.FC<ContactTemplateProps> = ({
                         </div>
                       </div>
 
-                      {/* 6. Country / Region */}
+                      {/* 6. Country */}
                       <MinimalCustomSelect
                         id="form-country"
-                        label="6. Country / Region"
+                        label="6. Country"
                         required
                         value={country}
                         onChange={(val) => setCountry(val)}
-                        placeholder="Select Country / Region..."
+                        placeholder="Select Country..."
                         icon={<Globe className="w-4 h-4" />}
                         categories={CATEGORIZED_COUNTRIES}
                       />
                     </div>
 
-                    {/* 7. Services */}
+                    {/* 7. Services Interested In */}
                     <div className="space-y-2 pt-2">
                       <div className="flex items-center justify-between">
                         <label className="block text-xs font-mono font-bold text-white">
-                          7. Services <span className="text-[#3B82F6]">*</span>
+                          7. Services Interested In <span className="text-[#3B82F6]">*</span>
                         </label>
                         <span className="text-[11px] font-mono text-[#60A5FA]">
                           {selectedServices.length} Selected
@@ -992,10 +992,10 @@ export const ContactTemplate: React.FC<ContactTemplateProps> = ({
                       </div>
                     </div>
 
-                    {/* 8. Note (Optional) */}
+                    {/* 8. Project Details (Optional) */}
                     <div className="space-y-1.5 pt-2">
                       <label htmlFor="form-note" className="block text-xs font-mono font-bold text-white">
-                        8. Note <span className="text-[#64748B] font-normal">(Optional)</span>
+                        8. Project Details <span className="text-[#64748B] font-normal">(Optional)</span>
                       </label>
                       <textarea
                         id="form-note"
