@@ -288,27 +288,25 @@ export async function POST(req: NextRequest) {
     safeRevalidatePath('/sitemap');
     revalidatedPaths.push('/sitemap.xml');
 
-    // Eager Background Cache Pre-warming
-    // Pre-fetches fresh data from WordPress into memory immediately so visitor loads are 100% instant
-    (async () => {
-      try {
-        if (rawPostType.includes('service')) {
-          await wordPressProvider.asyncGetAllServices();
-        } else if (rawPostType.includes('industr')) {
-          await wordPressProvider.asyncGetAllIndustries();
-        } else if (rawPostType.includes('location')) {
-          await wordPressProvider.asyncGetAllLocations();
-        } else if (rawPostType.includes('case') || rawPostType.includes('stud')) {
-          await wordPressProvider.asyncGetAllCaseStudies();
-        } else if (rawPostType.includes('post') || rawPostType.includes('insight')) {
-          await wordPressProvider.asyncGetAllInsights();
-        } else {
-          await wordPressProvider.refreshAll();
-        }
-      } catch {
-        // ignore background pre-warming network hiccups
+    // Immediate Synchronous Cache Refetching & Pre-warming
+    // Pre-fetches fresh data from WordPress into Node memory immediately before completing webhook response
+    try {
+      if (rawPostType.includes('service')) {
+        await wordPressProvider.asyncGetAllServices();
+      } else if (rawPostType.includes('industr')) {
+        await wordPressProvider.asyncGetAllIndustries();
+      } else if (rawPostType.includes('location')) {
+        await wordPressProvider.asyncGetAllLocations();
+      } else if (rawPostType.includes('case') || rawPostType.includes('stud')) {
+        await wordPressProvider.asyncGetAllCaseStudies();
+      } else if (rawPostType.includes('post') || rawPostType.includes('insight')) {
+        await wordPressProvider.asyncGetAllInsights();
+      } else {
+        await wordPressProvider.refreshAll();
       }
-    })();
+    } catch {
+      // ignore pre-warming network hiccups
+    }
 
     return NextResponse.json({
       success: true,

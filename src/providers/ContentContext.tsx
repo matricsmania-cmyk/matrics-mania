@@ -158,9 +158,17 @@ export const ContentContextProvider: React.FC<{
     window.addEventListener('focus', handleFocus);
     document.addEventListener('visibilitychange', handleVisibilityChange);
 
+    // Auto-refresh every 10 seconds while active tab is visible
+    const interval = setInterval(() => {
+      if (document.visibilityState === 'visible') {
+        refreshContent();
+      }
+    }, 10000);
+
     return () => {
       window.removeEventListener('focus', handleFocus);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
+      clearInterval(interval);
     };
   }, [refreshContent]);
 
