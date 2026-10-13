@@ -301,6 +301,8 @@ export async function POST(req: NextRequest) {
         await wordPressProvider.asyncGetAllCaseStudies();
       } else if (rawPostType.includes('post') || rawPostType.includes('insight')) {
         await wordPressProvider.asyncGetAllInsights();
+      } else if (rawPostType.includes('page')) {
+        await wordPressProvider.asyncGetAllPages();
       } else {
         await wordPressProvider.refreshAll();
       }

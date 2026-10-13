@@ -20,24 +20,33 @@ class MatricsMania_Instant_Revalidate {
     private static $dispatched_posts = [];
 
     public function __construct() {
-        // 1. Instant Real-Time Webhook Triggers (ACF, Gutenberg REST API, standard WP save)
+        // 1. Instant Real-Time Webhook Triggers for ALL content types (Posts, Pages, CPTs, ACF, Gutenberg REST API, Menus, Options)
         add_action('transition_post_status', [$this, 'handle_post_status_transition'], 10, 3);
+        add_action('save_post', [$this, 'handle_save_post'], 20, 3);
         add_action('acf/save_post', [$this, 'handle_acf_save_post'], 20);
         add_action('rest_after_insert_post', [$this, 'handle_rest_after_insert_post'], 20, 2);
         add_action('wp_trash_post', [$this, 'handle_trash_post']);
         add_action('untrash_post', [$this, 'handle_untrash_post']);
         add_action('before_delete_post', [$this, 'handle_delete_post']);
 
-        // 2. Admin Bar Quick-Sync Button
+        // 2. Global Site Options, Navigation Menus, Customizer & Taxonomies
+        add_action('wp_update_nav_menu', [$this, 'handle_menu_update']);
+        add_action('customize_save_after', [$this, 'handle_customizer_save']);
+        add_action('updated_option', [$this, 'handle_option_update'], 10, 3);
+        add_action('edited_term', [$this, 'handle_term_update'], 10, 3);
+        add_action('created_term', [$this, 'handle_term_update'], 10, 3);
+        add_action('delete_term', [$this, 'handle_term_update'], 10, 3);
+
+        // 3. Admin Bar Quick-Sync Button
         add_action('admin_bar_menu', [$this, 'add_admin_bar_sync_button'], 100);
         add_action('admin_post_matricsmania_manual_sync', [$this, 'handle_manual_sync']);
         add_action('admin_notices', [$this, 'render_admin_notices']);
 
-        // 3. Settings Page in WP Admin
+        // 4. Settings Page in WP Admin
         add_action('admin_menu', [$this, 'add_settings_page']);
         add_action('admin_init', [$this, 'register_settings']);
 
-        // 4. InfinityFree Hit & Inode Protections
+        // 5. InfinityFree Hit & Inode Protections
         $this->setup_infinityfree_optimizations();
     }
 
@@ -126,12 +135,13 @@ class MatricsMania_Instant_Revalidate {
             return;
         }
 
-        $allowed_types = ['services', 'industries', 'locations', 'case_studies', 'case-studies', 'post', 'posts', 'page', 'pages'];
-        if (!in_array($post->post_type, $allowed_types, true)) {
+        // Exclude internal system post types
+        $ignored_types = ['revision', 'nav_menu_item', 'custom_css', 'customize_changeset', 'oembed_cache', 'user_request'];
+        if (in_array($post->post_type, $ignored_types, true)) {
             return;
         }
 
-        // Only trigger on live changes or status transitions
+        // Trigger on live changes or status transitions
         if ($new_status === 'publish' || $old_status === 'publish') {
             $action = ($new_status === 'publish' && $old_status !== 'publish') ? 'publish' : 'update';
             if ($new_status !== 'publish' && $old_status === 'publish') {
@@ -148,15 +158,74 @@ class MatricsMania_Instant_Revalidate {
     }
 
     /**
-     * ACF save_post hook (Fires after all custom ACF fields are written to DB)
+     * Standard save_post hook (catches quick edits, bulk edits, and non-status transitions)
+     */
+    public function handle_save_post($post_id, $post, $update) {
+        if (!is_object($post) || wp_is_post_revision($post) || wp_is_post_autosave($post)) {
+            return;
+        }
+
+        $ignored_types = ['revision', 'nav_menu_item', 'custom_css', 'customize_changeset', 'oembed_cache', 'user_request'];
+        if (in_array($post->post_type, $ignored_types, true)) {
+            return;
+        }
+
+        if ($post->post_status === 'publish') {
+            $this->dispatch_revalidation('update', $post->post_type, $post->post_name, $post->ID);
+        }
+    }
+
+    /**
+     * ACF save_post hook (Fires after all custom ACF fields or ACF Options Pages are written to DB)
      */
     public function handle_acf_save_post($post_id) {
+        if ($post_id === 'options' || $post_id === 'option') {
+            $this->dispatch_revalidation('update', 'acf_options', 'global_options');
+            return;
+        }
+
         if (is_numeric($post_id)) {
             $post = get_post($post_id);
             if ($post && $post->post_status === 'publish') {
                 $this->dispatch_revalidation('update', $post->post_type, $post->post_name, $post->ID);
             }
         }
+    }
+
+    /**
+     * Navigation menu update hook
+     */
+    public function handle_menu_update($menu_id = 0) {
+        $this->dispatch_revalidation('update', 'nav_menu', 'navigation', intval($menu_id));
+    }
+
+    /**
+     * Customizer save hook
+     */
+    public function handle_customizer_save() {
+        $this->dispatch_revalidation('update', 'customizer', 'site_settings');
+    }
+
+    /**
+     * Option update hook (catches site title, tagline, ACF options, widgets, etc.)
+     */
+    public function handle_option_update($option_name, $old_value, $value) {
+        // Filter out temporary transients or system options
+        if (strpos($option_name, '_transient') === 0 || strpos($option_name, 'nonce') !== false) {
+            return;
+        }
+
+        $relevant_options = ['blogname', 'blogdescription', 'siteurl', 'home', 'sidebars_widgets', 'matricsmania_options', 'wp_user_roles'];
+        if (in_array($option_name, $relevant_options, true) || strpos($option_name, 'options_') === 0 || strpos($option_name, 'acf') !== false) {
+            $this->dispatch_revalidation('update', 'site_option', sanitize_key($option_name));
+        }
+    }
+
+    /**
+     * Taxonomy term update hook (categories, tags, custom taxonomies)
+     */
+    public function handle_term_update($term_id, $tt_id, $taxonomy) {
+        $this->dispatch_revalidation('update', 'term', sanitize_key($taxonomy), intval($term_id));
     }
 
     /**
