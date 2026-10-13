@@ -414,24 +414,36 @@ const TIMELINE_OPTIONS = [
 ];
 
 export const SERVICES_OPTIONS = [
-  'Technical SEO & Organic Search',
-  'Google / Bing Paid Search',
-  'Meta & Instagram Ads',
-  'LinkedIn Ads & B2B ABM',
-  'Programmatic Display & CTV',
-  'YouTube & Video Acquisition',
-  'Content Authority & AI Search (LLM)',
-  'Partner / Affiliate Networks',
-  'Outbound Sales Pipeline',
-  'Technical SEO & Crawl Engineering',
-  'Performance Marketing & Paid Acquisition',
-  'Conversion Rate Engineering & Speed',
-  'AI Search & LLM Visibility Optimization',
-  'CAC Escalation & Ad Fatigue',
-  'Organic Stagnation & AI Overview Loss',
-  'Conversion Funnel',
+  'SEO',
+  'Google Ads',
+  'Social Media Marketing',
+  'Paid Social Ads',
+  'Performance Marketing',
+  'AI Search Optimization',
+  'Content Marketing',
+  'Blogging & Copywriting',
+  'Video Production',
+  'Influencer Marketing',
+  'Affiliate Marketing',
+  'Public Relations (PR)',
+  'Lead Generation',
+  'Outbound Sales',
+  'Email Marketing',
+  'Marketing Automation',
+  'AI Chatbots & Calling Agents',
+  'Customer Support Automation',
+  'Appointment Booking & Follow-Ups',
+  'Conversion Rate Optimization (CRO)',
+  'Website Development',
+  'Domain & Hosting',
+  'Analytics & Tracking',
+  'Local SEO & Business Listings',
+  'Social Media Content & Management',
+  'Live Streaming',
+  'Content Distribution',
+  'Customer Retention',
   'Custom Engineering',
-  'Other',
+  'Marketing Strategy & Consulting',
 ];
 
 import { useRouter } from 'next/navigation';
@@ -457,8 +469,8 @@ export const ContactTemplate: React.FC<ContactTemplateProps> = ({
   const [phone, setPhone] = useState('');
   const [country, setCountry] = useState('India');
   const [selectedServices, setSelectedServices] = useState<string[]>([
-    'Technical SEO & Organic Search',
-    'Performance Marketing & Paid Acquisition',
+    'SEO',
+    'Performance Marketing',
   ]);
   const [note, setNote] = useState('');
   const [ndaAccepted, setNdaAccepted] = useState(true);
@@ -728,7 +740,7 @@ export const ContactTemplate: React.FC<ContactTemplateProps> = ({
                           setPhone('');
                           setCountry('India');
                           setNote('');
-                          setSelectedServices(['Technical SEO & Organic Search', 'Performance Marketing & Paid Acquisition']);
+                          setSelectedServices(['SEO', 'Performance Marketing']);
                           setEmailTouched(false);
                           setPhoneTouched(false);
                         }}
@@ -1081,86 +1093,56 @@ export const ContactTemplate: React.FC<ContactTemplateProps> = ({
 
             </div>
 
-            {/* Right Col: Telemetry Rail & Location Info (4 Cols) */}
-            <div className="lg:col-span-4 space-y-6 lg:sticky lg:top-24">
-              {/* Headquarters Node Card */}
-              <div className="p-6 rounded-3xl bg-[#0D1424] border border-[#1E293B] space-y-5">
-                <div className="flex items-center justify-between">
+            {/* Right Col: Minimal Office Locations & Contact Info (4 Cols) */}
+            <div className="lg:col-span-4 space-y-5 lg:sticky lg:top-24">
+              
+              {/* CARD 1: OFFICE LOCATIONS */}
+              <div className="p-5 rounded-2xl bg-[#0D1424] border border-[#1E293B] space-y-4">
+                <div className="flex items-center gap-2 pb-2.5 border-b border-[#1E293B]">
+                  <MapPin className="w-4 h-4 text-[#3B82F6]" />
+                  <h4 className="text-xs font-mono font-bold text-white uppercase tracking-wider">Office Locations</h4>
+                </div>
+
+                <div className="space-y-3 text-xs">
                   <div>
-                    <span className="text-[10px] font-mono uppercase text-[#60A5FA] tracking-wider">
-                      Primary Engineering Node
-                    </span>
-                    <h4 className="text-sm font-bold text-white mt-0.5">Bangalore Headquarters Lab</h4>
+                    <h5 className="font-semibold text-white mb-0.5">Varanasi Office</h5>
+                    <p className="text-[#94A3B8] leading-relaxed">
+                      4, New St John's Colony, Kanchan Vihar Colony, Bhullanpur, Varanasi, Manrauli, Uttar Pradesh 221108
+                    </p>
                   </div>
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                    ONLINE
-                  </span>
+
+                  <div className="pt-2.5 border-t border-[#1E293B]/60">
+                    <h5 className="font-semibold text-white mb-0.5">Bangalore Office</h5>
+                    <p className="text-[#94A3B8] leading-relaxed">
+                      Tech Innovation Center, Bangalore, Karnataka
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* CARD 2: CONTACT INFO */}
+              <div className="p-5 rounded-2xl bg-[#0D1424] border border-[#1E293B] space-y-4">
+                <div className="flex items-center gap-2 pb-2.5 border-b border-[#1E293B]">
+                  <Phone className="w-4 h-4 text-[#3B82F6]" />
+                  <h4 className="text-xs font-mono font-bold text-white uppercase tracking-wider">Contact Info</h4>
                 </div>
 
                 <div className="space-y-3 text-xs text-[#94A3B8]">
-                  <div className="flex items-start gap-2.5">
-                    <MapPin className="w-4 h-4 text-[#3B82F6] shrink-0 mt-0.5" />
-                    <div>
-                      <div className="text-white font-medium">{contact.headquarters.address.line1}</div>
-                      <div>
-                        {contact.headquarters.address.city}, {contact.headquarters.address.state}{' '}
-                        {contact.headquarters.address.postalCode}
-                      </div>
+                  <div>
+                    <div className="text-white font-medium mb-1">Phone Numbers</div>
+                    <div className="flex flex-col gap-1 font-mono text-xs text-[#CBD5E1]">
+                      <a href="tel:+918318356338" className="hover:text-[#60A5FA] transition-colors">+91 83183 56338</a>
+                      <a href="tel:+919196068917" className="hover:text-[#60A5FA] transition-colors">+91 91960 68917</a>
+                      <a href="tel:+917905991037" className="hover:text-[#60A5FA] transition-colors">+91 79059 91037</a>
                     </div>
                   </div>
 
-                  <div className="border-t border-[#1E293B] pt-3 space-y-2">
-                    <div className="flex items-center gap-2.5">
-                      <Phone className="w-4 h-4 text-[#3B82F6] shrink-0" />
-                      <span className="font-mono text-[#60A5FA] font-medium">Direct Phone Lines:</span>
-                    </div>
-                    <div className="flex items-center flex-wrap gap-x-2.5 gap-y-1.5 font-mono text-xs pl-6">
-                      <a
-                        href="tel:+918318356338"
-                        className="text-white hover:text-[#60A5FA] transition-colors font-medium inline-flex items-center gap-1.5"
-                      >
-                        +91 83183 56338
-                      </a>
-                      <span className="text-[#334155]">•</span>
-                      <a
-                        href="tel:+919196068917"
-                        className="text-white hover:text-[#60A5FA] transition-colors font-medium inline-flex items-center gap-1.5"
-                      >
-                        +91 91960 68917
-                      </a>
-                      <span className="text-[#334155]">•</span>
-                      <a
-                        href="tel:+917905991037"
-                        className="text-white hover:text-[#60A5FA] transition-colors font-medium inline-flex items-center gap-1.5"
-                      >
-                        +91 79059 91037
-                      </a>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2.5 border-t border-[#1E293B] pt-3">
-                    <Mail className="w-4 h-4 text-[#3B82F6] shrink-0" />
-                    <a
-                      href={`mailto:${contact?.headquarters?.email || 'info@matricsmania.com'}`}
-                      className="text-white font-mono hover:text-[#60A5FA] transition-colors"
-                    >
-                      {contact?.headquarters?.email || 'info@matricsmania.com'}
+                  <div className="pt-2.5 border-t border-[#1E293B]/60">
+                    <div className="text-white font-medium mb-1">Email</div>
+                    <a href="mailto:info@matricsmania.com" className="font-mono text-[#60A5FA] hover:text-white transition-colors">
+                      info@matricsmania.com
                     </a>
                   </div>
-                </div>
-
-                <div className="pt-2 border-t border-[#1E293B]">
-                  <a
-                    href="/locations/bangalore/"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      onNavigate('/locations/bangalore/');
-                    }}
-                    className="text-xs font-mono text-[#60A5FA] hover:text-white flex items-center justify-between group no-underline"
-                  >
-                    <span>View Bangalore Lab Infrastructure</span>
-                    <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-                  </a>
                 </div>
               </div>
 

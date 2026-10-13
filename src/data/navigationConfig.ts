@@ -302,11 +302,17 @@ export const NAVIGATION_CONFIG: NavigationConfig = {
     href: '/locations/',
     items: [
       {
+        id: 'varanasi',
+        label: 'Varanasi Office',
+        href: '/contact/',
+        description: "4, New St John's Colony, Bhullanpur, Varanasi",
+        badge: 'NEW',
+      },
+      {
         id: 'bangalore',
-        label: 'Bangalore Headquarters',
+        label: 'Bangalore Office',
         href: '/locations/bangalore/',
-        description: 'Indiranagar 100ft Road — Core Engineering & AI Labs',
-        badge: 'HQ',
+        description: 'Tech Innovation Center, Bangalore, Karnataka',
       },
       {
         id: 'london',

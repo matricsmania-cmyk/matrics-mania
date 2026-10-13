@@ -12,7 +12,7 @@ export interface OfficeNode {
   city: string;
   region: string;
   country: string;
-  role: 'Global Headquarters & Core Lab' | 'Regional Growth Hub' | 'Strategic Data Node';
+  role: 'Global Headquarters & Core Lab' | 'Regional Growth Hub' | 'Strategic Data Node' | string;
   address: {
     line1: string;
     line2?: string;
