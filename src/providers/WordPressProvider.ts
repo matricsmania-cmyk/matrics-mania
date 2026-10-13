@@ -650,12 +650,9 @@ export class WordPressProvider implements ContentProvider {
           signal: AbortSignal.timeout(10000), // 10-second timeout to prevent hung PHP workers
         };
 
-        // On server-side Next.js, leverage Next.js Data Cache (ISR) with 24-hour safety net
+        // On server-side Next.js, ensure origin fetches retrieve live WordPress data without stale Data Cache interference
         if (typeof window === 'undefined') {
-          (fetchOptions as any).next = {
-            revalidate: 86400, // 86400-second (24 hour) safety net backed by on-demand webhooks
-            tags,
-          };
+          (fetchOptions as any).cache = 'no-store';
         }
 
         const res = await fetch(currentUrl, fetchOptions);

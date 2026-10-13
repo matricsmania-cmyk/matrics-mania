@@ -96,7 +96,7 @@ export const ContentContextProvider: React.FC<{
     if (typeof window === 'undefined') return;
     setIsSyncing(true);
     try {
-      const res = await fetch('/api/content');
+      const res = await fetch(`/api/content?_t=${Date.now()}`, { cache: 'no-store' });
       if (res.ok) {
         const json = await res.json();
         if (json.data) {
