@@ -73,7 +73,7 @@ export function resolveEntityRef(
           id: ins.id,
           slug: ins.slug,
           title: ins.title,
-          url: `/insights/${ins.slug}/`,
+          url: `/${ins.slug}/`,
           excerpt: ins.standfirst || ins.excerpt,
           category: ins.category || 'Technical Research',
         };

@@ -87,9 +87,9 @@ export const ROUTES: RouteDefinition[] = [
   },
   {
     id: 'insight-detail',
-    pattern: /^\/(?:insights|blog)\/([a-zA-Z0-9_-]+)\/?$/,
+    pattern: /^\/([a-zA-Z0-9_-]+)\/?$/,
     template: 'insight',
-    getCanonical: (p) => `${BASE_URL}/insights/${p.slug}/`,
+    getCanonical: (p) => `${BASE_URL}/${p.slug}/`,
   },
   {
     id: 'author-detail',

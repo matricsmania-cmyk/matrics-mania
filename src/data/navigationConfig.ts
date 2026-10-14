@@ -257,12 +257,12 @@ export const NAVIGATION_CONFIG: NavigationConfig = {
 
   // 3. INSIGHTS NAVIGATION (Canonical Editorial Section)
   insights: {
-    title: 'Insights',
-    href: '/insights/',
+    title: 'Blog',
+    href: '/blog/',
     featured: {
       title: 'The 2025 Generative Engine Optimization Manifesto',
       description: 'A comprehensive technical breakdown of semantic search indexing, LLM citations, and AI crawler architectures.',
-      href: '/insights/how-ai-search-is-changing-digital-discovery/',
+      href: '/how-ai-search-is-changing-digital-discovery/',
       readTime: '12 min read',
       category: 'Research Whitepaper',
     },
@@ -270,28 +270,28 @@ export const NAVIGATION_CONFIG: NavigationConfig = {
       {
         id: 'all-insights',
         label: 'All Research & Intel',
-        href: '/insights/',
+        href: '/blog/',
       },
       {
         id: 'geo-aeo-research',
         label: 'AEO & Generative Search',
-        href: '/insights/how-ai-search-is-changing-digital-discovery/',
+        href: '/how-ai-search-is-changing-digital-discovery/',
         badge: 'Trending',
       },
       {
         id: 'technical-seo-deepdive',
         label: 'Technical Search Architecture',
-        href: '/insights/why-programmatic-seo-is-the-future-of-scaling-traffic/',
+        href: '/why-programmatic-seo-is-the-future-of-scaling-traffic/',
       },
       {
         id: 'performance-media-intel',
         label: 'Performance Attribution & CAPI',
-        href: '/insights/first-party-data-revolution-marketing-after-cookies/',
+        href: '/first-party-data-revolution-marketing-after-cookies/',
       },
       {
         id: 'cro-revenue-models',
         label: 'Conversion Engineering & CRO',
-        href: '/insights/the-cro-framework-that-doubled-our-enterprise-conversion-rates/',
+        href: '/the-cro-framework-that-doubled-our-enterprise-conversion-rates/',
       },
     ],
   },
@@ -416,11 +416,11 @@ export const NAVIGATION_CONFIG: NavigationConfig = {
       { id: 'f-all-industries', label: 'View All Industry Playbooks →', href: '/#industries-served-section' },
     ],
     insights: [
-      { id: 'f-geo-whitepaper', label: 'The 2025 GEO Manifesto', href: '/insights/how-ai-search-is-changing-digital-discovery/' },
-      { id: 'f-programmatic-seo', label: 'Programmatic SEO at Scale', href: '/insights/why-programmatic-seo-is-the-future-of-scaling-traffic/' },
-      { id: 'f-first-party-data', label: 'First-Party CAPI Architecture', href: '/insights/first-party-data-revolution-marketing-after-cookies/' },
-      { id: 'f-cro-playbook', label: 'Enterprise CRO Experimentation', href: '/insights/the-cro-framework-that-doubled-our-enterprise-conversion-rates/' },
-      { id: 'f-all-insights', label: 'All Research & Whitepapers →', href: '/insights/' },
+      { id: 'f-geo-whitepaper', label: 'The 2025 GEO Manifesto', href: '/how-ai-search-is-changing-digital-discovery/' },
+      { id: 'f-programmatic-seo', label: 'Programmatic SEO at Scale', href: '/why-programmatic-seo-is-the-future-of-scaling-traffic/' },
+      { id: 'f-first-party-data', label: 'First-Party CAPI Architecture', href: '/first-party-data-revolution-marketing-after-cookies/' },
+      { id: 'f-cro-playbook', label: 'Enterprise CRO Experimentation', href: '/the-cro-framework-that-doubled-our-enterprise-conversion-rates/' },
+      { id: 'f-all-insights', label: 'All Research & Whitepapers →', href: '/blog/' },
     ],
     hubs: [
       { id: 'f-all-locations', label: 'Global Operations Network →', href: '/contact/' },

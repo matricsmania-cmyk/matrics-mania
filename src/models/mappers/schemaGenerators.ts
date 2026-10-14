@@ -81,7 +81,7 @@ export function createLocalBusinessSchema(location: Location): SchemaLocalBusine
  * Creates Schema.org Article / TechArticle Graph for an Insight entity
  */
 export function createArticleSchema(insight: Insight): SchemaArticle {
-  return generateArticleSchema(insight, `${PUBLIC_DOMAIN}/insights/${insight.slug}/`);
+  return generateArticleSchema(insight, `${PUBLIC_DOMAIN}/${insight.slug}/`);
 }
 
 /**

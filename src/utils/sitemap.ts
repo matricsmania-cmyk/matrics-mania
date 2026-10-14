@@ -220,7 +220,7 @@ export async function getSitemapEntries(
       if (insight.seo?.robotsIndex === false) return;
 
       addEntry({
-        loc: `${host}/insights/${insight.slug}/`,
+        loc: `${host}/${insight.slug}/`,
         lastmod: insight.updatedAt || insight.publishedAt || defaultUpdatedDate,
         changefreq: 'monthly',
         priority: 0.8,

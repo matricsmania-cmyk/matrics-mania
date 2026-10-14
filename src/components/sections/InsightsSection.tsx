@@ -65,7 +65,7 @@ export const InsightsSection: React.FC<InsightsSectionProps> = ({
                   id={`insight-card-${post.slug}`}
                   onClick={() => {
                     if (onNavigateToBlogSlug) onNavigateToBlogSlug(post.slug);
-                    else handleNav(`/insights/${post.slug}/`);
+                    else handleNav(`/${post.slug}/`);
                   }}
                   className="p-6 rounded-2xl bg-[#0D1424] border border-[#1E293B] hover:border-[#2563EB]/50 transition-all cursor-pointer flex flex-col justify-between h-full group hover:shadow-xl hover:shadow-blue-500/5"
                 >

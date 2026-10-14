@@ -158,7 +158,7 @@ export const InsightIndexTemplate: React.FC<InsightIndexTemplateProps> = ({
     'Econometrics',
   ];
 
-  const canonicalUrl = 'https://matricsmania.com/insights/';
+  const canonicalUrl = 'https://matricsmania.com/blog/';
 
   return (
     <div className="bg-[#070B14] text-white selection:bg-[#2563EB]/30 selection:text-white font-sans antialiased min-h-screen">
@@ -176,7 +176,7 @@ export const InsightIndexTemplate: React.FC<InsightIndexTemplateProps> = ({
           {selectedCategory === 'All' && selectedContentType === 'All' && !searchQuery && currentPage === 1 && featuredPost && (
             <ScrollReveal className="mb-16">
               <div
-                onClick={() => onNavigate(`/insights/${featuredPost.slug}/`)}
+                onClick={() => onNavigate(`/${featuredPost.slug}/`)}
                 className="rounded-3xl bg-[#0D1424] border border-[#1E293B] hover:border-[#2563EB]/60 transition-all p-6 sm:p-8 lg:p-10 cursor-pointer group grid grid-cols-1 lg:grid-cols-12 gap-8 items-center shadow-2xl relative overflow-hidden"
               >
                 <div className="absolute top-0 right-0 w-80 h-80 bg-[#2563EB]/10 rounded-full blur-3xl pointer-events-none" />
@@ -285,7 +285,7 @@ export const InsightIndexTemplate: React.FC<InsightIndexTemplateProps> = ({
                   return (
                     <ScrollReveal key={post.id} delay={idx * 0.05}>
                       <div
-                        onClick={() => onNavigate(`/insights/${post.slug}/`)}
+                        onClick={() => onNavigate(`/${post.slug}/`)}
                         className="p-6 rounded-2xl bg-[#0D1424] border border-[#1E293B] hover:border-[#2563EB]/50 transition-all cursor-pointer flex flex-col justify-between h-full group hover:shadow-xl hover:shadow-blue-500/5"
                       >
                         <div className="space-y-4">

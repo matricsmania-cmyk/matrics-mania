@@ -106,7 +106,7 @@ export const InsightTemplate: React.FC<InsightTemplateProps> = ({
   if (!post) {
     return (
       <NotFoundState
-        attemptedPath={slug ? `/insights/${slug}/` : '/insights/'}
+        attemptedPath={slug ? `/${slug}/` : '/insights/'}
         onNavigate={onNavigate}
         onOpenBooking={onOpenBooking}
       />
@@ -114,7 +114,7 @@ export const InsightTemplate: React.FC<InsightTemplateProps> = ({
   }
 
   const handleShare = () => {
-    const url = `https://matricsmania.com/insights/${post.slug}/`;
+    const url = `https://matricsmania.com/${post.slug}/`;
     if (navigator.clipboard) {
       navigator.clipboard.writeText(url);
       setCopiedUrl(true);
@@ -146,7 +146,7 @@ export const InsightTemplate: React.FC<InsightTemplateProps> = ({
     }
   };
 
-  const canonicalUrl = `https://matricsmania.com/insights/${post.slug}/`;
+  const canonicalUrl = `https://matricsmania.com/${post.slug}/`;
   const readingTime = post.readingTimeMinutes ? `${post.readingTimeMinutes} min read` : '8 min read';
   const wordCountFormatted = post.wordCount ? `${post.wordCount.toLocaleString()} words` : '2,200 words';
   const imgUrl = typeof post.featuredImage === 'string' ? post.featuredImage : post.featuredImage?.url;
@@ -179,7 +179,7 @@ export const InsightTemplate: React.FC<InsightTemplateProps> = ({
         id: p.id,
         slug: p.slug,
         title: p.title,
-        url: `/insights/${p.slug}/`,
+        url: `/${p.slug}/`,
         excerpt: p.excerpt || p.standfirst,
         category: p.category,
       }));
@@ -698,10 +698,10 @@ export const InsightTemplate: React.FC<InsightTemplateProps> = ({
               {relatedInsights.map((other) => (
                 <a
                   key={other.id}
-                  href={`/insights/${other.slug}/`}
+                  href={`/${other.slug}/`}
                   onClick={(e) => {
                     e.preventDefault();
-                    onNavigate(`/insights/${other.slug}/`);
+                    onNavigate(`/${other.slug}/`);
                   }}
                   className="p-6 rounded-2xl bg-[#0D1424] border border-[#1E293B] hover:border-[#2563EB]/50 transition-all cursor-pointer flex flex-col justify-between h-full group no-underline block"
                 >

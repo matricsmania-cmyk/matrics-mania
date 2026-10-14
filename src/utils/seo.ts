@@ -631,6 +631,12 @@ export function getStaticRouteSeo(routeId: string, pathname: string = '/'): SEOR
         description: 'MatricsMania regional engineering hubs delivering enterprise SEO and revenue attribution in Bangalore, Mumbai, and Delhi NCR.',
         routePath: '/locations/',
       });
+    case 'blog-index':
+      return resolveSeoMetadata({
+        title: 'Growth Engineering Research & Blog | MatricsMania',
+        description: 'Proprietary research papers on AI search engine optimization, full-funnel attribution mathematics, log-file crawl telemetry, and conversion testing.',
+        routePath: '/blog/',
+      });
     case 'insights-index':
       return resolveSeoMetadata({
         title: 'Growth Engineering Research & Insights | MatricsMania',

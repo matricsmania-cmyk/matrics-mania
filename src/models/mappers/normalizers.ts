@@ -571,7 +571,7 @@ export function normalizeWpInsight(raw: RawWpInsightPost): Insight {
     publishedAt: raw.date,
     updatedAt: raw.modified,
     status: raw.status === 'publish' ? 'published' : (raw.status as any),
-    seo: normalizeWpSeo(raw, `https://www.matricsmania.com/insights/${raw.slug}/`),
+    seo: normalizeWpSeo(raw, `https://www.matricsmania.com/${raw.slug}/`),
     relationships,
 
     standfirst: acf.standfirst,

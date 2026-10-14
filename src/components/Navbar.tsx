@@ -526,6 +526,19 @@ export const Navbar: React.FC<NavbarProps> = ({
               <span>Work</span>
             </a>
 
+            {/* 4. Blog */}
+            <a
+              href="/blog/"
+              onClick={(e) => handleLinkClick(e, '/blog/')}
+              className={`flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold uppercase tracking-wider rounded-lg transition-all duration-200 ${
+                isLinkActive('/blog/')
+                  ? 'text-[#60A5FA] bg-[#131D33] ring-1 ring-[#60A5FA]/20'
+                  : 'text-[#94A3B8] hover:text-white hover:bg-[#0D1424]'
+              }`}
+            >
+              <span>Blog</span>
+            </a>
+
             {/* 4. Company Dropdown */}
             <div
               className="relative"
@@ -754,6 +767,15 @@ export const Navbar: React.FC<NavbarProps> = ({
                   className="p-4 border border-[#1E293B] rounded-xl bg-[#0D1424] flex items-center justify-between text-sm font-bold text-white uppercase tracking-wider hover:bg-[#131D33] transition-colors"
                 >
                   <span>Work</span>
+                </a>
+
+                {/* 4. Blog */}
+                <a
+                  href="/blog/"
+                  onClick={(e) => handleLinkClick(e, '/blog/')}
+                  className="p-4 border border-[#1E293B] rounded-xl bg-[#0D1424] flex items-center justify-between text-sm font-bold text-white uppercase tracking-wider hover:bg-[#131D33] transition-colors"
+                >
+                  <span>Blog</span>
                 </a>
 
                 {/* 4. Company Hubs */}

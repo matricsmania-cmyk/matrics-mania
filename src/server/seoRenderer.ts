@@ -177,8 +177,8 @@ export function resolveServerRoute(
         seo = resolveSeoMetadata({
           title: insight.seo?.seoTitle || `${insight.title} | Research & Insights | MatricsMania`,
           description: insight.seo?.metaDescription || insight.excerpt || insight.standfirst,
-          canonicalUrl: insight.seo?.canonicalUrl || `${PUBLIC_DOMAIN}/insights/${insight.slug}/`,
-          routePath: `/insights/${insight.slug}/`,
+          canonicalUrl: insight.seo?.canonicalUrl || `${PUBLIC_DOMAIN}/${insight.slug}/`,
+          routePath: `/${insight.slug}/`,
           ogImage: insight.featuredImage || insight.seo?.ogImage,
           ogType: 'article',
           publishedAt: insight.publishedAt,
@@ -190,8 +190,8 @@ export function resolveServerRoute(
           entityData: insight,
           breadcrumbs: [
             { name: 'Home', url: `${PUBLIC_DOMAIN}/`, position: 1 },
-            { name: 'Insights', url: `${PUBLIC_DOMAIN}/insights/`, position: 2 },
-            { name: insight.title, url: `${PUBLIC_DOMAIN}/insights/${insight.slug}/`, position: 3, isCurrentPage: true },
+            { name: 'Blog', url: `${PUBLIC_DOMAIN}/insights/`, position: 2 },
+            { name: insight.title, url: `${PUBLIC_DOMAIN}/${insight.slug}/`, position: 3, isCurrentPage: true },
           ],
         });
         schema = generateCompleteSchemaGraph({

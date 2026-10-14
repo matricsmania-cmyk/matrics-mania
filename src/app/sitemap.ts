@@ -5,6 +5,7 @@ import { PUBLIC_DOMAIN } from '../utils/seo';
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes = [
     '',
+    '/blog/',
     '/about/',
     '/work/',
     '/case-studies/',
@@ -66,6 +67,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'monthly',
       priority: 0.8,
     });
+  }
+
+  // Add WordPress Posts (Blog / Insights) at root level
+  const insights = await wordPressProvider.asyncGetAllInsights();
+  for (const ins of insights) {
+    if (ins.slug) {
+      routes.push({
+        url: `${PUBLIC_DOMAIN}/${ins.slug}/`,
+        lastModified: ins.updatedAt || now,
+        changeFrequency: 'weekly',
+        priority: 0.85,
+      });
+    }
   }
 
   return routes;

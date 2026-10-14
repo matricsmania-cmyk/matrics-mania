@@ -4,6 +4,7 @@ import { Metadata } from 'next';
 import { ServiceTemplate } from '@/src/templates/ServiceTemplate';
 import { IndustryTemplate } from '@/src/templates/IndustryTemplate';
 import { LocationTemplate } from '@/src/templates/LocationTemplate';
+import { InsightTemplate } from '@/src/templates/InsightTemplate';
 import { wordPressProvider } from '@/src/providers/WordPressProvider';
 import { asyncResolveSeoMetadata } from '@/src/utils/seo';
 import { toNextMetadata } from '@/src/utils/nextMetadata';
@@ -33,16 +34,18 @@ const RESERVED_TOP_LEVEL_SLUGS = new Set([
   'location',
   'case-studies',
   'insights',
+  'blog',
   'sitemap',
   'robots',
   'api',
 ]);
 
 export async function generateStaticParams() {
-  const [services, industries, locations] = await Promise.all([
+  const [services, industries, locations, insights] = await Promise.all([
     wordPressProvider.asyncGetAllServices(),
     wordPressProvider.asyncGetAllIndustries(),
     wordPressProvider.asyncGetAllLocations(),
+    wordPressProvider.asyncGetAllInsights(),
   ]);
 
   const allSlugs = new Set<string>();
@@ -60,6 +63,11 @@ export async function generateStaticParams() {
   for (const l of locations) {
     if (l.slug && !RESERVED_TOP_LEVEL_SLUGS.has(l.slug.toLowerCase())) {
       allSlugs.add(l.slug.toLowerCase());
+    }
+  }
+  for (const ins of insights) {
+    if (ins.slug && !RESERVED_TOP_LEVEL_SLUGS.has(ins.slug.toLowerCase())) {
+      allSlugs.add(ins.slug.toLowerCase());
     }
   }
 
@@ -110,6 +118,17 @@ export async function generateMetadata({ params }: DynamicSlugPageProps): Promis
     return toNextMetadata(seo);
   }
 
+  // 4. WordPress Post (Insight) Resolution at root level
+  const insight = await wordPressProvider.asyncGetInsightBySlug(cleanSlug);
+  if (insight) {
+    const seo = await asyncResolveSeoMetadata({
+      entityData: insight,
+      routePath: `/${cleanSlug}/`,
+      cmsSourceUrl: `/insights/${cleanSlug}/`,
+    });
+    return toNextMetadata(seo);
+  }
+
   return {
     title: 'Page Not Found | MatricsMania',
     robots: { index: false, follow: false },
@@ -140,6 +159,12 @@ export default async function RootDynamicSlugPage({ params }: DynamicSlugPagePro
   const location = await wordPressProvider.asyncGetLocationBySlug(cleanSlug);
   if (location) {
     return <LocationTemplate location={location} />;
+  }
+
+  // 4. WordPress Post (Insight) Check
+  const insight = await wordPressProvider.asyncGetInsightBySlug(cleanSlug);
+  if (insight) {
+    return <InsightTemplate insight={insight} />;
   }
 
   notFound();
