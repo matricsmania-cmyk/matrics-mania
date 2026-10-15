@@ -91,8 +91,9 @@ export class WordPressProvider implements ContentProvider {
   // In-flight request deduplication
   private inFlightRequests: Map<string, Promise<any>> = new Map();
 
-  // Cache TTL: 0 (Always fetch fresh from CMS on every request for 100% real-time sync on every page refresh)
-  private readonly CACHE_TTL_MS = 0;
+  // Cache TTL: 300_000 ms (5-minute ISR safety net; instantly purged on CMS webhook)
+  private readonly CACHE_TTL_MS = 300_000;
+  private readonly NEGATIVE_CACHE_TTL_MS = 60_000;
   private cacheExpiry: { [key: string]: number } = {};
   private negativeCache: Map<string, number> = new Map();
 
@@ -149,7 +150,7 @@ export class WordPressProvider implements ContentProvider {
   }
 
   private setNegativeCache(key: string): void {
-    this.negativeCache.set(key, Date.now() + this.CACHE_TTL_MS);
+    this.negativeCache.set(key, Date.now() + this.NEGATIVE_CACHE_TTL_MS);
   }
 
   // --- MANUAL CACHE INJECTION (For testing & SSR pre-warming) ---
@@ -224,75 +225,89 @@ export class WordPressProvider implements ContentProvider {
   }
 
   /**
-   * Granularly invalidates a specific entity or content type
+   * Granularly invalidates a specific entity or content type, supporting old/previous slugs
    */
-  public invalidateEntity(postType: string, slug?: string): void {
+  public invalidateEntity(postType: string, slug?: string, oldSlug?: string): void {
     const cleanType = (postType || '').toLowerCase();
-    const cleanSlug = slug ? slug.toLowerCase().trim() : undefined;
+    const cleanSlugs = [slug, oldSlug]
+      .filter((s): s is string => Boolean(s && typeof s === 'string' && s.trim() !== ''))
+      .map((s) => s.toLowerCase().trim());
 
     if (cleanType.includes('service')) {
       this.servicesCache = null;
       delete this.cacheExpiry['services'];
-      if (cleanSlug) {
-        this.serviceMap.delete(cleanSlug);
-        delete this.cacheExpiry[`service:${cleanSlug}`];
-        this.negativeCache.delete(cleanSlug);
-        this.negativeCache.delete(`service:${cleanSlug}`);
+      if (cleanSlugs.length > 0) {
+        for (const s of cleanSlugs) {
+          this.serviceMap.delete(s);
+          delete this.cacheExpiry[`service:${s}`];
+          this.negativeCache.delete(s);
+          this.negativeCache.delete(`service:${s}`);
+        }
       } else {
         this.serviceMap.clear();
       }
     } else if (cleanType.includes('industr')) {
       this.industriesCache = null;
       delete this.cacheExpiry['industries'];
-      if (cleanSlug) {
-        this.industryMap.delete(cleanSlug);
-        delete this.cacheExpiry[`industry:${cleanSlug}`];
-        this.negativeCache.delete(cleanSlug);
-        this.negativeCache.delete(`industry:${cleanSlug}`);
+      if (cleanSlugs.length > 0) {
+        for (const s of cleanSlugs) {
+          this.industryMap.delete(s);
+          delete this.cacheExpiry[`industry:${s}`];
+          this.negativeCache.delete(s);
+          this.negativeCache.delete(`industry:${s}`);
+        }
       } else {
         this.industryMap.clear();
       }
     } else if (cleanType.includes('location')) {
       this.locationsCache = null;
       delete this.cacheExpiry['locations'];
-      if (cleanSlug) {
-        this.locationMap.delete(cleanSlug);
-        delete this.cacheExpiry[`location:${cleanSlug}`];
-        this.negativeCache.delete(cleanSlug);
-        this.negativeCache.delete(`location:${cleanSlug}`);
+      if (cleanSlugs.length > 0) {
+        for (const s of cleanSlugs) {
+          this.locationMap.delete(s);
+          delete this.cacheExpiry[`location:${s}`];
+          this.negativeCache.delete(s);
+          this.negativeCache.delete(`location:${s}`);
+        }
       } else {
         this.locationMap.clear();
       }
     } else if (cleanType.includes('case') || cleanType.includes('stud')) {
       this.caseStudiesCache = null;
       delete this.cacheExpiry['case_studies'];
-      if (cleanSlug) {
-        this.caseStudyMap.delete(cleanSlug);
-        delete this.cacheExpiry[`case_study:${cleanSlug}`];
-        this.negativeCache.delete(cleanSlug);
-        this.negativeCache.delete(`case_study:${cleanSlug}`);
+      if (cleanSlugs.length > 0) {
+        for (const s of cleanSlugs) {
+          this.caseStudyMap.delete(s);
+          delete this.cacheExpiry[`case_study:${s}`];
+          this.negativeCache.delete(s);
+          this.negativeCache.delete(`case_study:${s}`);
+        }
       } else {
         this.caseStudyMap.clear();
       }
     } else if (cleanType.includes('post') || cleanType.includes('insight')) {
       this.insightsCache = null;
       delete this.cacheExpiry['insights'];
-      if (cleanSlug) {
-        this.insightMap.delete(cleanSlug);
-        delete this.cacheExpiry[`insight:${cleanSlug}`];
-        this.negativeCache.delete(cleanSlug);
-        this.negativeCache.delete(`insight:${cleanSlug}`);
+      if (cleanSlugs.length > 0) {
+        for (const s of cleanSlugs) {
+          this.insightMap.delete(s);
+          delete this.cacheExpiry[`insight:${s}`];
+          this.negativeCache.delete(s);
+          this.negativeCache.delete(`insight:${s}`);
+        }
       } else {
         this.insightMap.clear();
       }
     } else if (cleanType.includes('page')) {
       this.pagesCache = null;
       delete this.cacheExpiry['pages'];
-      if (cleanSlug) {
-        this.pageMap.delete(cleanSlug);
-        delete this.cacheExpiry[`page:${cleanSlug}`];
-        this.negativeCache.delete(cleanSlug);
-        this.negativeCache.delete(`page:${cleanSlug}`);
+      if (cleanSlugs.length > 0) {
+        for (const s of cleanSlugs) {
+          this.pageMap.delete(s);
+          delete this.cacheExpiry[`page:${s}`];
+          this.negativeCache.delete(s);
+          this.negativeCache.delete(`page:${s}`);
+        }
       } else {
         this.pageMap.clear();
       }
@@ -624,13 +639,33 @@ export class WordPressProvider implements ContentProvider {
       'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
     let currentUrl = targetUrl;
     const baseEndpoint = cleanEndpoint.split('?')[0].replace(/[^a-zA-Z0-9_-]/g, '_');
-    const tags: string[] = ['wordpress', `wp-${baseEndpoint}`];
+    const tags: string[] = ['wordpress', 'wp-all', `wp-${baseEndpoint}`];
+
+    if (baseEndpoint.includes('service')) {
+      tags.push('wp-services', 'wp-homepage', 'wp-navigation');
+    } else if (baseEndpoint.includes('industr')) {
+      tags.push('wp-industries', 'wp-homepage', 'wp-navigation');
+    } else if (baseEndpoint.includes('location')) {
+      tags.push('wp-locations', 'wp-navigation');
+    } else if (baseEndpoint.includes('case')) {
+      tags.push('wp-case-studies', 'wp-case_studies', 'wp-homepage');
+    } else if (baseEndpoint.includes('post') || baseEndpoint.includes('insight')) {
+      tags.push('wp-posts', 'wp-insights', 'wp-blog', 'wp-homepage');
+    } else if (baseEndpoint.includes('page')) {
+      tags.push('wp-pages', 'wp-navigation');
+    }
 
     // Granular entity tag extraction
     const slugMatch = cleanEndpoint.match(/slug=([^&]+)/);
     if (slugMatch && slugMatch[1]) {
       const slugVal = decodeURIComponent(slugMatch[1]).toLowerCase();
       tags.push(`wp-${baseEndpoint}:${slugVal}`);
+      if (baseEndpoint.includes('service')) tags.push(`wp-services:${slugVal}`);
+      if (baseEndpoint.includes('industr')) tags.push(`wp-industries:${slugVal}`);
+      if (baseEndpoint.includes('location')) tags.push(`wp-locations:${slugVal}`);
+      if (baseEndpoint.includes('case')) tags.push(`wp-case-studies:${slugVal}`, `wp-case_studies:${slugVal}`);
+      if (baseEndpoint.includes('post') || baseEndpoint.includes('insight')) tags.push(`wp-posts:${slugVal}`, `wp-insights:${slugVal}`);
+      if (baseEndpoint.includes('page')) tags.push(`wp-pages:${slugVal}`);
     }
 
     for (let attempt = 0; attempt < 2; attempt++) {
@@ -649,10 +684,11 @@ export class WordPressProvider implements ContentProvider {
           signal: AbortSignal.timeout(10000), // 10-second timeout to prevent hung PHP workers
         };
 
-        // On server-side Next.js, ensure origin fetches retrieve live WordPress data without stale Data Cache interference
-        if (typeof window === 'undefined') {
-          (fetchOptions as any).cache = 'no-store';
-        }
+        // Attach Next.js Data Cache tags with 300s ISR safety net
+        (fetchOptions as any).next = {
+          tags,
+          revalidate: 300,
+        };
 
         const res = await fetch(currentUrl, fetchOptions);
         const text = await res.text();

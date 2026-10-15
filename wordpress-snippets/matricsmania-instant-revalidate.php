@@ -22,6 +22,7 @@ class MatricsMania_Instant_Revalidate {
     public function __construct() {
         // 1. Instant Real-Time Webhook Triggers for ALL content types (Posts, Pages, CPTs, ACF, Gutenberg REST API, Menus, Options)
         add_action('transition_post_status', [$this, 'handle_post_status_transition'], 10, 3);
+        add_action('post_updated', [$this, 'handle_post_updated'], 10, 3);
         add_action('save_post', [$this, 'handle_save_post'], 20, 3);
         add_action('acf/save_post', [$this, 'handle_acf_save_post'], 20);
         add_action('rest_after_insert_post', [$this, 'handle_rest_after_insert_post'], 20, 2);
@@ -71,8 +72,8 @@ class MatricsMania_Instant_Revalidate {
     /**
      * Dispatches non-blocking instant webhook to Next.js /api/revalidate
      */
-    public function dispatch_revalidation($action, $post_type, $slug, $post_id = 0, $explicit_path = null) {
-        $dedup_key = $post_type . ':' . $post_id . ':' . $action . ':' . $slug;
+    public function dispatch_revalidation($action, $post_type, $slug, $post_id = 0, $explicit_path = null, $old_slug = null) {
+        $dedup_key = $post_type . ':' . $post_id . ':' . $action . ':' . $slug . ':' . ($old_slug ?: '');
         if (isset(self::$dispatched_posts[$dedup_key])) {
             return true;
         }
@@ -95,6 +96,10 @@ class MatricsMania_Instant_Revalidate {
             'post_id'   => intval($post_id),
             'timestamp' => gmdate('c'),
         ];
+
+        if ($old_slug && $old_slug !== $slug) {
+            $payload['old_slug'] = sanitize_title($old_slug);
+        }
 
         if ($explicit_path) {
             $payload['path'] = $explicit_path;
@@ -154,6 +159,29 @@ class MatricsMania_Instant_Revalidate {
                 $post->post_name,
                 $post->ID
             );
+        }
+    }
+
+    /**
+     * Handle slug updates for published posts
+     */
+    public function handle_post_updated($post_id, $post_after, $post_before) {
+        if (!is_object($post_after) || !is_object($post_before) || wp_is_post_revision($post_id) || wp_is_post_autosave($post_id)) {
+            return;
+        }
+        $ignored_types = ['revision', 'nav_menu_item', 'custom_css', 'customize_changeset', 'oembed_cache', 'user_request'];
+        if (in_array($post_after->post_type, $ignored_types, true)) {
+            return;
+        }
+        if ($post_after->post_status !== 'publish' && $post_before->post_status !== 'publish') {
+            return;
+        }
+
+        $old_slug = $post_before->post_name;
+        $new_slug = $post_after->post_name;
+
+        if (!empty($old_slug) && !empty($new_slug) && $old_slug !== $new_slug) {
+            $this->dispatch_revalidation('update', $post_after->post_type, $new_slug, $post_id, null, $old_slug);
         }
     }
 

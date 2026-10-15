@@ -11,8 +11,7 @@ interface CaseStudyPageProps {
 }
 
 export const dynamicParams = true;
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+export const revalidate = 300;
 
 export async function generateStaticParams() {
   const caseStudies = await wordPressProvider.asyncGetAllCaseStudies();

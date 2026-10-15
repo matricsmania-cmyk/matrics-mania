@@ -27,11 +27,30 @@ import crypto from 'crypto';
  *   "action": "create" | "update" | "delete" | "trash" | "publish" | "untrash" | "save_post",
  *   "post_type": "services" | "industries" | "locations" | "case_studies" | "posts" | "pages",
  *   "slug": "technical-seo",
+ *   "old_slug": "previous-slug", // optional previous slug when changed
  *   "path": "/services/technical-seo" // optional explicit path override
  * }
  */
 
 export const dynamic = 'force-dynamic';
+
+// Deduplication sliding window map for webhook protection (3 seconds)
+const recentWebhooks = new Map<string, number>();
+
+function isDuplicateWebhook(key: string): boolean {
+  const now = Date.now();
+  for (const [k, timestamp] of recentWebhooks.entries()) {
+    if (now - timestamp > 30000) {
+      recentWebhooks.delete(k);
+    }
+  }
+  const lastTime = recentWebhooks.get(key);
+  if (lastTime && now - lastTime < 3000) {
+    return true;
+  }
+  recentWebhooks.set(key, now);
+  return false;
+}
 
 function safeTimingCompare(provided: string, expected: string): boolean {
   if (typeof provided !== 'string' || typeof expected !== 'string') {
@@ -111,16 +130,33 @@ export async function POST(req: NextRequest) {
     const rawSlug = String(
       bodyData.slug || bodyData.post_name || bodyData.post_slug || bodyData.postSlug || ''
     ).toLowerCase().trim();
+    const oldSlug = String(
+      bodyData.old_slug || bodyData.oldSlug || bodyData.previous_slug || bodyData.previousSlug || ''
+    ).toLowerCase().trim();
     const explicitPath = bodyData.path;
+
+    // Deduplication check
+    const dedupKey = `${action}:${rawPostType}:${rawSlug}:${oldSlug}`;
+    if (isDuplicateWebhook(dedupKey)) {
+      return NextResponse.json({
+        success: true,
+        duplicate: true,
+        message: 'Duplicate webhook event suppressed within window',
+        timestamp: new Date().toISOString(),
+        action,
+        post_type: rawPostType || 'all',
+        slug: rawSlug || undefined,
+      });
+    }
 
     // 1. Invalidate WordPressProvider in-memory entity and collection caches
     if (rawPostType) {
-      wordPressProvider.invalidateEntity(rawPostType, rawSlug || undefined);
+      wordPressProvider.invalidateEntity(rawPostType, rawSlug || undefined, oldSlug || undefined);
     }
     wordPressProvider.clearCache();
 
     const revalidatedPaths: string[] = [];
-    const revalidatedTags: string[] = ['wordpress'];
+    const revalidatedTags: string[] = ['wordpress', 'wp-all'];
 
     // 2. Next.js Data Cache Invalidation (revalidateTag)
     const safeRevalidateTag = (tag: string) => {
@@ -149,6 +185,7 @@ export async function POST(req: NextRequest) {
 
     try {
       safeRevalidateTag('wordpress');
+      safeRevalidateTag('wp-all');
 
       if (rawPostType) {
         if (rawPostType.includes('service')) {
@@ -158,6 +195,10 @@ export async function POST(req: NextRequest) {
             safeRevalidateTag(`wp-services:${rawSlug}`);
             revalidatedTags.push(`wp-services:${rawSlug}`);
           }
+          if (oldSlug) {
+            safeRevalidateTag(`wp-services:${oldSlug}`);
+            revalidatedTags.push(`wp-services:${oldSlug}`);
+          }
         } else if (rawPostType.includes('industr')) {
           safeRevalidateTag('wp-industries');
           revalidatedTags.push('wp-industries');
@@ -165,12 +206,20 @@ export async function POST(req: NextRequest) {
             safeRevalidateTag(`wp-industries:${rawSlug}`);
             revalidatedTags.push(`wp-industries:${rawSlug}`);
           }
+          if (oldSlug) {
+            safeRevalidateTag(`wp-industries:${oldSlug}`);
+            revalidatedTags.push(`wp-industries:${oldSlug}`);
+          }
         } else if (rawPostType.includes('location')) {
           safeRevalidateTag('wp-locations');
           revalidatedTags.push('wp-locations');
           if (rawSlug) {
             safeRevalidateTag(`wp-locations:${rawSlug}`);
             revalidatedTags.push(`wp-locations:${rawSlug}`);
+          }
+          if (oldSlug) {
+            safeRevalidateTag(`wp-locations:${oldSlug}`);
+            revalidatedTags.push(`wp-locations:${oldSlug}`);
           }
         } else if (rawPostType.includes('case') || rawPostType.includes('stud')) {
           safeRevalidateTag('wp-case_studies');
@@ -181,14 +230,25 @@ export async function POST(req: NextRequest) {
             safeRevalidateTag(`wp-case-studies:${rawSlug}`);
             revalidatedTags.push(`wp-case-studies:${rawSlug}`);
           }
+          if (oldSlug) {
+            safeRevalidateTag(`wp-case_studies:${oldSlug}`);
+            safeRevalidateTag(`wp-case-studies:${oldSlug}`);
+            revalidatedTags.push(`wp-case-studies:${oldSlug}`);
+          }
         } else if (rawPostType.includes('post') || rawPostType.includes('insight')) {
           safeRevalidateTag('wp-posts');
           safeRevalidateTag('wp-insights');
-          revalidatedTags.push('wp-insights');
+          safeRevalidateTag('wp-blog');
+          revalidatedTags.push('wp-insights', 'wp-blog');
           if (rawSlug) {
             safeRevalidateTag(`wp-posts:${rawSlug}`);
             safeRevalidateTag(`wp-insights:${rawSlug}`);
             revalidatedTags.push(`wp-posts:${rawSlug}`);
+          }
+          if (oldSlug) {
+            safeRevalidateTag(`wp-posts:${oldSlug}`);
+            safeRevalidateTag(`wp-insights:${oldSlug}`);
+            revalidatedTags.push(`wp-posts:${oldSlug}`);
           }
         } else if (rawPostType.includes('page')) {
           safeRevalidateTag('wp-pages');
@@ -196,6 +256,10 @@ export async function POST(req: NextRequest) {
           if (rawSlug) {
             safeRevalidateTag(`wp-pages:${rawSlug}`);
             revalidatedTags.push(`wp-pages:${rawSlug}`);
+          }
+          if (oldSlug) {
+            safeRevalidateTag(`wp-pages:${oldSlug}`);
+            revalidatedTags.push(`wp-pages:${oldSlug}`);
           }
         }
       }
@@ -222,6 +286,12 @@ export async function POST(req: NextRequest) {
           safeRevalidatePath(`/${rawSlug}`, 'page');
           revalidatedPaths.push(`/services/${rawSlug}`, `/${rawSlug}`);
         }
+        if (oldSlug) {
+          safeRevalidatePath(`/services/${oldSlug}`);
+          safeRevalidatePath(`/${oldSlug}`);
+          safeRevalidatePath(`/${oldSlug}`, 'page');
+          revalidatedPaths.push(`/services/${oldSlug}`, `/${oldSlug}`);
+        }
       } else if (rawPostType.includes('industr')) {
         safeRevalidatePath('/industries');
         revalidatedPaths.push('/industries');
@@ -230,6 +300,12 @@ export async function POST(req: NextRequest) {
           safeRevalidatePath(`/${rawSlug}`);
           safeRevalidatePath(`/${rawSlug}`, 'page');
           revalidatedPaths.push(`/industries/${rawSlug}`, `/${rawSlug}`);
+        }
+        if (oldSlug) {
+          safeRevalidatePath(`/industries/${oldSlug}`);
+          safeRevalidatePath(`/${oldSlug}`);
+          safeRevalidatePath(`/${oldSlug}`, 'page');
+          revalidatedPaths.push(`/industries/${oldSlug}`, `/${oldSlug}`);
         }
       } else if (rawPostType.includes('location')) {
         safeRevalidatePath('/locations');
@@ -240,6 +316,12 @@ export async function POST(req: NextRequest) {
           safeRevalidatePath(`/${rawSlug}`, 'page');
           revalidatedPaths.push(`/locations/${rawSlug}`, `/${rawSlug}`);
         }
+        if (oldSlug) {
+          safeRevalidatePath(`/locations/${oldSlug}`);
+          safeRevalidatePath(`/${oldSlug}`);
+          safeRevalidatePath(`/${oldSlug}`, 'page');
+          revalidatedPaths.push(`/locations/${oldSlug}`, `/${oldSlug}`);
+        }
       } else if (rawPostType.includes('case') || rawPostType.includes('stud')) {
         safeRevalidatePath('/case-studies');
         revalidatedPaths.push('/case-studies');
@@ -249,28 +331,48 @@ export async function POST(req: NextRequest) {
           safeRevalidatePath(`/case-studies/${rawSlug}`, 'page');
           revalidatedPaths.push(`/case-studies/${rawSlug}`, `/${rawSlug}`);
         }
+        if (oldSlug) {
+          safeRevalidatePath(`/case-studies/${oldSlug}`);
+          safeRevalidatePath(`/${oldSlug}`);
+          safeRevalidatePath(`/${oldSlug}`, 'page');
+          revalidatedPaths.push(`/case-studies/${oldSlug}`, `/${oldSlug}`);
+        }
       } else if (rawPostType.includes('post') || rawPostType.includes('insight')) {
+        safeRevalidatePath('/blog');
         safeRevalidatePath('/insights');
-        revalidatedPaths.push('/insights');
+        revalidatedPaths.push('/blog', '/insights');
         if (rawSlug) {
-          safeRevalidatePath(`/insights/${rawSlug}`);
           safeRevalidatePath(`/${rawSlug}`);
-          safeRevalidatePath(`/insights/${rawSlug}`, 'page');
-          revalidatedPaths.push(`/insights/${rawSlug}`, `/${rawSlug}`);
+          safeRevalidatePath(`/insights/${rawSlug}`);
+          safeRevalidatePath(`/${rawSlug}`, 'page');
+          revalidatedPaths.push(`/${rawSlug}`, `/insights/${rawSlug}`);
+        }
+        if (oldSlug) {
+          safeRevalidatePath(`/${oldSlug}`);
+          safeRevalidatePath(`/insights/${oldSlug}`);
+          safeRevalidatePath(`/${oldSlug}`, 'page');
+          revalidatedPaths.push(`/${oldSlug}`, `/insights/${oldSlug}`);
         }
       } else if (rawPostType.includes('page')) {
         const pagePath = rawSlug === 'home' || !rawSlug ? '/' : `/${rawSlug}`;
         safeRevalidatePath(pagePath);
         safeRevalidatePath(pagePath, 'page');
         revalidatedPaths.push(pagePath);
+        if (oldSlug) {
+          const oldPagePath = `/${oldSlug}`;
+          safeRevalidatePath(oldPagePath);
+          safeRevalidatePath(oldPagePath, 'page');
+          revalidatedPaths.push(oldPagePath);
+        }
       } else {
         // Fallback for general or unspecified CMS events
         safeRevalidatePath('/services');
         safeRevalidatePath('/industries');
         safeRevalidatePath('/locations');
         safeRevalidatePath('/case-studies');
+        safeRevalidatePath('/blog');
         safeRevalidatePath('/insights');
-        revalidatedPaths.push('/services', '/industries', '/locations', '/case-studies', '/insights');
+        revalidatedPaths.push('/services', '/industries', '/locations', '/case-studies', '/blog', '/insights');
       }
     }
 
@@ -289,7 +391,6 @@ export async function POST(req: NextRequest) {
     revalidatedPaths.push('/sitemap.xml');
 
     // Immediate Synchronous Cache Refetching & Pre-warming
-    // Pre-fetches fresh data from WordPress into Node memory immediately before completing webhook response
     try {
       if (rawPostType.includes('service')) {
         await wordPressProvider.asyncGetAllServices();
@@ -316,6 +417,7 @@ export async function POST(req: NextRequest) {
       action,
       post_type: rawPostType || 'all',
       slug: rawSlug || undefined,
+      old_slug: oldSlug || undefined,
       revalidatedPaths,
       revalidatedTags,
     });

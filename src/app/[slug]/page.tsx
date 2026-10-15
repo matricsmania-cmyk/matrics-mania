@@ -14,8 +14,7 @@ interface DynamicSlugPageProps {
 }
 
 export const dynamicParams = true;
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+export const revalidate = 300;
 
 // Set of static top-level routes and section indexes that must never be handled as root entity slugs
 const RESERVED_TOP_LEVEL_SLUGS = new Set([

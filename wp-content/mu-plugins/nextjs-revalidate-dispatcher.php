@@ -77,10 +77,13 @@ class NextJS_Revalidate_Dispatcher {
         // 1. Post Status Transitions (create, update, publish, unpublish, trash, restore)
         add_action('transition_post_status', array($this, 'on_transition_post_status'), 10, 3);
 
-        // 2. Pre-Deletion Hook (before permanent database delete to capture slug and post_type)
+        // 2. Post Slug Updates (detects when a published post slug changes)
+        add_action('post_updated', array($this, 'on_post_updated'), 10, 3);
+
+        // 3. Pre-Deletion Hook (before permanent database delete to capture slug and post_type)
         add_action('before_delete_post', array($this, 'on_before_delete_post'), 10, 1);
 
-        // 3. ACF Save Lifecycle (priority 20 runs after ACF meta fields have finished saving)
+        // 4. ACF Save Lifecycle (priority 20 runs after ACF meta fields have finished saving)
         add_action('acf/save_post', array($this, 'on_acf_save_post'), 20, 1);
 
         // 4. Shutdown hook: Drains the queue and dispatches webhooks after all database transactions
@@ -207,6 +210,36 @@ class NextJS_Revalidate_Dispatcher {
     }
 
     /**
+     * Hook: post_updated
+     * Detects slug changes for published posts and queues revalidation with old_slug.
+     *
+     * @param int     $post_id
+     * @param WP_Post $post_after
+     * @param WP_Post $post_before
+     */
+    public function on_post_updated($post_id, $post_after, $post_before) {
+        if (!$post_after || !($post_after instanceof WP_Post) || !$post_before || !($post_before instanceof WP_Post)) {
+            return;
+        }
+        if (wp_is_post_autosave($post_id) || wp_is_post_revision($post_id)) {
+            return;
+        }
+        if (!self::is_allowed_post_type($post_after->post_type)) {
+            return;
+        }
+        if ($post_after->post_status !== 'publish' && $post_before->post_status !== 'publish') {
+            return;
+        }
+
+        $old_slug = !empty($post_before->post_name) ? $post_before->post_name : '';
+        $new_slug = !empty($post_after->post_name) ? $post_after->post_name : '';
+
+        if (!empty($old_slug) && !empty($new_slug) && $old_slug !== $new_slug) {
+            $this->queue_revalidation('update', $post_after->post_type, $new_slug, $post_id, $old_slug);
+        }
+    }
+
+    /**
      * Hook: before_delete_post
      *
      * Captures slug and post_type BEFORE the record is permanently deleted from the DB.
@@ -294,10 +327,11 @@ class NextJS_Revalidate_Dispatcher {
      * @param string $slug
      * @param int    $post_id
      */
-    public function queue_revalidation($action, $post_type, $slug, $post_id = 0) {
+    public function queue_revalidation($action, $post_type, $slug, $post_id = 0, $old_slug = '') {
         $action = strtolower(trim($action));
         $post_type = strtolower(trim($post_type));
         $slug = strtolower(trim($slug));
+        $old_slug = strtolower(trim($old_slug));
 
         // Deterministic composite key: post_type:slug when slug is known, fallback to post_{post_id}
         $key = !empty($slug) ? "{$post_type}:{$slug}" : ($post_id > 0 ? "post_{$post_id}" : "{$post_type}:" . uniqid('reval_', true));
@@ -311,6 +345,7 @@ class NextJS_Revalidate_Dispatcher {
             'action'    => $action,
             'post_type' => $post_type,
             'slug'      => $slug,
+            'old_slug'  => $old_slug,
             'post_id'   => $post_id,
         );
 
@@ -349,7 +384,7 @@ class NextJS_Revalidate_Dispatcher {
                 continue;
             }
 
-            $this->send_revalidate_request($item['action'], $item['post_type'], $slug);
+            $this->send_revalidate_request($item['action'], $item['post_type'], $slug, !empty($item['old_slug']) ? $item['old_slug'] : null);
         }
     }
 
@@ -360,14 +395,15 @@ class NextJS_Revalidate_Dispatcher {
      *   the TLS handshake and HTTP POST complete before PHP shutdown terminates the process.
      * - Inspects and validates the HTTP response code (logging errors if non-200).
      *
-     * @param string $action    'update' | 'delete'
-     * @param string $post_type
-     * @param string $slug
+     * @param string      $action    'update' | 'delete'
+     * @param string      $post_type
+     * @param string      $slug
+     * @param string|null $old_slug  Optional previous slug if renamed
      * @return bool True if dispatched successfully, false otherwise.
      */
-    public function send_revalidate_request($action, $post_type, $slug) {
+    public function send_revalidate_request($action, $post_type, $slug, $old_slug = null) {
         // 1. Request-level deduplication: Never send identical request multiple times in same request
-        $dedup_key = "{$action}:{$post_type}:{$slug}";
+        $dedup_key = "{$action}:{$post_type}:{$slug}:" . ($old_slug ?: '');
         if (isset($this->dispatched[$dedup_key])) {
             return true;
         }
@@ -385,6 +421,9 @@ class NextJS_Revalidate_Dispatcher {
             'post_type' => $post_type,
             'slug'      => $slug,
         );
+        if (!empty($old_slug) && $old_slug !== $slug) {
+            $payload['old_slug'] = $old_slug;
+        }
 
         $endpoint = self::get_endpoint();
 

@@ -12,7 +12,8 @@
     "test:contract": "tsx src/tests/cmsContractTest.ts",
     "test:acceptance": "tsx src/tests/productionAcceptanceTest.ts",
     "test:sync": "tsx src/tests/cmsSyncTest.ts",
-    "test": "tsx src/tests/cmsContractTest.ts && tsx src/tests/productionAcceptanceTest.ts && tsx src/tests/cmsSyncTest.ts"
+    "test:caching": "tsx src/tests/cachingAndRevalidationTest.ts",
+    "test": "tsx src/tests/cmsContractTest.ts && tsx src/tests/productionAcceptanceTest.ts && tsx src/tests/cmsSyncTest.ts && tsx src/tests/cachingAndRevalidationTest.ts"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",
