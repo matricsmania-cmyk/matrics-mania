@@ -343,15 +343,17 @@ export async function POST(req: NextRequest) {
         revalidatedPaths.push('/blog', '/insights');
         if (rawSlug) {
           safeRevalidatePath(`/${rawSlug}`);
+          safeRevalidatePath(`/blog/${rawSlug}`);
           safeRevalidatePath(`/insights/${rawSlug}`);
           safeRevalidatePath(`/${rawSlug}`, 'page');
-          revalidatedPaths.push(`/${rawSlug}`, `/insights/${rawSlug}`);
+          revalidatedPaths.push(`/${rawSlug}`, `/blog/${rawSlug}`, `/insights/${rawSlug}`);
         }
         if (oldSlug) {
           safeRevalidatePath(`/${oldSlug}`);
+          safeRevalidatePath(`/blog/${oldSlug}`);
           safeRevalidatePath(`/insights/${oldSlug}`);
           safeRevalidatePath(`/${oldSlug}`, 'page');
-          revalidatedPaths.push(`/${oldSlug}`, `/insights/${oldSlug}`);
+          revalidatedPaths.push(`/${oldSlug}`, `/blog/${oldSlug}`, `/insights/${oldSlug}`);
         }
       } else if (rawPostType.includes('page')) {
         const pagePath = rawSlug === 'home' || !rawSlug ? '/' : `/${rawSlug}`;

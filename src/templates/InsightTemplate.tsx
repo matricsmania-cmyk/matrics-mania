@@ -42,6 +42,7 @@ import {
 } from 'lucide-react';
 
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export interface InsightTemplateProps {
   insight?: Insight;
@@ -59,8 +60,24 @@ export const InsightTemplate: React.FC<InsightTemplateProps> = ({
   onShowToast,
 }) => {
   const router = useRouter();
-  const onNavigate = propNavigate;
-  const onOpenBooking = propBooking;
+  const handleNav = (path: string) => {
+    if (propNavigate) {
+      propNavigate(path);
+    } else {
+      router.push(path);
+    }
+  };
+  const onNavigate = handleNav;
+
+  const handleBooking = (prefillInfo?: any) => {
+    if (propBooking) {
+      propBooking(prefillInfo);
+    } else {
+      router.push('/contact/');
+    }
+  };
+  const onOpenBooking = handleBooking;
+
   const provider = useContentProvider();
   const post =
     propInsight ||
@@ -73,6 +90,47 @@ export const InsightTemplate: React.FC<InsightTemplateProps> = ({
   const [readingProgress, setReadingProgress] = useState(0);
   const [isMobileTocOpen, setIsMobileTocOpen] = useState(false);
 
+  // Extract structured table of contents items from sections OR post HTML headings
+  const tocItems = useMemo(() => {
+    if (post?.sections && post.sections.length > 0) {
+      return post.sections.map((sec, idx) => ({
+        id: sec.id || `section-${idx}`,
+        title: sec.title,
+        level: 2,
+      }));
+    }
+    if (!post?.content) return [];
+    const items: Array<{ id: string; title: string; level: number }> = [];
+    const headingRegex = /<h([2-3])[^>]*>([\s\S]*?)<\/h\1>/gi;
+    let match;
+    let idx = 0;
+    while ((match = headingRegex.exec(post.content)) !== null) {
+      const level = parseInt(match[1], 10);
+      const text = match[2].replace(/<[^>]+>/g, '').trim();
+      if (text) {
+        const cleanId = `heading-${idx}-${text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')}`;
+        items.push({ id: cleanId, title: text, level });
+        idx++;
+      }
+    }
+    return items;
+  }, [post]);
+
+  // Inject anchor IDs into HTML headings so TOC links jump directly to them
+  const processedContent = useMemo(() => {
+    if (!post?.content) return '';
+    let idx = 0;
+    return post.content.replace(/<h([2-3])([^>]*)>([\s\S]*?)<\/h\1>/gi, (full, level, attrs, inner) => {
+      const text = inner.replace(/<[^>]+>/g, '').trim();
+      const cleanId = `heading-${idx}-${text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')}`;
+      idx++;
+      if (attrs.includes('id=')) {
+        return full;
+      }
+      return `<h${level}${attrs} id="${cleanId}" class="scroll-mt-28">${inner}</h${level}>`;
+    });
+  }, [post?.content]);
+
   // Calculate reading progress and active section tracker
   useEffect(() => {
     if (!post) return;
@@ -84,14 +142,14 @@ export const InsightTemplate: React.FC<InsightTemplateProps> = ({
       }
 
       // Check sections on screen
-      if (post?.sections && post.sections.length > 0) {
-        for (let i = post.sections.length - 1; i >= 0; i--) {
-          const sec = post.sections[i];
-          const el = document.getElementById(sec.id);
+      if (tocItems.length > 0) {
+        for (let i = tocItems.length - 1; i >= 0; i--) {
+          const item = tocItems[i];
+          const el = document.getElementById(item.id);
           if (el) {
             const rect = el.getBoundingClientRect();
             if (rect.top <= 200) {
-              setActiveSectionId(sec.id);
+              setActiveSectionId(item.id);
               break;
             }
           }
@@ -101,12 +159,12 @@ export const InsightTemplate: React.FC<InsightTemplateProps> = ({
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [post]);
+  }, [post, tocItems]);
 
   if (!post) {
     return (
       <NotFoundState
-        attemptedPath={slug ? `/${slug}/` : '/insights/'}
+        attemptedPath={slug ? `/${slug}/` : '/blog/'}
         onNavigate={onNavigate}
         onOpenBooking={onOpenBooking}
       />
@@ -203,13 +261,19 @@ export const InsightTemplate: React.FC<InsightTemplateProps> = ({
       {/* Top Sticky Header */}
       <div className="border-b border-[#1E293B] bg-[#070B14]/90 backdrop-blur-md sticky top-16 z-30 py-3">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
-          <button
-            onClick={() => onNavigate('/insights/')}
+          <Link
+            href="/blog/"
+            onClick={(e) => {
+              if (propNavigate) {
+                e.preventDefault();
+                propNavigate('/blog/');
+              }
+            }}
             className="inline-flex items-center gap-1.5 text-xs font-mono text-[#94A3B8] hover:text-[#60A5FA] transition-colors cursor-pointer"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
-            <span>Back to Insights Hub</span>
-          </button>
+            <span>Back to Blog Hub</span>
+          </Link>
 
           <div className="flex items-center gap-2 shrink-0">
             <button
@@ -341,7 +405,7 @@ export const InsightTemplate: React.FC<InsightTemplateProps> = ({
             )}
 
             {/* Mobile Table of Contents Accordion */}
-            {post.sections && post.sections.length > 0 && (
+            {tocItems.length > 0 && (
               <div className="lg:hidden p-4 rounded-2xl bg-[#0D1424] border border-[#1E293B]">
                 <button
                   onClick={() => setIsMobileTocOpen(!isMobileTocOpen)}
@@ -349,25 +413,27 @@ export const InsightTemplate: React.FC<InsightTemplateProps> = ({
                 >
                   <span className="flex items-center gap-2">
                     <ListOrdered className="w-4 h-4 text-[#3B82F6]" />
-                    Table of Contents ({post.sections.length} Sections)
+                    Table of Contents ({tocItems.length} Sections)
                   </span>
                   <ChevronDown
                     className={`w-4 h-4 transition-transform ${isMobileTocOpen ? 'rotate-180' : ''}`}
                   />
                 </button>
                 {isMobileTocOpen && (
-                  <div className="mt-4 pt-3 border-t border-[#1E293B] space-y-2">
-                    {post.sections.map((sec, sIdx) => (
+                  <div className="mt-4 pt-3 border-t border-[#1E293B] space-y-2 max-h-80 overflow-y-auto">
+                    {tocItems.map((item) => (
                       <button
-                        key={sec.id}
-                        onClick={() => scrollToSection(sec.id)}
+                        key={item.id}
+                        onClick={() => scrollToSection(item.id)}
                         className={`w-full text-left p-2 rounded-lg text-xs font-mono transition-colors ${
-                          activeSectionId === sec.id
+                          item.level === 3 ? 'pl-4 opacity-90' : ''
+                        } ${
+                          activeSectionId === item.id
                             ? 'bg-[#2563EB] text-white font-bold'
                             : 'text-[#94A3B8] hover:text-white hover:bg-[#1E293B]'
                         }`}
                       >
-                        {sec.title}
+                        {item.title}
                       </button>
                     ))}
                   </div>
@@ -376,9 +442,9 @@ export const InsightTemplate: React.FC<InsightTemplateProps> = ({
             )}
 
             {/* Article Primary Content Body */}
-            {post.content && (
-              <div className="prose prose-invert prose-blue max-w-none text-[#CBD5E1] text-sm sm:text-base leading-relaxed space-y-6">
-                <div dangerouslySetInnerHTML={{ __html: post.content }} />
+            {processedContent && (
+              <div className="wp-content-body max-w-none text-[#CBD5E1] text-base leading-relaxed space-y-6">
+                <div dangerouslySetInnerHTML={{ __html: processedContent }} />
               </div>
             )}
 
@@ -574,31 +640,33 @@ export const InsightTemplate: React.FC<InsightTemplateProps> = ({
             <div className="sticky top-28 space-y-6">
               
               {/* Interactive TOC Card */}
-              {post.sections && post.sections.length > 0 && (
+              {tocItems.length > 0 && (
                 <div className="p-6 rounded-3xl bg-[#0D1424] border border-[#1E293B] space-y-4 shadow-xl">
                   <div className="flex items-center justify-between text-xs font-mono text-[#60A5FA] uppercase font-bold border-b border-[#1E293B] pb-3">
                     <span className="flex items-center gap-2">
                       <ListOrdered className="w-4 h-4 text-[#3B82F6]" />
-                      Table of Contents
+                      Table of Contents ({tocItems.length})
                     </span>
                     <span>{readingProgress}% read</span>
                   </div>
 
-                  <nav className="space-y-1.5">
-                    {post.sections.map((sec, idx) => {
-                      const isActive = activeSectionId === sec.id;
+                  <nav className="space-y-1.5 max-h-[60vh] overflow-y-auto pr-1">
+                    {tocItems.map((item, idx) => {
+                      const isActive = activeSectionId === item.id;
                       return (
                         <button
-                          key={sec.id}
-                          onClick={() => scrollToSection(sec.id)}
+                          key={item.id}
+                          onClick={() => scrollToSection(item.id)}
                           className={`w-full text-left p-2.5 rounded-xl text-xs font-mono transition-all flex items-start gap-2 cursor-pointer ${
+                            item.level === 3 ? 'pl-5 opacity-90' : ''
+                          } ${
                             isActive
                               ? 'bg-[#2563EB] text-white font-bold shadow-md shadow-blue-500/20'
                               : 'text-[#94A3B8] hover:text-white hover:bg-[#1E293B]'
                           }`}
                         >
-                          <span className="text-[10px] opacity-70 mt-0.5">0{idx + 1}</span>
-                          <span className="line-clamp-1">{sec.title}</span>
+                          <span className="text-[10px] opacity-70 mt-0.5">{idx + 1 < 10 ? `0${idx + 1}` : idx + 1}</span>
+                          <span className="line-clamp-1">{item.title}</span>
                         </button>
                       );
                     })}
@@ -682,16 +750,18 @@ export const InsightTemplate: React.FC<InsightTemplateProps> = ({
                   Related Research &amp; Protocols
                 </h2>
               </div>
-              <a
-                href="/insights/"
+              <Link
+                href="/blog/"
                 onClick={(e) => {
-                  e.preventDefault();
-                  onNavigate('/insights/');
+                  if (propNavigate) {
+                    e.preventDefault();
+                    propNavigate('/blog/');
+                  }
                 }}
                 className="text-xs font-mono text-[#60A5FA] hover:underline cursor-pointer"
               >
                 View Repository →
-              </a>
+              </Link>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

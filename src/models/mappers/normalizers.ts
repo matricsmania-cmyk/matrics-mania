@@ -38,6 +38,24 @@ export function sanitizePlainText(html: string = ''): string {
 }
 
 /**
+ * Proxies WordPress uploaded media URLs via our Next.js media proxy
+ * so that InfinityFree/ByetHost anti-bot challenge (aes.js) never blocks images in the browser.
+ */
+export function proxyWpImageUrl(url?: string): string {
+  if (!url) return '';
+  const match = url.match(/^https?:\/\/cms\.matricsmania\.com\/wp-content\/uploads\/(.+)/i);
+  if (match && match[1]) {
+    return `/api/media/${match[1]}`;
+  }
+  return url;
+}
+
+export function proxyContentImages(contentHtml: string = ''): string {
+  if (!contentHtml) return '';
+  return contentHtml.replace(/https?:\/\/cms\.matricsmania\.com\/wp-content\/uploads\/([a-zA-Z0-9_\-\.\/]+)/gi, '/api/media/$1');
+}
+
+/**
  * Normalizes Raw WordPress Embedded Media into the domain Media model
  */
 export function normalizeWpMedia(rawMedia?: RawWpEmbeddedMedia): Media {
@@ -46,10 +64,11 @@ export function normalizeWpMedia(rawMedia?: RawWpEmbeddedMedia): Media {
   }
 
   const sizes = rawMedia.media_details?.sizes || {};
+  const proxiedUrl = proxyWpImageUrl(rawMedia.source_url);
 
   return {
     id: rawMedia.id,
-    url: rawMedia.source_url,
+    url: proxiedUrl,
     altText: rawMedia.alt_text || sanitizePlainText(rawMedia.title?.rendered) || 'MatricsMania Asset',
     title: sanitizePlainText(rawMedia.title?.rendered),
     caption: sanitizePlainText(rawMedia.caption?.rendered),
@@ -65,7 +84,7 @@ export function normalizeWpMedia(rawMedia?: RawWpEmbeddedMedia): Media {
     sizes: {
       thumbnail: sizes.thumbnail
         ? {
-            url: sizes.thumbnail.source_url,
+            url: proxyWpImageUrl(sizes.thumbnail.source_url),
             width: sizes.thumbnail.width,
             height: sizes.thumbnail.height,
             mimeType: sizes.thumbnail.mime_type,
@@ -73,7 +92,7 @@ export function normalizeWpMedia(rawMedia?: RawWpEmbeddedMedia): Media {
         : undefined,
       medium: sizes.medium
         ? {
-            url: sizes.medium.source_url,
+            url: proxyWpImageUrl(sizes.medium.source_url),
             width: sizes.medium.width,
             height: sizes.medium.height,
             mimeType: sizes.medium.mime_type,
@@ -81,14 +100,14 @@ export function normalizeWpMedia(rawMedia?: RawWpEmbeddedMedia): Media {
         : undefined,
       large: sizes.large
         ? {
-            url: sizes.large.source_url,
+            url: proxyWpImageUrl(sizes.large.source_url),
             width: sizes.large.width,
             height: sizes.large.height,
             mimeType: sizes.large.mime_type,
           }
         : undefined,
       full: {
-        url: rawMedia.source_url,
+        url: proxiedUrl,
         width: rawMedia.media_details?.width || 1200,
         height: rawMedia.media_details?.height || 630,
         mimeType: rawMedia.mime_type,
@@ -566,7 +585,7 @@ export function normalizeWpInsight(raw: RawWpInsightPost): Insight {
     slug: raw.slug,
     title: sanitizePlainText(raw.title?.rendered),
     excerpt: sanitizePlainText(raw.excerpt?.rendered) || '',
-    content: raw.content?.rendered || '',
+    content: proxyContentImages(raw.content?.rendered || ''),
     featuredImage,
     publishedAt: raw.date,
     updatedAt: raw.modified,

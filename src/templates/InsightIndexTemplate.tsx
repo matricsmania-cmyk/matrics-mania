@@ -29,6 +29,7 @@ import {
 } from 'lucide-react';
 
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export interface InsightIndexTemplateProps {
   insights?: Insight[];
@@ -44,7 +45,14 @@ export const InsightIndexTemplate: React.FC<InsightIndexTemplateProps> = ({
   onOpenBooking: propBooking,
 }) => {
   const router = useRouter();
-  const onNavigate = propNavigate;
+  const handleNav = (path: string) => {
+    if (propNavigate) {
+      propNavigate(path);
+    } else {
+      router.push(path);
+    }
+  };
+  const onNavigate = handleNav;
   const onOpenBooking = propBooking;
   const provider = useContentProvider();
   const allInsights = propInsights !== undefined ? propInsights : provider.getAllInsights();
@@ -175,9 +183,15 @@ export const InsightIndexTemplate: React.FC<InsightIndexTemplateProps> = ({
           {/* Featured Post (Visible when viewing All without an active text search) */}
           {selectedCategory === 'All' && selectedContentType === 'All' && !searchQuery && currentPage === 1 && featuredPost && (
             <ScrollReveal className="mb-16">
-              <div
-                onClick={() => onNavigate(`/${featuredPost.slug}/`)}
-                className="rounded-3xl bg-[#0D1424] border border-[#1E293B] hover:border-[#2563EB]/60 transition-all p-6 sm:p-8 lg:p-10 cursor-pointer group grid grid-cols-1 lg:grid-cols-12 gap-8 items-center shadow-2xl relative overflow-hidden"
+              <Link
+                href={`/${featuredPost.slug}/`}
+                onClick={(e) => {
+                  if (propNavigate) {
+                    e.preventDefault();
+                    propNavigate(`/${featuredPost.slug}/`);
+                  }
+                }}
+                className="rounded-3xl bg-[#0D1424] border border-[#1E293B] hover:border-[#2563EB]/60 transition-all p-6 sm:p-8 lg:p-10 cursor-pointer group grid grid-cols-1 lg:grid-cols-12 gap-8 items-center shadow-2xl relative overflow-hidden block no-underline"
               >
                 <div className="absolute top-0 right-0 w-80 h-80 bg-[#2563EB]/10 rounded-full blur-3xl pointer-events-none" />
 
@@ -246,7 +260,7 @@ export const InsightIndexTemplate: React.FC<InsightIndexTemplateProps> = ({
                     <div className="absolute inset-0 bg-gradient-to-t from-[#070B14]/80 via-transparent to-transparent" />
                   </div>
                 )}
-              </div>
+              </Link>
             </ScrollReveal>
           )}
 
@@ -284,9 +298,15 @@ export const InsightIndexTemplate: React.FC<InsightIndexTemplateProps> = ({
 
                   return (
                     <ScrollReveal key={post.id} delay={idx * 0.05}>
-                      <div
-                        onClick={() => onNavigate(`/${post.slug}/`)}
-                        className="p-6 rounded-2xl bg-[#0D1424] border border-[#1E293B] hover:border-[#2563EB]/50 transition-all cursor-pointer flex flex-col justify-between h-full group hover:shadow-xl hover:shadow-blue-500/5"
+                      <Link
+                        href={`/${post.slug}/`}
+                        onClick={(e) => {
+                          if (propNavigate) {
+                            e.preventDefault();
+                            propNavigate(`/${post.slug}/`);
+                          }
+                        }}
+                        className="p-6 rounded-2xl bg-[#0D1424] border border-[#1E293B] hover:border-[#2563EB]/50 transition-all cursor-pointer flex flex-col justify-between h-full group hover:shadow-xl hover:shadow-blue-500/5 block no-underline"
                       >
                         <div className="space-y-4">
                           {/* Image */}
@@ -367,7 +387,7 @@ export const InsightIndexTemplate: React.FC<InsightIndexTemplateProps> = ({
                             <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                           </div>
                         </div>
-                      </div>
+                      </Link>
                     </ScrollReveal>
                   );
                 })}
