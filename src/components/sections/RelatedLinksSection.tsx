@@ -21,6 +21,7 @@ export interface RelatedLinksSectionProps {
 }
 
 const normalizeItem = (item: RelatedLinkItem, basePath: string): EntityRef => {
+  const isRootLevel = basePath === 'locations';
   if (typeof item === 'string') {
     const cleanSlug = item.replace(/^\/+|\/+$/g, '').replace(/^(services|industries|locations|insights|case-studies)\//, '');
     const title = cleanSlug
@@ -31,14 +32,17 @@ const normalizeItem = (item: RelatedLinkItem, basePath: string): EntityRef => {
       id: cleanSlug,
       slug: cleanSlug,
       title,
-      url: `/${basePath}/${cleanSlug}/`,
+      url: isRootLevel ? `/${cleanSlug}/` : `/${basePath}/${cleanSlug}/`,
     };
   }
+  const cleanUrl = item.url
+    ? (isRootLevel ? item.url.replace(/^\/locations\//, '/') : item.url)
+    : (isRootLevel ? `/${item.slug}/` : `/${basePath}/${item.slug}/`);
   return {
     id: item.id || item.slug,
     slug: item.slug,
     title: item.title,
-    url: item.url || `/${basePath}/${item.slug}/`,
+    url: cleanUrl,
     excerpt: item.excerpt,
     category: item.category,
   };

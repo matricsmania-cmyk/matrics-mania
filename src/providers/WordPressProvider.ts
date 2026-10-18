@@ -181,6 +181,47 @@ export class WordPressProvider implements ContentProvider {
     locations.forEach((l) => {
       this.locationMap.set(l.slug, l);
       this.cacheExpiry[`location:${l.slug}`] = Date.now() + this.CACHE_TTL_MS;
+
+      // Register city slug alias
+      if (l.city) {
+        const citySlug = l.city.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+        if (citySlug && !this.locationMap.has(citySlug)) {
+          this.locationMap.set(citySlug, l);
+          this.cacheExpiry[`location:${citySlug}`] = Date.now() + this.CACHE_TTL_MS;
+        }
+      }
+      // Register title slug alias
+      if (l.title) {
+        const titleSlug = l.title.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+        if (titleSlug && !this.locationMap.has(titleSlug)) {
+          this.locationMap.set(titleSlug, l);
+          this.cacheExpiry[`location:${titleSlug}`] = Date.now() + this.CACHE_TTL_MS;
+        }
+      }
+      // Register canonical URL slug alias
+      if (l.seo?.canonicalUrl) {
+        try {
+          const canonicalPath = new URL(l.seo.canonicalUrl).pathname.replace(/^\/+|\/+$/g, '');
+          const canonicalSlug = canonicalPath.split('/').pop();
+          if (canonicalSlug && !this.locationMap.has(canonicalSlug)) {
+            this.locationMap.set(canonicalSlug, l);
+            this.cacheExpiry[`location:${canonicalSlug}`] = Date.now() + this.CACHE_TTL_MS;
+          }
+        } catch {
+          // Ignore invalid URL parse
+        }
+      }
+      // Common transliteration / alias support for banglore <-> bangalore
+      if (l.slug.includes('bangalore') || l.city?.toLowerCase() === 'bangalore') {
+        if (!this.locationMap.has('bangalore')) {
+          this.locationMap.set('bangalore', l);
+          this.cacheExpiry[`location:bangalore`] = Date.now() + this.CACHE_TTL_MS;
+        }
+        if (!this.locationMap.has('banglore')) {
+          this.locationMap.set('banglore', l);
+          this.cacheExpiry[`location:banglore`] = Date.now() + this.CACHE_TTL_MS;
+        }
+      }
     });
   }
 
@@ -969,31 +1010,71 @@ export class WordPressProvider implements ContentProvider {
     if (!slug) return null;
     const cleanSlug = slug.toLowerCase().trim();
 
+    // Check pre-warmed / in-memory map
     if (this.locationMap.has(cleanSlug) && this.isCacheValid(`location:${cleanSlug}`)) {
       return this.locationMap.get(cleanSlug)!;
     }
+
+    // Common transliteration normalization
+    const normalizedSlug = cleanSlug === 'banglore' ? 'bangalore' : cleanSlug;
+    if (this.locationMap.has(normalizedSlug) && this.isCacheValid(`location:${normalizedSlug}`)) {
+      const loc = this.locationMap.get(normalizedSlug)!;
+      this.locationMap.set(cleanSlug, loc);
+      return loc;
+    }
+
+    // Check existing locations cache if populated
     if (this.locationsCache && this.locationsCache.length > 0 && this.isCacheValid('locations')) {
-      const found = this.locationsCache.find((l) => l.slug === cleanSlug);
+      const found = this.locationsCache.find((l) => {
+        if (l.slug === cleanSlug || l.slug === normalizedSlug) return true;
+        if (l.city && (l.city.toLowerCase() === cleanSlug || l.city.toLowerCase() === normalizedSlug)) return true;
+        if (l.title && (l.title.toLowerCase() === cleanSlug || l.title.toLowerCase() === normalizedSlug)) return true;
+        if (l.seo?.canonicalUrl) {
+          const canonicalEnd = l.seo.canonicalUrl.replace(/\/+$/, '').split('/').pop()?.toLowerCase();
+          if (canonicalEnd === cleanSlug || canonicalEnd === normalizedSlug) return true;
+        }
+        return false;
+      });
       if (found) {
         this.locationMap.set(cleanSlug, found);
         this.cacheExpiry[`location:${cleanSlug}`] = Date.now() + this.CACHE_TTL_MS;
         return found;
       }
     }
+
     if (this.isConfigured()) {
       try {
-        const raw = await this.fetchFromWordPress<RawWpLocationPost[]>(
+        // 1. Direct slug query
+        let raw = await this.fetchFromWordPress<RawWpLocationPost[]>(
           `locations?slug=${encodeURIComponent(cleanSlug)}&_embed=true`
         );
+
+        // 2. If direct slug not found, try normalized slug (e.g. bangalore)
+        if ((!raw || !Array.isArray(raw) || raw.length === 0) && normalizedSlug !== cleanSlug) {
+          raw = await this.fetchFromWordPress<RawWpLocationPost[]>(
+            `locations?slug=${encodeURIComponent(normalizedSlug)}&_embed=true`
+          );
+        }
+
+        // 3. If still not found, search WordPress locations CPT for city/title match
+        if (!raw || !Array.isArray(raw) || raw.length === 0) {
+          raw = await this.fetchFromWordPress<RawWpLocationPost[]>(
+            `locations?search=${encodeURIComponent(normalizedSlug)}&_embed=true`
+          );
+        }
+
         if (raw && Array.isArray(raw) && raw.length > 0) {
           const location = normalizeWpLocation(raw[0]);
           this.locationMap.set(cleanSlug, location);
+          this.locationMap.set(location.slug, location);
           this.cacheExpiry[`location:${cleanSlug}`] = Date.now() + this.CACHE_TTL_MS;
+          this.cacheExpiry[`location:${location.slug}`] = Date.now() + this.CACHE_TTL_MS;
           this.negativeCache.delete(`location:${cleanSlug}`);
+          this.negativeCache.delete(`location:${normalizedSlug}`);
           this.negativeCache.delete(cleanSlug);
 
           if (this.locationsCache) {
-            const idx = this.locationsCache.findIndex((l) => l.slug === cleanSlug);
+            const idx = this.locationsCache.findIndex((l) => l.id === location.id);
             if (idx >= 0) {
               this.locationsCache[idx] = location;
             } else {
@@ -1001,6 +1082,25 @@ export class WordPressProvider implements ContentProvider {
             }
           }
           return location;
+        }
+
+        // 4. Ensure all locations are loaded and scan for match
+        const allLocs = await this.asyncGetAllLocations();
+        const matched = allLocs.find((l) => {
+          if (l.slug === cleanSlug || l.slug === normalizedSlug) return true;
+          if (l.city && (l.city.toLowerCase() === cleanSlug || l.city.toLowerCase() === normalizedSlug)) return true;
+          if (l.title && (l.title.toLowerCase() === cleanSlug || l.title.toLowerCase() === normalizedSlug)) return true;
+          if (l.seo?.canonicalUrl) {
+            const canonicalEnd = l.seo.canonicalUrl.replace(/\/+$/, '').split('/').pop()?.toLowerCase();
+            if (canonicalEnd === cleanSlug || canonicalEnd === normalizedSlug) return true;
+          }
+          return false;
+        });
+
+        if (matched) {
+          this.locationMap.set(cleanSlug, matched);
+          this.cacheExpiry[`location:${cleanSlug}`] = Date.now() + this.CACHE_TTL_MS;
+          return matched;
         }
       } catch {
         // Fallback to local provider on network interruption
@@ -1026,12 +1126,7 @@ export class WordPressProvider implements ContentProvider {
         const raw = await this.fetchFromWordPress<RawWpLocationPost[]>('locations?_embed=true&per_page=100');
         if (raw && Array.isArray(raw)) {
           const locations = raw.map((post) => normalizeWpLocation(post));
-          this.locationsCache = locations;
-          this.cacheExpiry['locations'] = Date.now() + this.CACHE_TTL_MS;
-          locations.forEach((l) => {
-            this.locationMap.set(l.slug, l);
-            this.cacheExpiry[`location:${l.slug}`] = Date.now() + this.CACHE_TTL_MS;
-          });
+          this.setLocationsCache(locations);
           return locations;
         }
       } catch {

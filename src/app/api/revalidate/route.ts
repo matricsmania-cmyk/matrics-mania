@@ -315,12 +315,26 @@ export async function POST(req: NextRequest) {
           safeRevalidatePath(`/${rawSlug}`);
           safeRevalidatePath(`/${rawSlug}`, 'page');
           revalidatedPaths.push(`/locations/${rawSlug}`, `/${rawSlug}`);
+
+          if (rawSlug.includes('bangalore') || rawSlug === 'bangalore') {
+            safeRevalidatePath('/bangalore');
+            safeRevalidatePath('/banglore');
+            safeRevalidatePath('/bangalore', 'page');
+            revalidatedPaths.push('/bangalore', '/banglore');
+          }
         }
         if (oldSlug) {
           safeRevalidatePath(`/locations/${oldSlug}`);
           safeRevalidatePath(`/${oldSlug}`);
           safeRevalidatePath(`/${oldSlug}`, 'page');
           revalidatedPaths.push(`/locations/${oldSlug}`, `/${oldSlug}`);
+
+          if (oldSlug.includes('bangalore') || oldSlug === 'bangalore') {
+            safeRevalidatePath('/bangalore');
+            safeRevalidatePath('/banglore');
+            safeRevalidatePath('/bangalore', 'page');
+            revalidatedPaths.push('/bangalore', '/banglore');
+          }
         }
       } else if (rawPostType.includes('case') || rawPostType.includes('stud')) {
         safeRevalidatePath('/case-studies');

@@ -5,6 +5,7 @@ import { ServiceTemplate } from '@/src/templates/ServiceTemplate';
 import { IndustryTemplate } from '@/src/templates/IndustryTemplate';
 import { LocationTemplate } from '@/src/templates/LocationTemplate';
 import { InsightTemplate } from '@/src/templates/InsightTemplate';
+import { StaticPageTemplate } from '@/src/templates/StaticPageTemplate';
 import { wordPressProvider } from '@/src/providers/WordPressProvider';
 import { asyncResolveSeoMetadata } from '@/src/utils/seo';
 import { toNextMetadata } from '@/src/utils/nextMetadata';
@@ -40,11 +41,12 @@ const RESERVED_TOP_LEVEL_SLUGS = new Set([
 ]);
 
 export async function generateStaticParams() {
-  const [services, industries, locations, insights] = await Promise.all([
+  const [services, industries, locations, insights, pages] = await Promise.all([
     wordPressProvider.asyncGetAllServices(),
     wordPressProvider.asyncGetAllIndustries(),
     wordPressProvider.asyncGetAllLocations(),
     wordPressProvider.asyncGetAllInsights(),
+    wordPressProvider.asyncGetAllPages(),
   ]);
 
   const allSlugs = new Set<string>();
@@ -63,10 +65,32 @@ export async function generateStaticParams() {
     if (l.slug && !RESERVED_TOP_LEVEL_SLUGS.has(l.slug.toLowerCase())) {
       allSlugs.add(l.slug.toLowerCase());
     }
+    if (l.city) {
+      const citySlug = l.city.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+      if (citySlug && !RESERVED_TOP_LEVEL_SLUGS.has(citySlug)) {
+        allSlugs.add(citySlug);
+      }
+    }
+    if (l.seo?.canonicalUrl) {
+      try {
+        const canonicalSlug = new URL(l.seo.canonicalUrl).pathname.replace(/^\/+|\/+$/g, '').split('/').pop();
+        if (canonicalSlug && !RESERVED_TOP_LEVEL_SLUGS.has(canonicalSlug.toLowerCase())) {
+          allSlugs.add(canonicalSlug.toLowerCase());
+        }
+      } catch {}
+    }
+    if (l.slug.includes('bangalore') || l.city?.toLowerCase() === 'bangalore') {
+      allSlugs.add('bangalore');
+    }
   }
   for (const ins of insights) {
     if (ins.slug && !RESERVED_TOP_LEVEL_SLUGS.has(ins.slug.toLowerCase())) {
       allSlugs.add(ins.slug.toLowerCase());
+    }
+  }
+  for (const p of pages) {
+    if (p.slug && !RESERVED_TOP_LEVEL_SLUGS.has(p.slug.toLowerCase()) && p.slug !== 'home') {
+      allSlugs.add(p.slug.toLowerCase());
     }
   }
 
@@ -128,6 +152,17 @@ export async function generateMetadata({ params }: DynamicSlugPageProps): Promis
     return toNextMetadata(seo);
   }
 
+  // 5. WordPress Page Resolution at root level
+  const page = await wordPressProvider.asyncGetPageBySlug(cleanSlug);
+  if (page) {
+    const seo = await asyncResolveSeoMetadata({
+      entityData: page,
+      routePath: `/${cleanSlug}/`,
+      cmsSourceUrl: `/${cleanSlug}/`,
+    });
+    return toNextMetadata(seo);
+  }
+
   return {
     title: 'Page Not Found | MatricsMania',
     robots: { index: false, follow: false },
@@ -142,28 +177,53 @@ export default async function RootDynamicSlugPage({ params }: DynamicSlugPagePro
     notFound();
   }
 
+  // Retrieve candidate entities across supported content types for collision audit
+  const [service, industry, location, insight, page] = await Promise.all([
+    wordPressProvider.asyncGetServiceBySlug(cleanSlug),
+    wordPressProvider.asyncGetIndustryBySlug(cleanSlug),
+    wordPressProvider.asyncGetLocationBySlug(cleanSlug),
+    wordPressProvider.asyncGetInsightBySlug(cleanSlug),
+    wordPressProvider.asyncGetPageBySlug(cleanSlug),
+  ]);
+
+  const conflicts: string[] = [];
+  if (service) conflicts.push('Service');
+  if (industry) conflicts.push('Industry');
+  if (location) conflicts.push('Location');
+  if (insight) conflicts.push('Insight');
+  if (page) conflicts.push('Page');
+
+  if (conflicts.length > 1) {
+    console.warn(
+      `[Collision Resolution] Slug "/${cleanSlug}" matches multiple CMS content types: [${conflicts.join(
+        ', '
+      )}]. Deterministically resolving according to priority hierarchy: Service > Industry > Location > Insight > Page.`
+    );
+  }
+
   // 1. Service Check
-  const service = await wordPressProvider.asyncGetServiceBySlug(cleanSlug);
   if (service) {
     return <ServiceTemplate service={service} />;
   }
 
   // 2. Industry Check
-  const industry = await wordPressProvider.asyncGetIndustryBySlug(cleanSlug);
   if (industry) {
     return <IndustryTemplate industry={industry} />;
   }
 
   // 3. Location Check
-  const location = await wordPressProvider.asyncGetLocationBySlug(cleanSlug);
   if (location) {
     return <LocationTemplate location={location} />;
   }
 
   // 4. WordPress Post (Insight) Check
-  const insight = await wordPressProvider.asyncGetInsightBySlug(cleanSlug);
   if (insight) {
     return <InsightTemplate insight={insight} />;
+  }
+
+  // 5. WordPress Page Check
+  if (page) {
+    return <StaticPageTemplate page={page} />;
   }
 
   notFound();

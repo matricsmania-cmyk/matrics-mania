@@ -120,6 +120,7 @@ export async function getSitemapEntries(
     { path: '/', changefreq: 'daily', priority: 1.0 },
     { path: '/case-studies/', changefreq: 'weekly', priority: 0.9 },
     { path: '/insights/', changefreq: 'daily', priority: 0.9 },
+    { path: '/locations/', changefreq: 'weekly', priority: 0.8 },
     { path: '/about/', changefreq: 'monthly', priority: 0.8 },
     { path: '/work/', changefreq: 'weekly', priority: 0.8 },
     { path: '/process/', changefreq: 'monthly', priority: 0.7 },
@@ -201,8 +202,17 @@ export async function getSitemapEntries(
       if (location.status && location.status !== 'published') return;
       if (location.seo?.robotsIndex === false) return;
 
+      let targetSlug = location.slug;
+      if (location.seo?.canonicalUrl) {
+        try {
+          const canonicalPath = new URL(location.seo.canonicalUrl).pathname.replace(/^\/+|\/+$/g, '');
+          const extracted = canonicalPath.split('/').pop();
+          if (extracted) targetSlug = extracted;
+        } catch {}
+      }
+
       addEntry({
-        loc: `${host}/${location.slug}/`,
+        loc: `${host}/${targetSlug}/`,
         lastmod: location.updatedAt || location.publishedAt || defaultUpdatedDate,
         changefreq: 'weekly',
         priority: 0.8,

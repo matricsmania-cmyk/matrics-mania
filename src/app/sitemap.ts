@@ -6,6 +6,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes = [
     '',
     '/blog/',
+    '/locations/',
     '/about/',
     '/work/',
     '/case-studies/',
@@ -28,6 +29,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Add services from WordPress
   const services = await wordPressProvider.asyncGetAllServices();
   for (const s of services) {
+    if (s.status && s.status !== 'published') continue;
+    if (s.seo?.robotsIndex === false) continue;
     routes.push({
       url: `${PUBLIC_DOMAIN}/${s.slug}/`,
       lastModified: s.updatedAt || now,
@@ -39,6 +42,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Add industries from WordPress
   const industries = await wordPressProvider.asyncGetAllIndustries();
   for (const ind of industries) {
+    if (ind.status && ind.status !== 'published') continue;
+    if (ind.seo?.robotsIndex === false) continue;
     routes.push({
       url: `${PUBLIC_DOMAIN}/${ind.slug}/`,
       lastModified: ind.updatedAt || now,
@@ -47,11 +52,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     });
   }
 
-  // Add locations from WordPress
+  // Add locations from WordPress at root-level (excluding drafts/noindex)
   const locations = await wordPressProvider.asyncGetAllLocations();
   for (const loc of locations) {
+    if (loc.status && loc.status !== 'published') continue;
+    if (loc.seo?.robotsIndex === false) continue;
+    let targetSlug = loc.slug;
+    if (loc.seo?.canonicalUrl) {
+      try {
+        const canonicalPath = new URL(loc.seo.canonicalUrl).pathname.replace(/^\/+|\/+$/g, '');
+        const extracted = canonicalPath.split('/').pop();
+        if (extracted) targetSlug = extracted;
+      } catch {}
+    }
     routes.push({
-      url: `${PUBLIC_DOMAIN}/${loc.slug}/`,
+      url: `${PUBLIC_DOMAIN}/${targetSlug}/`,
       lastModified: loc.updatedAt || now,
       changeFrequency: 'weekly',
       priority: 0.8,

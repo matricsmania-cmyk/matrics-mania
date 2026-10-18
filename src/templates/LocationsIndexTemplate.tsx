@@ -25,7 +25,7 @@ export const LocationsIndexTemplate: React.FC<LocationsIndexTemplateProps> = ({
   onOpenBooking: propBooking,
 }) => {
   const router = useRouter();
-  const onNavigate = propNavigate;
+  const onNavigate = propNavigate || ((path: string) => router.push(path));
   const onOpenBooking = propBooking;
   const provider = useContentProvider();
   const allLocations = propLocations !== undefined ? propLocations : provider.getAllLocations();
@@ -96,13 +96,31 @@ export const LocationsIndexTemplate: React.FC<LocationsIndexTemplateProps> = ({
                   </div>
 
                   <div className="pt-6 mt-6 border-t border-[#1E293B]">
-                    <a
-                      href={`/locations/${loc.slug}/`}
-                      className="inline-flex items-center gap-2 text-xs font-mono font-bold text-[#60A5FA] hover:text-white transition-colors"
-                    >
-                      <span>View Hub Telemetry</span>
-                      <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-                    </a>
+                    {(() => {
+                      let targetSlug = loc.slug;
+                      if (loc.seo?.canonicalUrl) {
+                        try {
+                          const canonicalPath = new URL(loc.seo.canonicalUrl).pathname.replace(/^\/+|\/+$/g, '');
+                          const extracted = canonicalPath.split('/').pop();
+                          if (extracted) targetSlug = extracted;
+                        } catch {}
+                      } else if (loc.city && loc.city.toLowerCase() === 'bangalore') {
+                        targetSlug = 'bangalore';
+                      }
+                      return (
+                        <a
+                          href={`/${targetSlug}/`}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            onNavigate(`/${targetSlug}/`);
+                          }}
+                          className="inline-flex items-center gap-2 text-xs font-mono font-bold text-[#60A5FA] hover:text-white transition-colors"
+                        >
+                          <span>View Hub Telemetry</span>
+                          <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                        </a>
+                      );
+                    })()}
                   </div>
                 </div>
               ))}

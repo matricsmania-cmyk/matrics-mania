@@ -201,9 +201,7 @@ export function normalizeCanonicalUrl(rawUrl?: string, pathFallback: string = '/
         }
       } else if (!pathFallback.startsWith('/locations/') && pathname.startsWith('/locations/')) {
         const strippedPath = pathname.replace(/^\/locations\//i, '/');
-        if (strippedPath === pathFallback.toLowerCase()) {
-          pathname = pathFallback;
-        }
+        pathname = (strippedPath === pathFallback.toLowerCase()) ? pathFallback : strippedPath;
       }
     }
 
