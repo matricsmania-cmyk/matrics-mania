@@ -24,7 +24,7 @@ const QUICK_LINKS: QuickLinkItem[] = [
   { id: 'work', label: 'Work', href: '/work/' },
   { id: 'blog', label: 'Blog', href: '/blog/' },
   { id: 'industries', label: 'Industries', href: '/#industries-served-section' },
-  { id: 'locations', label: 'Locations', href: '/contact/' },
+  { id: 'locations', label: 'Locations', href: '/locations/' },
   { id: 'contact', label: 'Contact Us', href: '/contact/' },
   { id: 'about', label: 'About', href: '/about/' },
 ];

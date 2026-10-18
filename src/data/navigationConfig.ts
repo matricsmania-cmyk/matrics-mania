@@ -349,14 +349,14 @@ export const NAVIGATION_CONFIG: NavigationConfig = {
         href: '/case-studies/',
       },
       {
-        id: 'careers',
-        label: 'Careers',
-        href: '/careers/',
+        id: 'locations',
+        label: 'Locations',
+        href: '/locations/',
       },
       {
-        id: 'faq',
-        label: 'FAQs',
-        href: '/faq/',
+        id: 'blog',
+        label: 'Blog',
+        href: '/blog/',
       },
       {
         id: 'contact',
@@ -429,9 +429,9 @@ export const NAVIGATION_CONFIG: NavigationConfig = {
       { id: 'f-about', label: 'About MatricsMania', href: '/about/' },
       { id: 'f-work', label: 'Portfolio & Proof of Work', href: '/work/' },
       { id: 'f-case-studies', label: 'Case Studies & Teardowns', href: '/case-studies/' },
+      { id: 'f-locations', label: 'Global Locations', href: '/locations/' },
+      { id: 'f-blog', label: 'Insights & Blog', href: '/blog/' },
       { id: 'f-process', label: 'Operating Methodology', href: '/process/' },
-      { id: 'f-careers', label: 'Careers (Growth Engineers)', href: '/careers/' },
-      { id: 'f-faq', label: 'Frequently Asked Questions', href: '/faq/' },
       { id: 'f-contact', label: 'Contact Growth Engineers', href: '/contact/' },
     ],
     legal: [

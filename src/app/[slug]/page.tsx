@@ -21,8 +21,6 @@ export const revalidate = 300;
 const RESERVED_TOP_LEVEL_SLUGS = new Set([
   'about',
   'contact',
-  'careers',
-  'faq',
   'privacy',
   'terms',
   'work',

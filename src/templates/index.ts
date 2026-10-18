@@ -14,6 +14,4 @@ export * from './CaseStudyIndexTemplate';
 export * from './CaseStudyTemplate';
 export * from './WorkTemplate';
 export * from './ProcessTemplate';
-export * from './CareersTemplate';
-export * from './FAQTemplate';
 export * from './ContactTemplate';
