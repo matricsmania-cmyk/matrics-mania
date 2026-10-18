@@ -66,11 +66,6 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
       {
-        source: '/locations',
-        destination: '/',
-        permanent: true,
-      },
-      {
         source: '/locations/:slug((?!$).*)',
         destination: '/:slug',
         permanent: true,
