@@ -16,16 +16,22 @@ export interface RedirectRule {
 export const STATIC_REDIRECT_RULES: RedirectRule[] = [
   // Legacy & Alias Routes
   {
-    source: /^\/blog\/?$/,
-    destination: '/insights/',
-    statusCode: 301,
-    description: 'Legacy blog index migrated to canonical insights hub',
+    source: /^\/insights\/?$/,
+    destination: '/blog/',
+    statusCode: 308,
+    description: 'Legacy insights index redirected to blog hub',
+  },
+  {
+    source: /^\/insights\/([a-zA-Z0-9_-]+)\/?$/,
+    destination: '/$1/',
+    statusCode: 308,
+    description: 'Legacy individual insight redirected to root article URL',
   },
   {
     source: /^\/blog\/([a-zA-Z0-9_-]+)\/?$/,
-    destination: '/insights/$1/',
-    statusCode: 301,
-    description: 'Legacy individual blog post redirect',
+    destination: '/$1/',
+    statusCode: 308,
+    description: 'Legacy individual blog post redirected to root article URL',
   },
   {
     source: /^\/digital-marketing-agency-in-bangalore\/?$/,

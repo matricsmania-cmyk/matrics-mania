@@ -1,4 +1,4 @@
-import { notFound, redirect } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
 import { Metadata } from 'next';
 import { wordPressProvider } from '@/src/providers/WordPressProvider';
 import { asyncResolveSeoMetadata } from '@/src/utils/seo';
@@ -10,6 +10,11 @@ interface BlogSlugPageProps {
 
 export const dynamicParams = true;
 export const revalidate = 300;
+
+export async function generateStaticParams() {
+  const insights = await wordPressProvider.asyncGetAllInsights();
+  return insights.map((i) => ({ slug: i.slug }));
+}
 
 export async function generateMetadata({ params }: BlogSlugPageProps): Promise<Metadata> {
   const { slug } = await params;
@@ -39,6 +44,6 @@ export default async function BlogSlugPage({ params }: BlogSlugPageProps) {
     notFound();
   }
 
-  // Canonical article location is root-level /<slug>/
-  redirect(`/${cleanSlug}/`);
+  // Canonical article location is root-level /<slug>
+  permanentRedirect(`/${cleanSlug}`);
 }

@@ -172,14 +172,6 @@ export interface RawWpServicePost extends RawWpBasePost {
     // Live ACF REST field names used by WordPress Service payload
     servicecode?: string;
     category?: string;
-    metatitle?: string;
-    metadescription?: string;
-    canonicalurl?: string;
-    ogtitle?: string;
-    ogdescription?: string;
-    ogimage?: string;
-    robotsindex?: boolean | string;
-    robotsfollow?: boolean | string;
 
     // Backward-compatible fallback fields & extended metadata
     service_code?: string;
@@ -219,14 +211,6 @@ export interface RawWpIndustryPost extends RawWpBasePost {
     industrycode?: string;
     tagline?: string;
     marketsummary?: string;
-    metatitle?: string;
-    metadescription?: string;
-    canonicalurl?: string;
-    ogtitle?: string;
-    ogdescription?: string;
-    ogimage?: string;
-    robotsindex?: boolean | string;
-    robotsfollow?: boolean | string;
 
     // Backward-compatible fallback fields
     industry_code?: string;
@@ -257,14 +241,6 @@ export interface RawWpLocationPost extends RawWpBasePost {
     officenode?: string;
     stateorregion?: string;
     localmarketsummary?: string;
-    metatitle?: string;
-    metadescription?: string;
-    canonicalurl?: string;
-    ogtitle?: string;
-    ogdescription?: string;
-    ogimage?: string;
-    robotsindex?: boolean | string;
-    robotsfollow?: boolean | string;
 
     // Backward-compatible fallback fields
     location_code?: string;
@@ -303,14 +279,6 @@ export interface RawWpInsightPost extends RawWpBasePost {
     standfirst?: string;
     category?: string;
     contenttype?: string;
-    metatitle?: string;
-    metadescription?: string;
-    canonicalurl?: string;
-    ogtitle?: string;
-    ogdescription?: string;
-    ogimage?: string;
-    robotsindex?: boolean | string;
-    robotsfollow?: boolean | string;
 
     // Backward-compatible fallback fields
     content_type?: string;
@@ -354,14 +322,6 @@ export interface RawWpCaseStudyPost extends RawWpBasePost {
     clientindustry?: string;
     heroheadline?: string;
     challengesummary?: string;
-    metatitle?: string;
-    metadescription?: string;
-    canonicalurl?: string;
-    ogtitle?: string;
-    ogdescription?: string;
-    ogimage?: string;
-    robotsindex?: boolean | string;
-    robotsfollow?: boolean | string;
 
     // Backward-compatible fallback fields
     case_study_code?: string;

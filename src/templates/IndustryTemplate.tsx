@@ -33,7 +33,7 @@ export const IndustryTemplate: React.FC<IndustryTemplateProps> = ({
   onOpenBooking: propBooking,
 }) => {
   const router = useRouter();
-  const onNavigate = propNavigate;
+  const onNavigate = propNavigate || ((path: string) => router.push(path));
   const onOpenBooking = propBooking;
   const provider = useContentProvider();
   const industry =

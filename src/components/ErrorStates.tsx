@@ -46,7 +46,7 @@ export const NotFoundState: React.FC<NotFoundStateProps> = ({
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      handleNav(`/insights/?q=${encodeURIComponent(searchQuery.trim())}`);
+      handleNav(`/blog/?q=${encodeURIComponent(searchQuery.trim())}`);
     }
   };
 
@@ -152,13 +152,13 @@ export const NotFoundState: React.FC<NotFoundStateProps> = ({
 
                 <button
                   type="button"
-                  onClick={() => handleNav('/insights/')}
+                  onClick={() => handleNav('/blog/')}
                   className="flex items-center gap-2.5 p-2.5 rounded-lg bg-[#0D1424] hover:bg-[#131D33] text-[#CBD5E1] hover:text-white border border-[#1E293B]/60 transition-all text-left group"
                 >
                   <Terminal className="w-4 h-4 text-[#60A5FA] group-hover:scale-110 transition-transform" />
                   <div>
-                    <span className="font-bold block text-white">/insights/</span>
-                    <span className="text-[10px] text-[#64748B]">Research Papers</span>
+                    <span className="font-bold block text-white">/blog/</span>
+                    <span className="text-[10px] text-[#64748B]">Blog & Research</span>
                   </div>
                 </button>
 

@@ -116,25 +116,29 @@ export function normalizeWpMedia(rawMedia?: RawWpEmbeddedMedia): Media {
   };
 }
 
+export type CmsEntityType = 'service' | 'industry' | 'caseStudy' | 'location' | 'insight' | 'page';
+
 /**
- * Normalizes SEO metadata from ACF custom fields, Yoast/RankMath, or raw WP post fallback
+ * Normalizes SEO metadata with Rank Math as the authoritative single source of truth,
+ * falling back gracefully to Yoast or entity defaults.
  */
-export function normalizeWpSeo(rawPost: RawWpBasePost, canonicalUrlFallback?: string): SEO {
-  const acf = rawPost.acf || {};
+export function normalizeWpSeo(
+  rawPost: RawWpBasePost,
+  canonicalUrlFallback?: string,
+  entityType?: CmsEntityType
+): SEO {
   const yoast = rawPost.yoast_head_json;
   const rankMath = rawPost.rank_math_seo;
 
   const fallbackTitle = sanitizePlainText(rawPost.title?.rendered) + ' | MatricsMania Growth Systems';
   const fallbackExcerpt = sanitizePlainText(rawPost.excerpt?.rendered) || 'Growth engineering and technical search systems for B2B enterprises.';
 
-  // Map acf.metatitle -> seoTitle / metaTitle
-  const title = acf.metatitle || yoast?.title || rankMath?.title || fallbackTitle;
+  // Standardize on Rank Math as the primary source of truth for SEO metadata, with Yoast and entity fallbacks
+  const title = rankMath?.title || yoast?.title || fallbackTitle;
+  const metaDescription = rankMath?.description || yoast?.description || fallbackExcerpt;
 
-  // Map acf.metadescription -> metaDescription
-  const metaDescription = acf.metadescription || yoast?.description || rankMath?.description || fallbackExcerpt;
-
-  // Map acf.canonicalurl -> canonicalUrl
-  const rawCanonical = acf.canonicalurl || yoast?.canonical || rankMath?.canonical || canonicalUrlFallback || rawPost.link || `https://www.matricsmania.com/${rawPost.slug}/`;
+  // Canonical URL determination: Rank Math is authoritative, converted to public domain with content-type awareness
+  const rawCanonical = rankMath?.canonical || yoast?.canonical || canonicalUrlFallback || rawPost.link || `https://www.matricsmania.com/${rawPost.slug}/`;
   let canonicalUrl = rawCanonical.trim();
   if (canonicalUrl.includes('#')) canonicalUrl = canonicalUrl.split('#')[0];
   if (canonicalUrl.includes('?')) canonicalUrl = canonicalUrl.split('?')[0];
@@ -144,57 +148,56 @@ export function normalizeWpSeo(rawPost: RawWpBasePost, canonicalUrlFallback?: st
   if (canonicalUrl.startsWith('/')) {
     canonicalUrl = `https://www.matricsmania.com${canonicalUrl}`;
   }
-  canonicalUrl = canonicalUrl
-    .replace('https://www.matricsmania.com/services/', 'https://www.matricsmania.com/')
-    .replace('https://www.matricsmania.com/industries/', 'https://www.matricsmania.com/')
-    .replace('https://www.matricsmania.com/locations/', 'https://www.matricsmania.com/');
+
+  // Preserve established public URL structure for each content type:
+  // - Services: /services/<slug>
+  // - Industries: /industries/<slug>
+  // - Case Studies: /case-studies/<slug>
+  // - Locations: /<slug>
+  // - WordPress Posts (Blog): /<slug>
+  // - WordPress Pages: existing route
+  const slug = rawPost.slug || '';
+  if (entityType === 'service' || (!entityType && canonicalUrlFallback?.includes('/services/'))) {
+    canonicalUrl = `https://www.matricsmania.com/services/${slug}/`;
+  } else if (entityType === 'industry' || (!entityType && canonicalUrlFallback?.includes('/industries/'))) {
+    canonicalUrl = `https://www.matricsmania.com/industries/${slug}/`;
+  } else if (entityType === 'caseStudy' || (!entityType && canonicalUrlFallback?.includes('/case-studies/'))) {
+    canonicalUrl = `https://www.matricsmania.com/case-studies/${slug}/`;
+  } else if (entityType === 'location') {
+    canonicalUrl = `https://www.matricsmania.com/${slug}/`;
+  } else if (entityType === 'insight') {
+    canonicalUrl = `https://www.matricsmania.com/${slug}/`;
+  } else if (entityType === 'page') {
+    canonicalUrl = slug === 'home' || !slug ? 'https://www.matricsmania.com/' : `https://www.matricsmania.com/${slug}/`;
+  } else {
+    // Fallback: strip legacy CPT prefixes for root-level locations and blog posts
+    canonicalUrl = canonicalUrl
+      .replace('https://www.matricsmania.com/locations/', 'https://www.matricsmania.com/')
+      .replace('https://www.matricsmania.com/insights/', 'https://www.matricsmania.com/')
+      .replace('https://www.matricsmania.com/blog/', 'https://www.matricsmania.com/');
+  }
+
   if (!canonicalUrl.endsWith('/')) {
     canonicalUrl = `${canonicalUrl}/`;
   }
 
-  // Map acf.ogtitle -> ogTitle
-  const ogTitle = acf.ogtitle || yoast?.og_title || rankMath?.openGraph?.title || title;
-
-  // Map acf.ogdescription -> ogDescription
-  const ogDescription = acf.ogdescription || yoast?.og_description || rankMath?.openGraph?.description || metaDescription;
-
-  // Map acf.ogimage -> ogImage
+  // Open Graph metadata: Rank Math is authoritative
+  const ogTitle = rankMath?.openGraph?.title || yoast?.og_title || title;
+  const ogDescription = rankMath?.openGraph?.description || yoast?.og_description || metaDescription;
   const ogImageUrl =
-    acf.ogimage ||
-    yoast?.og_image?.[0]?.url ||
     rankMath?.openGraph?.images?.[0]?.url ||
+    yoast?.og_image?.[0]?.url ||
     rawPost._embedded?.['wp:featuredmedia']?.[0]?.source_url ||
     'https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1200';
 
   const twitterImageUrl =
-    acf.ogimage ||
-    yoast?.twitter_image ||
     rankMath?.twitter?.image ||
+    yoast?.twitter_image ||
     ogImageUrl;
 
-  // Map acf.robotsindex -> robotsIndex
-  let robotsIndex = true;
-  if (acf.robotsindex !== undefined && acf.robotsindex !== null) {
-    if (typeof acf.robotsindex === 'boolean') {
-      robotsIndex = acf.robotsindex;
-    } else if (typeof acf.robotsindex === 'string') {
-      robotsIndex = acf.robotsindex !== 'noindex' && acf.robotsindex !== '0' && acf.robotsindex !== 'false';
-    }
-  } else {
-    robotsIndex = yoast?.robots?.index !== 'noindex' && rankMath?.robots?.index !== false;
-  }
-
-  // Map acf.robotsfollow -> robotsFollow
-  let robotsFollow = true;
-  if (acf.robotsfollow !== undefined && acf.robotsfollow !== null) {
-    if (typeof acf.robotsfollow === 'boolean') {
-      robotsFollow = acf.robotsfollow;
-    } else if (typeof acf.robotsfollow === 'string') {
-      robotsFollow = acf.robotsfollow !== 'nofollow' && acf.robotsfollow !== '0' && acf.robotsfollow !== 'false';
-    }
-  } else {
-    robotsFollow = yoast?.robots?.follow !== 'nofollow' && rankMath?.robots?.follow !== false;
-  }
+  // Robots directives: Rank Math is authoritative
+  const robotsIndex = rankMath?.robots?.index !== undefined ? rankMath.robots.index !== false : (yoast?.robots?.index !== 'noindex');
+  const robotsFollow = rankMath?.robots?.follow !== undefined ? rankMath.robots.follow !== false : (yoast?.robots?.follow !== 'nofollow');
 
   return {
     seoTitle: title,
@@ -328,7 +331,7 @@ export function normalizeWpService(raw: RawWpServicePost): Service {
     publishedAt: raw.date,
     updatedAt: raw.modified,
     status: raw.status === 'publish' ? 'published' : (raw.status as any),
-    seo: normalizeWpSeo(raw, `https://www.matricsmania.com/${raw.slug}/`),
+    seo: normalizeWpSeo(raw, `https://www.matricsmania.com/services/${raw.slug}/`, 'service'),
     relationships,
 
     serviceCode: acf.servicecode || acf.service_code || `SRV-${raw.slug.toUpperCase().slice(0, 4)}`,
@@ -410,7 +413,7 @@ export function normalizeWpIndustry(raw: RawWpIndustryPost): Industry {
     publishedAt: raw.date,
     updatedAt: raw.modified,
     status: raw.status === 'publish' ? 'published' : (raw.status as any),
-    seo: normalizeWpSeo(raw, `https://www.matricsmania.com/${raw.slug}/`),
+    seo: normalizeWpSeo(raw, `https://www.matricsmania.com/industries/${raw.slug}/`, 'industry'),
     relationships,
 
     industryCode: acf.industrycode || acf.industry_code || `IND-${raw.slug ? raw.slug.toUpperCase().slice(0, 3) : 'GEN'}`,
@@ -493,7 +496,7 @@ export function normalizeWpLocation(raw: RawWpLocationPost): Location {
     publishedAt: raw.date,
     updatedAt: raw.modified,
     status: raw.status === 'publish' ? 'published' : (raw.status as any),
-    seo: normalizeWpSeo(raw, `https://www.matricsmania.com/${raw.slug}/`),
+    seo: normalizeWpSeo(raw, `https://www.matricsmania.com/${raw.slug}/`, 'location'),
     relationships,
 
     locationCode: acf.location_code || nodeCode,
@@ -590,7 +593,7 @@ export function normalizeWpInsight(raw: RawWpInsightPost): Insight {
     publishedAt: raw.date,
     updatedAt: raw.modified,
     status: raw.status === 'publish' ? 'published' : (raw.status as any),
-    seo: normalizeWpSeo(raw, `https://www.matricsmania.com/${raw.slug}/`),
+    seo: normalizeWpSeo(raw, `https://www.matricsmania.com/${raw.slug}/`, 'insight'),
     relationships,
 
     standfirst: acf.standfirst,
@@ -668,7 +671,7 @@ export function normalizeWpCaseStudy(raw: RawWpCaseStudyPost): CaseStudy {
     publishedAt: raw.date,
     updatedAt: raw.modified,
     status: raw.status === 'publish' ? 'published' : (raw.status as any),
-    seo: normalizeWpSeo(raw, `https://www.matricsmania.com/case-studies/${raw.slug}/`),
+    seo: normalizeWpSeo(raw, `https://www.matricsmania.com/case-studies/${raw.slug}/`, 'caseStudy'),
     relationships,
 
     caseStudyCode: acf.case_study_code || `CS-${raw.slug ? raw.slug.toUpperCase().slice(0, 4) : 'PROJ'}`,
@@ -725,7 +728,7 @@ export function normalizeWpPage(raw: RawWpBasePost): Page {
     publishedAt: raw.date,
     updatedAt: raw.modified,
     status: raw.status === 'publish' ? 'published' : (raw.status as any),
-    seo: normalizeWpSeo(raw, `https://www.matricsmania.com/${raw.slug}/`),
+    seo: normalizeWpSeo(raw, raw.slug === 'home' || !raw.slug ? 'https://www.matricsmania.com/' : `https://www.matricsmania.com/${raw.slug}/`, 'page'),
     relationships: {},
     template: (raw.template as any) || 'default',
     heroHeadline: raw.acf?.hero_headline,

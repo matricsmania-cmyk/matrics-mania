@@ -48,10 +48,10 @@ export const InsightsSection: React.FC<InsightsSectionProps> = ({
 
           <button
             id="view-all-insights-btn"
-            onClick={() => handleNav('/insights/')}
+            onClick={() => handleNav('/blog/')}
             className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[#60A5FA] hover:text-white transition-colors group cursor-pointer"
           >
-            <span>Explore Insights Repository</span>
+            <span>Explore Blog & Research</span>
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </button>
         </ScrollReveal>

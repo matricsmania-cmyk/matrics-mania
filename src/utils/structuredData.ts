@@ -300,7 +300,7 @@ export function generateWebSiteSchema(options?: WebSiteSchemaOptions): SchemaWeb
       '@type': 'SearchAction',
       target: {
         '@type': 'EntryPoint',
-        urlTemplate: options?.searchUrlTemplate || `${PUBLIC_DOMAIN}/insights/?q={search_term_string}`,
+        urlTemplate: options?.searchUrlTemplate || `${PUBLIC_DOMAIN}/blog/?q={search_term_string}`,
       },
       'query-input': 'required name=search_term_string',
     },

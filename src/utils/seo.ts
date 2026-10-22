@@ -202,6 +202,12 @@ export function normalizeCanonicalUrl(rawUrl?: string, pathFallback: string = '/
       } else if (!pathFallback.startsWith('/locations/') && pathname.startsWith('/locations/')) {
         const strippedPath = pathname.replace(/^\/locations\//i, '/');
         pathname = (strippedPath === pathFallback.toLowerCase()) ? pathFallback : strippedPath;
+      } else if (!pathFallback.startsWith('/insights/') && pathname.startsWith('/insights/')) {
+        const strippedPath = pathname.replace(/^\/insights\//i, '/');
+        pathname = (strippedPath === pathFallback.toLowerCase()) ? pathFallback : strippedPath;
+      } else if (!pathFallback.startsWith('/blog/') && pathname.startsWith('/blog/')) {
+        const strippedPath = pathname.replace(/^\/blog\//i, '/');
+        pathname = (strippedPath === pathFallback.toLowerCase()) ? pathFallback : strippedPath;
       }
     }
 
@@ -310,7 +316,7 @@ export function buildBreadcrumbsFromPath(path: string = '/'): BreadcrumbItem[] {
 
     if (seg === 'services') formattedName = 'Services';
     if (seg === 'industries') formattedName = 'Industries';
-    if (seg === 'insights' || seg === 'blog') formattedName = 'Insights';
+    if (seg === 'insights' || seg === 'blog') formattedName = 'Blog';
     if (seg === 'locations') formattedName = 'Locations';
     if (seg === 'case-studies') formattedName = 'Case Studies';
     if (seg === 'about') formattedName = 'About';
@@ -336,9 +342,8 @@ export function buildBreadcrumbsFromPath(path: string = '/'): BreadcrumbItem[] {
  * 
  * Resolves static, dynamic, CMS-provided, and fallback metadata into a single
  * deterministic SEOResolved structure. Priority order:
- * 1. Rank Math API metadata (when valid & success === true)
- * 2. ACF custom fields (acf.metatitle, acf.metadescription, etc.)
- * 3. Fallback entity data / site defaults
+ * 1. Rank Math API metadata (authoritative single source of truth)
+ * 2. Fallback entity data / site defaults
  */
 export function resolveSeoMetadata(input: SEOMetadataInput = {}): SEOResolved {
   const rankMath = input.rankMathSeo;
@@ -637,9 +642,9 @@ export function getStaticRouteSeo(routeId: string, pathname: string = '/'): SEOR
       });
     case 'insights-index':
       return resolveSeoMetadata({
-        title: 'Growth Engineering Research & Insights | MatricsMania',
+        title: 'Growth Engineering Research & Blog | MatricsMania',
         description: 'Proprietary research papers on AI search engine optimization, full-funnel attribution mathematics, log-file crawl telemetry, and conversion testing.',
-        routePath: '/insights/',
+        routePath: '/blog/',
       });
     case 'process':
       return resolveSeoMetadata({

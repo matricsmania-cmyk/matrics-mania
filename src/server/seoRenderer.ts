@@ -190,7 +190,7 @@ export function resolveServerRoute(
           entityData: insight,
           breadcrumbs: [
             { name: 'Home', url: `${PUBLIC_DOMAIN}/`, position: 1 },
-            { name: 'Blog', url: `${PUBLIC_DOMAIN}/insights/`, position: 2 },
+            { name: 'Blog', url: `${PUBLIC_DOMAIN}/blog/`, position: 2 },
             { name: insight.title, url: `${PUBLIC_DOMAIN}/${insight.slug}/`, position: 3, isCurrentPage: true },
           ],
         });

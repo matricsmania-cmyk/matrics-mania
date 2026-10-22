@@ -111,7 +111,7 @@ export async function generateMetadata({ params }: DynamicSlugPageProps): Promis
   if (service) {
     const seo = await asyncResolveSeoMetadata({
       entityData: service,
-      routePath: `/${cleanSlug}/`,
+      routePath: `/services/${cleanSlug}/`,
       cmsSourceUrl: `/services/${cleanSlug}/`,
     });
     return toNextMetadata(seo);
@@ -122,7 +122,7 @@ export async function generateMetadata({ params }: DynamicSlugPageProps): Promis
   if (industry) {
     const seo = await asyncResolveSeoMetadata({
       entityData: industry,
-      routePath: `/${cleanSlug}/`,
+      routePath: `/industries/${cleanSlug}/`,
       cmsSourceUrl: `/industries/${cleanSlug}/`,
     });
     return toNextMetadata(seo);

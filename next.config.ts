@@ -70,6 +70,11 @@ const nextConfig: NextConfig = {
         destination: '/:slug',
         permanent: true,
       },
+      {
+        source: '/insights',
+        destination: '/blog',
+        permanent: true,
+      },
     ];
   },
 };

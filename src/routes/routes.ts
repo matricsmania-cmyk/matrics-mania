@@ -80,10 +80,10 @@ export const ROUTES: RouteDefinition[] = [
     getCanonical: (p) => `${BASE_URL}/${p.slug}/`,
   },
   {
-    id: 'insights-index',
-    pattern: /^\/(?:insights|blog)\/?$/,
+    id: 'blog-index',
+    pattern: /^\/blog\/?$/,
     template: 'static',
-    getCanonical: () => `${BASE_URL}/insights/`,
+    getCanonical: () => `${BASE_URL}/blog/`,
   },
   {
     id: 'insight-detail',
@@ -102,18 +102,6 @@ export const ROUTES: RouteDefinition[] = [
     pattern: /^\/process\/?$/,
     template: 'static',
     getCanonical: () => `${BASE_URL}/process/`,
-  },
-  {
-    id: 'careers',
-    pattern: /^\/careers\/?$/,
-    template: 'static',
-    getCanonical: () => `${BASE_URL}/careers/`,
-  },
-  {
-    id: 'faq',
-    pattern: /^\/faq\/?$/,
-    template: 'static',
-    getCanonical: () => `${BASE_URL}/faq/`,
   },
   {
     id: 'contact',

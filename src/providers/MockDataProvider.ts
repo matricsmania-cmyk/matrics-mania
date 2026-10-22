@@ -29,7 +29,7 @@ export const MOCK_NAVIGATION: Navigation = {
     { id: 'nav-services', label: 'Services', url: '/' },
     { id: 'nav-industries', label: 'Industries', url: '/' },
     { id: 'nav-case-studies', label: 'Case Studies', url: '/case-studies/' },
-    { id: 'nav-insights', label: 'Insights', url: '/insights/' },
+    { id: 'nav-insights', label: 'Blog', url: '/blog/' },
     { id: 'nav-about', label: 'About', url: '/about/' },
     { id: 'nav-contact', label: 'Contact', url: '/contact/' },
   ],
@@ -53,7 +53,7 @@ export const MOCK_NAVIGATION: Navigation = {
       id: 'footer-res',
       title: 'Intelligence & Research',
       items: [
-        { id: 'f-insights', label: 'Research & Insights', url: '/insights/' },
+        { id: 'f-insights', label: 'Research & Blog', url: '/blog/' },
         { id: 'f-case-studies', label: 'Verified Case Studies', url: '/case-studies/' },
       ],
     },

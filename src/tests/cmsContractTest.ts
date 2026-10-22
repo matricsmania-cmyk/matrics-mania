@@ -147,15 +147,21 @@ const mockLiveWpServicePost: RawWpServicePost = {
   acf: {
     servicecode: 'SRV-PAID-01',
     category: 'Paid Media & Demand Systems',
-    metatitle: 'B2B Paid Media Architecture | MatricsMania',
-    metadescription: 'Engineered Paid Media and Demand Systems for Enterprise B2B.',
-    canonicalurl: 'https://matricsmania.com/services/paid-media-architecture/',
-    ogtitle: 'B2B Paid Media Systems',
-    ogdescription: 'Engineered Paid Media and Demand Systems.',
-    ogimage: 'https://matricsmania.com/images/og-paid-media.png',
-    robotsindex: true,
-    robotsfollow: true,
     // Relationships absent to test safe default [] without data fabrication
+  },
+  rank_math_seo: {
+    title: 'B2B Paid Media Architecture | MatricsMania',
+    description: 'Engineered Paid Media and Demand Systems for Enterprise B2B.',
+    canonical: 'https://matricsmania.com/services/paid-media-architecture/',
+    openGraph: {
+      title: 'B2B Paid Media Systems',
+      description: 'Engineered Paid Media and Demand Systems.',
+      images: [{ url: 'https://matricsmania.com/images/og-paid-media.png' }],
+    },
+    robots: {
+      index: true,
+      follow: true,
+    },
   },
 };
 
@@ -210,14 +216,20 @@ const mockLiveWpIndustryPost: RawWpIndustryPost = {
     industrycode: 'IND-HLTH-01',
     tagline: 'HIPAA-Compliant Patient Acquisition & Medical E-E-A-T',
     marketsummary: 'Scaling clinical patient volume while maintaining absolute compliance with medical ethics boards and patient privacy laws.',
-    metatitle: 'Healthcare & Clinical Growth Systems | MatricsMania',
-    metadescription: 'Medical board verified SEO, clinical trial patient recruitment, and HIPAA-compliant patient intake systems.',
-    canonicalurl: 'https://cms.matricsmania.com/industries/healthcare/',
-    ogtitle: 'Healthcare & Clinical Growth Systems | MatricsMania',
-    ogdescription: 'Patient acquisition and medical search architecture.',
-    ogimage: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=1200',
-    robotsindex: true,
-    robotsfollow: true,
+  },
+  rank_math_seo: {
+    title: 'Healthcare & Clinical Growth Systems | MatricsMania',
+    description: 'Medical board verified SEO, clinical trial patient recruitment, and HIPAA-compliant patient intake systems.',
+    canonical: 'https://cms.matricsmania.com/industries/healthcare/',
+    openGraph: {
+      title: 'Healthcare & Clinical Growth Systems | MatricsMania',
+      description: 'Patient acquisition and medical search architecture.',
+      images: [{ url: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=1200' }],
+    },
+    robots: {
+      index: true,
+      follow: true,
+    },
   },
 };
 
@@ -369,10 +381,10 @@ export function runCmsContractTest(): { success: boolean; testsRun: number; fail
       throw new ContractAssertionError('LiveService', 'seo.metaDescription', 'Engineered Paid Media and Demand Systems for Enterprise B2B.', liveService.seo.metaDescription);
     }
     if (
-      liveService.seo.canonicalUrl !== 'https://www.matricsmania.com/paid-media-architecture/' &&
+      liveService.seo.canonicalUrl !== 'https://www.matricsmania.com/services/paid-media-architecture/' &&
       liveService.seo.canonicalUrl !== 'https://matricsmania.com/services/paid-media-architecture/'
     ) {
-      throw new ContractAssertionError('LiveService', 'seo.canonicalUrl', 'https://www.matricsmania.com/paid-media-architecture/', liveService.seo.canonicalUrl);
+      throw new ContractAssertionError('LiveService', 'seo.canonicalUrl', 'https://www.matricsmania.com/services/paid-media-architecture/', liveService.seo.canonicalUrl);
     }
     if (liveService.seo.ogTitle !== 'B2B Paid Media Systems') {
       throw new ContractAssertionError('LiveService', 'seo.ogTitle', 'B2B Paid Media Systems', liveService.seo.ogTitle);
@@ -470,6 +482,7 @@ export function runCmsContractTest(): { success: boolean; testsRun: number; fail
     }
     // Must normalize CMS canonical URL to public domain
     if (
+      liveIndustry.seo.canonicalUrl !== 'https://www.matricsmania.com/industries/healthcare/' &&
       liveIndustry.seo.canonicalUrl !== 'https://www.matricsmania.com/healthcare/' &&
       liveIndustry.seo.canonicalUrl !== 'https://matricsmania.com/industries/healthcare/'
     ) {
